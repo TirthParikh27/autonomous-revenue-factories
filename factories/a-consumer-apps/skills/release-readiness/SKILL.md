@@ -16,7 +16,7 @@ The developer account is the scarcest asset in this factory. This stage exists t
 
 ## Steps for `release_candidate`
 
-1. Run `checks/cadence`. It reads `state/submissions.jsonl` and `account_protection` in `budget.yaml`: submissions this month, days since the last new-app submission, new apps in the rolling 12 months, submissions today, live apps. If submissions are frozen by `A-ACCT-1`, stop and report. If the cadence says not yet, finish the checklist, leave the item at `release_candidate` with the earliest allowed date, set a follow-up for that date, and stop.
+1. Run `checks/cadence`. It reads `state/submissions.jsonl` and `account_protection` in `budget.yaml`: submissions this month, days since the last new-app submission, new apps in the rolling 12 months, submissions today, live apps. If submissions are frozen by `A-ACCT-1`, stop and report. If the cadence says not yet, finish the checklist, leave the item at `release_candidate` with the earliest allowed date, set its `next_check` to that date, and stop.
 1a. Run `checks/metadata_similarity` on the draft listing (name, subtitle, description, keywords, release notes, screenshot captions) against every other listing on the account. Over the limit in `budget.yaml`, rewrite the listing from the app's own spec and rerun once. A second fail goes back to `building`. Raise `A-CAP-1` only if the evidence is unusually strong.
 2. Delegate the checklist to the `release-verifier` agent. For each row it records pass or fail and the evidence: a file path, a test id, or a screenshot hash. It writes `state/release/<id>/checklist.json`.
 3. Checklist groups. Rows marked (unverified) come from background knowledge and must be confirmed against developer.apple.com before first use:

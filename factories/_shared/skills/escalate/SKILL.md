@@ -17,8 +17,8 @@ Use this when a trigger in `ESCALATION.md` fires. Do not attempt the gated actio
    - State the worst case honestly, including account bans and legal exposure, not only money.
    - State an expiry date. Default is 7 days.
 4. Set the item's `stage` to `awaiting_human` and `blocked_by` to the packet path. Append the transition to `history`.
-5. Add a follow-up in `timers/followups.jsonl` due on the packet's expiry date.
-6. Notify, with outbox priority `now`: one Slack message with the decision line, the cost, the expiry and the packet path, and one Linear issue with the same content. Keep both under 80 words. Do not include secrets or personal data.
+5. Set the item's `next_check` to the packet's expiry date.
+6. Notify, with outbox priority `now`: one Slack message with the decision line, the cost, the expiry and the packet path. Keep it under 80 words. Do not include secrets or personal data.
 7. Continue with other items that are not blocked. If nothing else is available, end the run with a run report.
 
 ## Never
@@ -30,7 +30,7 @@ Use this when a trigger in `ESCALATION.md` fires. Do not attempt the gated actio
 
 ## Checking for a decision
 
-At the start of a run, for each item in `awaiting_human`, look for its packet:
+At the start of every run, including the daily telemetry run, for each item in `awaiting_human`, look for its packet. Do this whatever the item's `next_check` says, and clear `next_check` when a decision is found. If this run's stage is not the one the packet names, only record the decision (move the item to the named stage, or to `killed`, and append history). Never carry out the gated action from another stage's run:
 
 - In `approved/` on `main`: proceed with exactly what the packet described. If circumstances changed since it was written (price, policy, evidence), raise a new packet instead.
 - In `rejected/`: move the item to `killed` or back to the stage named in "If you say no", and record the reason.
