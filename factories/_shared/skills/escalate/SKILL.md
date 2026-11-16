@@ -17,8 +17,8 @@ Use this when a trigger in `ESCALATION.md` fires. Do not attempt the gated actio
    - State the worst case honestly, including account bans and legal exposure, not only money.
    - State an expiry date. Default is 7 days.
 4. Set the item's `stage` to `awaiting_human` and `blocked_by` to the packet path. Append the transition to `history`.
-5. Add a follow-up in `timers/followups.jsonl` due on the packet's expiry date.
-6. Notify, with outbox priority `now`: one Slack message with the decision line, the cost, the expiry and the packet path, and one Linear issue with the same content. Keep both under 80 words. Do not include secrets or personal data.
+5. Set the item's `next_check` to the packet's expiry date.
+6. Notify, with outbox priority `now`: one Slack message with the decision line, the cost, the expiry and the packet path. Keep it under 80 words. Do not include secrets or personal data.
 7. Continue with other items that are not blocked. If nothing else is available, end the run with a run report.
 
 ## Never

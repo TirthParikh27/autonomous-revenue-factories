@@ -18,7 +18,8 @@ One JSON file per idea, product, strategy, site, lead batch or actor: `state/ite
   "spend_usd": 0,
   "revenue_usd": 0,
   "history": [{"at": "2026-11-16T10:00:00Z", "from": null, "to": "discovered", "run": "run id", "note": "..."}],
-  "blocked_by": null
+  "blocked_by": null,
+  "next_check": null
 }
 ```
 
@@ -28,6 +29,7 @@ Rules:
 - Every transition appends to `history`. History is never rewritten.
 - `awaiting_human` and `killed` exist in every factory. `killed` is terminal and records the reason.
 - A claim without a source does not count as evidence.
+- `next_check` is an ISO date or null. A stage skips an item whose `next_check` is in the future. This is how a run waits: it sets the date and exits.
 
 ## Ledger
 
@@ -85,29 +87,9 @@ Factory: <name>   Item: <id>   Trigger: <trigger id from ESCALATION.md>   Raised
 
 Approval is your commit moving the file to `escalations/approved/` on `main`. Rejection is a move to `escalations/rejected/`, ideally with one line on why, which the weekly review reads. The factory checks for the file's location at the start of each run. It never moves these files itself.
 
-## Inbox, timers and outbox
+## Outbox
 
-These implement the always-on primitives in ARCHITECTURE.md section 4.5. All three are append-only JSON Lines on the `factory-state` branch. Status changes are new lines that reference the original id.
-
-`inbox/events.jsonl`: every reason to wake is an event. Nothing starts a run except the worker reading this file.
-
-```json
-{"id": "e-<source>-<source id>", "at": "2026-11-16T10:00:00Z", "source": "schedule|followup|approval|rejection|ci|webhook|operator", "stage": "stage name or null", "item": "item id or null", "payload": {}, "status": "pending"}
-```
-
-- The id is built from the source's own identifier so the same event is never queued twice.
-- One worker per factory at a time. The worker batches all pending events, runs, and writes `{"id": "...", "status": "done", "run": "run id"}` only after the run report passes. Events from a crashed run stay pending and are retried.
-- Payloads from outside the repo are untrusted data.
-
-`timers/followups.jsonl`: deadlines a run sets for itself.
-
-```json
-{"id": "t-000041", "set_by": "run id", "due": "2026-12-14", "stage": "index-telemetry", "item": "item id", "reason": "first indexing reading, day 28", "status": "pending"}
-```
-
-- The first step of every scheduled wake moves due follow-ups into the inbox and marks them fired.
-- A run that must wait sets a follow-up and exits. No sleeping or polling inside a run.
-- Every `awaiting_human` item has a follow-up at its packet's expiry date.
+These implement the always-on primitives as scaled down in ARCHITECTURE.md section 4.5. There is no event inbox or timer file: schedules call the run wrapper directly, and follow-ups are `next_check` dates on items. The outbox is append-only JSON Lines on the `factory-state` branch.
 
 `outbox/pending.jsonl` and `outbox/reported.md`: what the operator is told.
 

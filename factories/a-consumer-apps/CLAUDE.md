@@ -22,7 +22,7 @@ Each run does one stage. You are started by the run wrapper with one skill named
 4. Select up to `pipeline.batch_size` items in the stage this skill owns. Do not touch items in other stages.
 5. Load the one skill for this stage from `skills/` and follow it.
 6. Run the stage's deterministic check from `checks/`. Its exit code decides the transition. Your opinion does not.
-7. Update `state/items/<id>.json`, appending to `history`. Use only transitions listed in `FACTORY_SPEC.md` section 2.2.
+7. Update `state/items/<id>.json`, appending to `history`. Use only transitions listed in `FACTORY_SPEC.md` section 3.2.
 8. End with the shared `run-report` skill. Always.
 
 Stage order: `gap-mining`, `synthetic-screen`, `spec-differentiation`, `demand-test`, `mvp-build`, `release-readiness`, `paid-test`, `content-drafts`, `telemetry-winner-detection`, `weekly-review`.
