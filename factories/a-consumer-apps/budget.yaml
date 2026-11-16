@@ -102,7 +102,7 @@ paid_test:               # proposed thresholds. Anchors: Adapty Q3 2026 Meta ben
 winner:
   max_cost_per_payer_usd: 60
   min_d7_roas_pct: 60
-  min_payers: 20
+  min_payers: 10                       # the most a $600 test can produce at $60 a payer
   max_refund_rate_pct: 10
   hold: {min_d7_roas_pct: 40, consecutive_weeks_below: 2}
 

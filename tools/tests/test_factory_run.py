@@ -1,0 +1,167 @@
+"""The wrapper's failure paths are proven first (ARCHITECTURE.md section 7, step 2)."""
+import datetime as dt
+import json
+import stat
+import sys
+from pathlib import Path
+
+import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import factory_run  # noqa: E402
+
+NOW = dt.datetime(2026, 11, 20, 9, 0, tzinfo=dt.timezone.utc)
+
+GOOD_REPORT = """# Run {run}
+## Did
+- ranked ideas -> 5 kept
+## Evidence
+- checks/screen_rank -> exit 0
+## Not done
+- none
+## Denied or blocked
+- none
+## Next
+- spec
+"""
+
+FAKE_CLAUDE = """#!/usr/bin/env python3
+import json, os, pathlib, sys
+mode = os.environ.get("FAKE_MODE", "ok")
+run = os.environ["FACTORY_RUN_ID"]
+report = pathlib.Path("journal") / "2026-11-20" / (run + ".md")
+out = {"total_cost_usd": 0.42, "permission_denials": [], "is_error": False}
+if mode in ("ok", "denied", "crash"):
+    report.parent.mkdir(parents=True, exist_ok=True)
+    report.write_text(os.environ["FAKE_REPORT"].replace("{run}", run))
+if mode == "denied":
+    out["permission_denials"] = [{"tool_name": "Bash", "tool_input": {"command": "adb devices"}}]
+if mode == "garbage":
+    print("not json"); sys.exit(0)
+print(json.dumps(out))
+sys.exit(3 if mode == "crash" else 0)
+"""
+
+
+@pytest.fixture
+def repo(tmp_path, monkeypatch):
+    factory = tmp_path / "factories" / "demo"
+    (factory / "skills" / "screen").mkdir(parents=True)
+    (factory / "skills" / "screen" / "SKILL.md").write_text("# screen\n")
+    (factory / "budget.yaml").write_text(
+        "monthly_caps_usd: {tokens: 10, total: 20}\n"
+        "per_run: {screen: {max_turns: 5, max_budget_usd: 1.0}}\n"
+        "escalation: {consecutive_failures_before_stop: 3}\n"
+    )
+    fake = tmp_path / "fake_claude.py"
+    fake.write_text(FAKE_CLAUDE)
+    fake.chmod(fake.stat().st_mode | stat.S_IEXEC)
+    monkeypatch.setenv("FACTORY_CLAUDE_CMD", f"{sys.executable} {fake}")
+    monkeypatch.setenv("FAKE_REPORT", GOOD_REPORT)
+    monkeypatch.setenv("FAKE_MODE", "ok")
+    return tmp_path
+
+
+def run(repo, stage="screen"):
+    return factory_run.run("demo", stage, repo_root=repo, now=NOW)
+
+
+def lines(path):
+    return [json.loads(x) for x in path.read_text().splitlines()]
+
+
+def test_pass_records_cost_and_digest_line(repo):
+    assert run(repo) == factory_run.PASSED
+    factory = repo / "factories" / "demo"
+    (spend,) = lines(factory / "ledger" / "spend.jsonl")
+    assert spend["usd"] == 0.42 and spend["category"] == "tokens"
+    (note,) = lines(factory / "outbox" / "pending.jsonl")
+    assert note["priority"] == "digest"
+    assert not (factory / "state" / "worker.lock").exists()
+
+
+@pytest.mark.parametrize("where", ["root", "factory"])
+def test_stop_file_refuses(repo, where):
+    target = repo if where == "root" else repo / "factories" / "demo"
+    (target / "STOP").write_text("halt\n")
+    assert run(repo) == factory_run.REFUSED
+    assert not (repo / "factories" / "demo" / "ledger").exists()
+
+
+def test_budget_exceeded_refuses(repo):
+    ledger = repo / "factories" / "demo" / "ledger" / "spend.jsonl"
+    factory_run.append_jsonl(ledger, {"at": "2026-11-03T00:00:00+00:00", "category": "tokens", "usd": 10})
+    assert run(repo) == factory_run.REFUSED
+
+
+def test_last_months_spend_does_not_count(repo):
+    ledger = repo / "factories" / "demo" / "ledger" / "spend.jsonl"
+    factory_run.append_jsonl(ledger, {"at": "2026-10-30T00:00:00+00:00", "category": "tokens", "usd": 10})
+    assert run(repo) == factory_run.PASSED
+
+
+def test_unknown_stage_refuses(repo):
+    assert run(repo, stage="publish-everything") == factory_run.REFUSED
+
+
+def test_held_lock_refuses(repo):
+    lock = repo / "factories" / "demo" / "state" / "worker.lock"
+    lock.parent.mkdir(parents=True)
+    lock.write_text("other run")
+    assert run(repo) == factory_run.REFUSED
+    assert lock.exists()
+
+
+def test_missing_report_fails(repo, monkeypatch):
+    monkeypatch.setenv("FAKE_MODE", "silent")
+    assert run(repo) == factory_run.FAILED
+
+
+def test_report_without_evidence_fails(repo, monkeypatch):
+    monkeypatch.setenv("FAKE_REPORT", GOOD_REPORT.replace("- checks/screen_rank -> exit 0\n", ""))
+    assert run(repo) == factory_run.FAILED
+
+
+def test_report_without_mandatory_section_fails(repo, monkeypatch):
+    monkeypatch.setenv("FAKE_REPORT", GOOD_REPORT.replace("## Denied or blocked\n- none\n", ""))
+    assert run(repo) == factory_run.FAILED
+
+
+def test_permission_denial_fails(repo, monkeypatch):
+    monkeypatch.setenv("FAKE_MODE", "denied")
+    assert run(repo) == factory_run.FAILED
+
+
+def test_nonzero_exit_fails_but_cost_is_still_recorded(repo, monkeypatch):
+    monkeypatch.setenv("FAKE_MODE", "crash")
+    assert run(repo) == factory_run.FAILED
+    assert len(lines(repo / "factories" / "demo" / "ledger" / "spend.jsonl")) == 1
+
+
+def test_unparseable_output_fails(repo, monkeypatch):
+    monkeypatch.setenv("FAKE_MODE", "garbage")
+    assert run(repo) == factory_run.FAILED
+
+
+def test_three_consecutive_failures_write_stop_and_alert_now(repo, monkeypatch):
+    factory = repo / "factories" / "demo"
+    monkeypatch.setenv("FAKE_MODE", "silent")
+    assert run(repo) == factory_run.FAILED
+    assert run(repo) == factory_run.FAILED
+    assert not (factory / "STOP").exists()
+    assert run(repo) == factory_run.FAILED
+    assert (factory / "STOP").exists()
+    assert lines(factory / "outbox" / "pending.jsonl")[-1]["priority"] == "now"
+    monkeypatch.setenv("FAKE_MODE", "ok")
+    assert run(repo) == factory_run.REFUSED
+
+
+def test_a_pass_resets_the_failure_streak(repo, monkeypatch):
+    factory = repo / "factories" / "demo"
+    monkeypatch.setenv("FAKE_MODE", "silent")
+    run(repo), run(repo)
+    monkeypatch.setenv("FAKE_MODE", "ok")
+    assert run(repo) == factory_run.PASSED
+    monkeypatch.setenv("FAKE_MODE", "silent")
+    run(repo), run(repo)
+    assert not (factory / "STOP").exists()

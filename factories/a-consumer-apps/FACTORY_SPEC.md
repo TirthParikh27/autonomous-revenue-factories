@@ -140,7 +140,7 @@ Thresholds live in `budget.yaml`. All are proposed. Benchmarks used as anchors a
 
 Small numbers warning: 300 visitors and 6 signups can tell 0.5% from 3%. They cannot tell 2% from 3%. The thresholds are set to catch clear failures cheaply, not to rank close calls.
 
-**Winner (proposed):** cost per payer at or under $60, day-7 return on ad spend at or above 60%, at least 20 payers, refunds under 10%, no open review or account warning. A winner raises `A-WIN-1`, which asks for a scale budget in tranches. Scale spend is never automatic.
+**Winner (proposed):** cost per payer at or under $60, day-7 return on ad spend at or above 60%, at least 10 payers, refunds under 10%, no open review or account warning. A winner raises `A-WIN-1`, which asks for a scale budget in tranches. Scale spend is never automatic.
 
 **Factory validation budget (proposed):** $6,000 total recorded spend or 150 days from the first scheduled run, whichever comes first. That is one full cycle. If no app has reached `winner`, the factory raises `BUD-2` and pauses everything except telemetry for a keep-or-kill decision.
 
@@ -181,7 +181,7 @@ Factory-level numbers tracked weekly: ideas killed per stage and cost per kill, 
 | Account termination takes every app and unpaid proceeds | Section 4: cadence, similarity and distinctness checks, freeze on any spam or fraud citation, hand submission, no second account |
 | Building things nobody wants | Two tranches of real paid traffic before any code. Build slots only for validated ideas |
 | Synthetic demand signals overstate interest | The LLM screen may only kill. Price and pass decisions use real traffic. Screen accuracy is tracked against tranche 1 |
-| Signups that do not become payers | The fake door shows the price. The paid test measures trials and payers, and the winner rule needs 20 payers |
+| Signups that do not become payers | The fake door shows the price. The paid test measures trials and payers, and the winner rule needs 10 payers |
 | Ad spend runs away | Campaigns are created paused with lifetime budgets. The operator activates. Meta account spending limit. Monthly ads cap in `budget.yaml`. Telemetry kills by script |
 | Ad account ban | Copy lint on every ad. No fake testimonials, no invented customers, no "available now" wording before launch. One ad account, operator-owned |
 | Revenue bought at a loss | Winner rule is on cost per payer and return on ad spend, not on MRR |
