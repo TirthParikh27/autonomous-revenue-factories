@@ -2,6 +2,7 @@
 
 Status: blueprint for review, revision 2. Nothing here has been built or run. Date: 16 November 2026.
 Revision 2 changes the ranking lens to portfolio expected value at the operator's direction, makes the consumer app factory the first build, and adds section 2.1.
+Revision 3 (16 November 2026) simplifies the runtime after a review of published software-factory practice (section 9): no event inbox or timer store until real webhooks exist, fewer sub-agents, one notification channel, every stage driven by hand before it is scheduled, and self-improvement deferred until there is data.
 Companion document: `RESEARCH_REPORT.md` (evidence, rankings, tooling matrix).
 
 ## 1. What the research changes about the design
@@ -78,7 +79,7 @@ revenue-factories/
       budget.yaml               spend and risk caps, read by the run wrapper
       skills/<stage>/SKILL.md   one skill per stage, loaded on demand
       agents/<role>.md          sub-agent prompts with restricted tools
-      inbox/, timers/, outbox/  (created at build time) events, follow-ups and pending messages, see section 4.5
+      outbox/                   (created at build time) messages waiting for the daily digest, see section 4.5
       state/                    (created at build time) item files, one per idea or asset
       ledger/                   (created at build time) spend.jsonl, revenue.jsonl
       journal/                  (created at build time) one run report per run
@@ -87,7 +88,7 @@ revenue-factories/
 
 At build time each factory gets a `.claude/` directory whose `skills` and `agents` entries point at the factory's `skills/` and `agents/` folders, so a session started with the factory directory as its working directory discovers them natively. The blueprint keeps them at the top level of the factory, as requested, so they are easy to review.
 
-**Two branches, two trust levels.** `main` is protected and holds everything that defines the rules: specs, `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, skills, agents, application code after review, and `escalations/approved/` and `rejected/`. Only you can merge to it. A long-lived `factory-state` branch is writable by factory runs and holds `inbox/`, `timers/`, `outbox/`, `state/`, `ledger/`, `journal/` and `escalations/open/`. Runs read rules and approvals from `main` and write their bookkeeping to `factory-state`, so a run can record what it did without being able to approve itself or rewrite its own limits. Code and skill changes reach `main` only through pull requests.
+**Two branches, two trust levels.** `main` is protected and holds everything that defines the rules: specs, `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, skills, agents, application code after review, and `escalations/approved/` and `rejected/`. Only you can merge to it. A long-lived `factory-state` branch is writable by factory runs and holds `outbox/`, `state/`, `ledger/`, `journal/` and `escalations/open/`. Runs read rules and approvals from `main` and write their bookkeeping to `factory-state`, so a run can record what it did without being able to approve itself or rewrite its own limits. Code and skill changes reach `main` only through pull requests.
 
 This is designed as one git repository. No repository is attached to this project yet, so the files currently live in the project's shared files. Moving them into a repo is a prerequisite for scheduled cloud runs, which clone a repo fresh each run.
 
@@ -104,6 +105,12 @@ A run is a fresh Claude Code session that:
 5. Writes item state, ledger lines and a run report, then exits.
 
 No run carries context to the next. All memory is in files. This is what keeps context small, makes runs cheap to retry, and survives all three official schedulers, each of which starts from a fresh session or a fresh clone.
+
+**Crashed runs are retried by the next run.** A stage picks its batch from item state, and an item changes stage only after its check passes. A run that crashes leaves its items where they were, so the next run picks them up again. No separate retry queue is needed. Because a crash can happen after an external side effect and before the item file is written, any step that creates something outside the repo (an ad campaign, a draft post, a deployed page) first reads back whether an object tagged with the item id already exists, and reuses it instead of creating a second one.
+
+**Manual first.** Each skill is written so it can be invoked by hand in an interactive session and by the run wrapper on a schedule, with the same prompt. Every stage is run by hand, with you watching, at least three times before it gets a schedule. You cannot debug an unattended run of a stage you have never driven yourself.
+
+**One loop, few sub-agents.** A run is one Claude session working through one skill. Sub-agents are used for two reasons only: to keep untrusted web content away from a session that holds write access (the scout), and to have output checked by a context that did not produce it (the verifier). Anything with a definite shape, such as creating paused ad campaigns from a validated plan, is a script, not an agent.
 
 ### 4.2 Schedulers
 
@@ -124,37 +131,26 @@ Every headless run goes through one wrapper script. Its job is to make failure l
 - Starts Claude with explicit caps: `--max-turns`, `--max-budget-usd`, `--permission-prompts none`, an allow list for that stage only, and JSON output.
 - After the run, fails the run if the exit code is non-zero, if `permission_denials` is non-empty, if the expected artifact for the stage is missing, or if the run report lacks an evidence block.
 - Appends token cost from `total_cost_usd` to the ledger.
-- Acts as the single worker for the factory's event inbox and as the outbox dispatcher (section 4.5): it takes the factory lock, batches pending events, and marks them done only after the checks above pass.
+- Prevents two runs of one factory from overlapping. A local lock file does this for Desktop runs. Cloud scheduled tasks clone fresh and cannot see a local lock, so a factory's scheduled stages are set at different hours, further apart than the longest per-run cap, and any stage run through GitHub Actions uses a per-factory concurrency group. A lock older than the longest per-run cap is treated as stale, removed, and reported in the outbox, so a killed run cannot stall the factory silently.
 - Writes a one line result to the outbox for the daily digest. Three consecutive failures of the same stage write the `STOP` file and raise an escalation, which is delivered immediately.
 
 ### 4.4 Model routing
 
-| Work | Model tier | Reason |
-|---|---|---|
-| Triage, classification, dedupe, log summarising | Haiku 5.5 | $0.10 / $0.50 per million tokens |
-| Stage work: research synthesis, specs, copy, most code | Sonnet 5.5 | $2 / $10 |
-| Hard builds, architecture, weekly self-review | Opus 5.5 | $4 / $20 |
-| Reserved for cases where the above failed twice | Fable 5.2 | $8 / $40 |
+Sonnet 5.5 by default. Opus 5.5 for app builds and the weekly review. Haiku 5.5 only where a step is pure classification and the saving is worth a second configuration. A stage moves up a tier only after it has failed twice on the lower one, and the change is recorded in its skill.
 
 Subscription login carries scheduled cloud tasks and interactive work. An API key with a workspace spend limit carries `--bare` scripts and CI. Keeping both paths working means a change in subscription policy raises cost without stopping the factory.
 
-### 4.5 Always-on primitives
+### 4.5 Always-on primitives, kept to what a factory needs now
 
-A factory is an always-on agent in the sense of Anthropic's guide [Building always-on agents](https://claude.com/resources/articles/building-always-on-agents) (13 November 2026): it is asleep almost all the time and wakes for short runs. That guide names five primitives around the agent loop. Each one maps to a concrete part of this design, and three of them tighten what the first draft had.
+A factory is an always-on agent in the sense of Anthropic's guide [Building always-on agents](https://claude.com/resources/articles/building-always-on-agents) (13 November 2026): asleep almost all the time, awake for short runs. The guide names five primitives. It is written for agents that receive webhooks and user messages at any moment. A factory's wake reasons today are only schedules and your commits, so three of the five collapse into files the design already has. The guide is a reference here, not a requirement.
 
-| Primitive | What the guide says | How a factory implements it |
+| Primitive | Factory implementation now | Add later, when |
 |---|---|---|
-| **Event inbox** | Sources never call the agent directly. They append to a durable list, and a single worker pulls from it. The inbox is the source of truth, events are deduplicated by source id, one active worker at a time, pending events are batched into one run | `inbox/events.jsonl` on the `factory-state` branch. Every wake reason is an event with an id: a schedule tick, a due follow-up, an approval or rejection commit, a CI result, a payout or webhook notification. The run wrapper is the worker. It takes a per-factory lock (a GitHub Actions concurrency group or a lock file), reads all pending events, groups them by stage, runs, and marks them done only after the run report passes. A crashed run leaves events pending, so the next wake retries them |
-| **Timers** | Two kinds: schedules on a known cadence, and follow-ups the agent sets for itself. They live in their own store. A scheduler polls it and moves due timers into the inbox | Schedules are the cloud scheduled tasks and GitHub Actions crons. Follow-ups are lines in `timers/followups.jsonl`, written by skills, for example "read the indexing canary on day 28", "this packet expires on the 23rd", "re-check this actor's canary tomorrow". The first step of every scheduled wake promotes due follow-ups into the inbox. A run that needs to wait sets a follow-up and exits. It never sleeps or polls inside a run |
-| **Memory** | Hold only what cannot be looked up again, otherwise store a pointer. Load instructions, an index and "what I already told the user" at the start of each run. Keep per-task progress files and read them on demand | Instructions are `CLAUDE.md`. The index is a generated `state/INDEX.md` with one line per live item. Task progress is the item file. `journal/LESSONS.md` holds curated lessons. `outbox/reported.md` records what you have already been told. Metrics, revenue and listings are pointers to the source of truth, not copies treated as truth. The weekly review does the curation the guide calls dreaming |
-| **Permissions** | Keep credentials outside the agent's environment behind a proxy. Use auto mode for routine work. Defer a tool call when approval is needed: the run ends, the request goes to the user, and the answer returns as an inbox event | Token-holding steps run in GitHub Actions or behind connectors, not in model sessions. Model runs use auto mode with deny rules. A gated action is a deferred call: the escalation packet is the request, your commit is the answer, and that commit arrives as an inbox event that resumes the item. Other items keep moving meanwhile |
-| **Outbox** | Runs end by sending a message, sending nothing, or deferring. Pace what reaches the user. Start quiet and earn attention | `outbox/pending.jsonl` plus a dispatcher step in the wrapper. Escalations and `STOP` events are delivered immediately. Everything else is batched into one daily digest per factory in Slack. A run with nothing new sends nothing. Nothing in `outbox/reported.md` is sent twice |
-
-Three consequences for the build:
-
-1. **Schedules do not call skills directly.** A schedule tick only adds an event and wakes the worker. This removes the two failure modes the guide names: competing runs when two triggers land together, and a lost event when a run crashes.
-2. **Files first, a database when webhooks arrive.** JSON Lines on the `factory-state` branch are enough while every event comes from a schedule or a commit. When a factory needs real webhooks (Stripe, a marketplace, a broker), the inbox, timers and outbox move to three Supabase tables with the same fields, and a small HTTP handler acknowledges the webhook quickly and writes the row. Checks for prompt injection happen in the run, not in the handler.
-3. **Quiet by default.** The first draft had every run post to Slack. That is replaced by the outbox rule above, so your attention is spent on decisions and on one digest a day.
+| **Event inbox** | None. A scheduled task calls the run wrapper directly. Staggered schedules and the wrapper's lock stop overlapping runs (section 4.3), and item state is the source of truth, so a crashed run loses nothing (section 4.1) | A real webhook source arrives (Stripe, a marketplace, a broker). Then add one `events` table in Supabase and a small handler that acknowledges fast and writes the row. The wrapper becomes its single worker |
+| **Timers** | Schedules are cloud scheduled tasks and GitHub Actions crons. A follow-up is a `next_check` date on the item file. A stage skips items whose `next_check` is in the future. A run that needs to wait sets `next_check` and exits. It never sleeps or polls | The same webhook moment. Follow-ups stay on the item |
+| **Memory** | Instructions are `CLAUDE.md`. Task progress is the item file. A generated `state/INDEX.md` lists live items. `journal/LESSONS.md` holds dated lessons. Metrics and revenue are pointers to the source of truth | Curation by the weekly review once it is switched on (section 5.5) |
+| **Permissions** | Tokens live in GitHub Actions or behind connectors, not in sessions. Auto mode with deny rules. A gated action ends the item's run with an escalation packet. Your commit is the answer, read at the start of the next run | n/a |
+| **Outbox** | `outbox/pending.jsonl`. Escalations and `STOP` go out at once. Everything else goes into one daily Slack digest per factory. A run with nothing new sends nothing. `outbox/reported.md` stops repeats | n/a |
 
 ## 5. Control plane
 
@@ -176,7 +172,9 @@ A factory that reads the open web and also holds posting, payment or email crede
 - **Scout** agents read the web. They have no write connectors and no credentials. Everything they read is data, never instructions. Their output is a structured file validated against a schema.
 - **Builder** agents write code and content in the repo. They never read raw scraped pages, only scout output.
 - **Verifier** agents check a builder's output against the stage's acceptance criteria. They are told to report only gaps that affect correctness.
-- **Publisher** steps are the only ones that touch an external write API, they consume only validated structured input, and in most factories they stop at "draft" or "paused" and hand the last click to you.
+- **Publisher** steps are the only ones that touch an external write API, they consume only validated structured input, and in most factories they stop at "draft" or "paused" and hand the last click to you. Where the input is a validated plan, a publisher is a script rather than an agent.
+
+These are roles, not necessarily separate agents. Only the scout and the verifier need their own context (section 4.1). The builder is normally the run's main session.
 
 For each scheduled cloud task, the connector list is pruned to the minimum. By default a task would hold write access to Gmail, Slack, HubSpot, Linear, Notion, Drive and GitHub.
 
@@ -192,7 +190,7 @@ For each scheduled cloud task, the connector list is pruned to the minimum. By d
 Detailed in `factories/_shared/CONVENTIONS.md` and each factory's `ESCALATION.md`. In short:
 
 1. The factory writes an approval packet to `escalations/open/<id>.md`: what it wants to do, evidence, cost, worst case, how to undo it, and what happens if you say no.
-2. It notifies you in Slack and opens a Linear issue, both sent immediately rather than held for the digest, then moves the item to `awaiting_human` and continues with other items. Your decision returns as an event in the inbox.
+2. It notifies you with one Slack message, sent immediately rather than held for the digest, then moves the item to `awaiting_human` with `next_check` set to the packet's expiry, and continues with other items. Every run, and at least the daily telemetry run, checks all `awaiting_human` items for a decision on `main`, whatever their `next_check`, so an approval is picked up within a day even when the item's own stage runs weekly. A run outside the item's stage only records the decision: it clears `next_check` and moves the item to the stage the packet names. The gated action itself is carried out only by that stage's own run, with that stage's permissions.
 3. **Approval is a commit by you** that moves the packet to `escalations/approved/` on `main`. The agent's identity cannot push to `main`, so it cannot approve itself. A Slack reply is a convenience and is never treated as approval on its own.
 4. Silence is never approval. Packets expire after the period stated in the packet and the item is parked.
 
@@ -202,7 +200,8 @@ Triggers common to every factory: spending money beyond the token budget, creati
 
 - **Sources of truth:** Stripe (read-only key), marketplace payout pages, broker statements, PostHog, Search Console. Revenue is recorded only from these.
 - **Daily telemetry run:** pulls metrics into `state/metrics/` and appends revenue lines to the ledger with the source reference.
-- **Weekly review run:** reads the week's journal, ledger and metrics, and produces at most three proposed changes. Each proposal names the observation, the hypothesis, the single change, the metric that will judge it and the review date.
+- **Corrections first.** Until a factory has four weeks of run reports, self-improvement is manual: whenever you correct a run, the lesson goes into `journal/LESSONS.md` or the relevant skill in the same change. Practitioners report this is the stage that pays off most.
+- **Weekly review run (switched on after four weeks of run reports):** reads the week's journal, ledger and metrics, and produces at most three proposed changes. Each proposal names the observation, the hypothesis, the single change, the metric that will judge it and the review date.
 - **Changes land as pull requests, never as direct edits.** You merge or close them. One change per skill per week, so effects can be attributed.
 - **Off limits to self-modification:** `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, the run wrapper, hooks and settings. Deny rules cover these paths. A proposal to change them is an escalation.
 - **Lessons** go into `journal/LESSONS.md` as dated, evidence-linked entries, capped in length, so the file stays cheap to load.
@@ -214,7 +213,7 @@ Verification status for prices and for which integrations are official is in the
 | Role | Default | Why | Already available to you |
 |---|---|---|---|
 | Scheduler | Claude Code cloud scheduled tasks, plus Desktop tasks for HeyGen and HyperFrames video work only | First party, bills to the plan, carries connectors | Yes |
-| Queue and approvals | Linear issues, Slack notifications, approval by commit | Connectors already live | Yes |
+| Queue and approvals | Item files for the queue, Slack for notifications, approval by commit | Slack is already connected. One channel is enough | Yes |
 | Source control and CI | GitHub, GitHub Actions | Branch protection is the approval mechanism | Yes, connector. A repo still needs creating |
 | Web research | Parallel Search or Exa connector, Firecrawl for page content | First-party connectors, free or low entry tiers | No, one click each |
 | Scraping at volume | Apify actors, Firecrawl, Crawl4AI for self-run | Cheapest per record for maps and listings data | No |
@@ -244,7 +243,7 @@ Third-party MCP servers outside the Claude connector directory are treated as un
 1. Create the repository, protect `main`, add CODEOWNERS for `escalations/approved/`, `budget.yaml`, `CLAUDE.md` and `ESCALATION.md`.
 2. Build the shared run wrapper and its tests. Prove the failure paths first: missing artifact, permission denial, budget exceeded, `STOP` present.
 3. Build factory 1 as a walking skeleton: one batch of five ideas pushed through the screen, the spec gate and a tranche 1 ad test by hand-triggered runs, with you approving and activating the one batch. This proves the test rig before any app is built. The store accounts (Apple Developer, RevenueCat, Expo) are opened in parallel, since identity checks take days.
-4. Only then turn on schedules, at the slowest cadence, with the connector list pruned.
+4. Only then turn on schedules, one stage at a time, at the slowest cadence, with the connector list pruned. A stage is scheduled after at least three clean hand-driven runs.
 5. Add the second factory after the first has produced two weeks of honest run reports.
 
 ## 8. Decisions needed from you
@@ -256,3 +255,16 @@ Third-party MCP servers outside the Claude connector directory are treated as un
 4. Whether Factory E should exist at all in outbound form, given the Australian Spam Act position, or be redesigned as inbound-led.
 5. Whether you are comfortable running this on a work-managed Mac and a personal Claude subscription. Unattended use on a subscription is currently permitted but Anthropic paused a change to it in 2026, so the design keeps an API-key path as well.
 6. Branch protection on `main` in the new repository, which the approval mechanism depends on.
+
+## 9. Outside practice behind revision 3
+
+A review on 16 November 2026 of published write-ups on agentic software factories found broad agreement with this design's core: deterministic checks outside the model, humans on a few high-leverage gates, unattended runs that cannot ship on their own, and cost caps enforced outside the agent. It also found agreement against complexity added before it is needed, which is what revision 3 removes.
+
+- Anthropic, [Building always-on agents](https://claude.com/resources/articles/building-always-on-agents) (November 2026): the five primitives. Used as a reference, scaled down in section 4.5.
+- Anthropic, [When to fold subagents into your main agent loop](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop) (October 2026): prefer one loop with skills. Split only for context bloat, parallel work or conflicting instructions.
+- Anthropic, [Getting started with loops](https://claude.com/resources/articles/getting-started-with-loops) (June 2026): start with the simplest loop. Deterministic stop criteria work best.
+- Joe Paravisini, [Building a software factory](https://joeparavisini.com/writing/building-a-software-factory) (July 2026): solo operator, three human checkpoints, every stage a skill with a manual and a scheduled trigger, run by hand before automating. Corrections routed into permanent lessons were the most valuable stage.
+- LaunchDarkly, [Building a software factory on our scariest code](https://launchdarkly.com/blog/building-a-software-factory-on-our-scariest-code) (August 2026): chasing full autonomy became "Rube Goldberg development". Human steering at phase boundaries is what shipped.
+- Magrathea, [Running an overnight team of AI coding agents](https://magratheasoftware.com/blog/overnight-autonomous-ai-dev-team.html) (July 2026): the run never pushes, merges or deploys. That read-only boundary is what made it safe.
+- Alexandre Carette, [Running Claude Code agents unattended: three failures](https://medium.com/@alexandrecarette/running-claude-code-agents-unattended-three-failures-my-guardrails-didnt-see-2947e2e3fd05) (October 2026): a guard must sit on the execution path the scheduler uses, not in the interactive session. A busy agent burned 12 times its token ceiling, so cost caps must be enforced outside the agent, and a runaway is never restarted without a human diagnosis.
+- [Agent harness checklist](https://capitalandcompute.net/blog/agent-harness-checklist) (October 2026): multi-agent orchestration is the last layer to add, not the first.

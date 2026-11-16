@@ -65,7 +65,7 @@ One run does one stage on a batch. All memory is in files under `state/`.
 | 7 | `paid-test` | Item at `live` | Paused install campaigns optimised for trial start. Operator activates. Tranche 1 then tranche 2 | `checks/ads_paused`, then `checks/decide` on ad spend, trials and payers | Packet `A-AD-2`, item at `paid_t1`, `paid_t2`, `winner` or sunset | Cloud task, on demand |
 | 8 | `content-drafts` | Item at `winner` (organic content is for winners only) | Slideshows and demos from real screenshots, as drafts | `checks/content_lint`, draft read-back | Postiz drafts | Desktop task, weekly per winner |
 | 9 | `telemetry-winner-detection` | Items in any test or live stage | Pulls ad, analytics, store and RevenueCat numbers. A script applies the kill and winner rules | `checks/decide` | `state/metrics/<date>.json`, ledger lines, transitions | Cloud task, daily |
-| 10 | `weekly-review` | Week of journal, ledger, metrics | At most 3 proposals as pull requests | Protected paths untouched | PRs, `journal/LESSONS.md` | Cloud task, weekly |
+| 10 | `weekly-review` | Week of journal, ledger, metrics | At most 3 proposals as pull requests | Protected paths untouched | PRs, `journal/LESSONS.md` | Cloud task, weekly, switched on after four weeks of run reports |
 
 ### 3.2 Allowed transitions
 
@@ -170,7 +170,7 @@ Factory-level numbers tracked weekly: ideas killed per stage and cost per kill, 
 | App Store Connect data | Downloads and proceeds | No official Apple MCP. Sales and finance reports through the API with a reports-only Team key, or an operator export into `state/metrics/inbox/` |
 | Google Play | Second platform | Off by default. $25 one-time. New personal accounts need 12 testers for 14 days |
 | Postiz, HyperFrames, HeyGen, ElevenLabs, ffmpeg | Organic content for winners | Postiz $29 a month, drafts only. HeyGen CLI and HyperFrames skills are on the operator's Mac |
-| GitHub, GitHub Actions, Slack, Linear | Source control, CI and page deploys, notifications | Already available |
+| GitHub, GitHub Actions, Slack | Source control, CI and page deploys, notifications | Already available |
 | Prelaunch.com | Reservation-deposit tests | Not used by default. Plans from $279 a month (secondary source), built mainly for physical products. An `A-MCP-1` escalation if wanted |
 | Apple pre-orders, Play pre-registration | Launch warm-up | Not a pre-build test. Apple pre-orders need the app submitted and reviewed first, and Play pre-registration needs an uploaded app bundle (both read on the vendors' pages) |
 
