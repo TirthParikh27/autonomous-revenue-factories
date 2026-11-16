@@ -30,7 +30,7 @@ Use this when a trigger in `ESCALATION.md` fires. Do not attempt the gated actio
 
 ## Checking for a decision
 
-At the start of every run, including the daily telemetry run, for each item in `awaiting_human`, look for its packet. Do this whatever the item's `next_check` says, and clear `next_check` when a decision is found:
+At the start of every run, including the daily telemetry run, for each item in `awaiting_human`, look for its packet. Do this whatever the item's `next_check` says, and clear `next_check` when a decision is found. If this run's stage is not the one the packet names, only record the decision (move the item to the named stage, or to `killed`, and append history). Never carry out the gated action from another stage's run:
 
 - In `approved/` on `main`: proceed with exactly what the packet described. If circumstances changed since it was written (price, policy, evidence), raise a new packet instead.
 - In `rejected/`: move the item to `killed` or back to the stage named in "If you say no", and record the reason.
