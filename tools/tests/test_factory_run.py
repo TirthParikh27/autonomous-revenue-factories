@@ -17,7 +17,7 @@ GOOD_REPORT = """# Run {run}
 ## Did
 - ranked ideas -> 5 kept
 ## Evidence
-- checks/screen_rank -> exit 0
+- checks/copy_lint -> exit 0
 ## Not done
 - none
 ## Denied or blocked
@@ -118,7 +118,7 @@ def test_stale_lock_is_cleared_and_reported(repo):
 
 
 def test_report_without_evidence_fails(repo, monkeypatch):
-    monkeypatch.setenv("FAKE_REPORT", GOOD_REPORT.replace("- checks/screen_rank -> exit 0\n", ""))
+    monkeypatch.setenv("FAKE_REPORT", GOOD_REPORT.replace("- checks/copy_lint -> exit 0\n", ""))
     assert run(repo) == factory_run.FAILED
 
 
