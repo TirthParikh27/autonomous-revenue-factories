@@ -1,0 +1,116 @@
+# Factory D (directories) budget and risk limits.
+# Proposed conservative defaults for review. Read by the run wrapper and by every skill.
+# Only the operator edits this file. The agent proposes changes through an escalation.
+# All amounts in USD.
+
+factory: d-directories
+
+monthly:
+  token_cap_usd: 60            # All model usage for this factory, from total_cost_usd in the ledger.
+  paid_api_cap_usd: 75         # Data vendors, crawl credits, keyword data. Sized to allow one USD 50
+                               # prepaid DataForSEO top-up (USD 50 minimum, verified 2026-11-16 on the vendor's
+                               # page) plus small crawl costs.
+  infra_cap_usd: 10            # Hosting. Cloudflare Pages free tier (500 builds a month, 20,000 files per site), verified 2026-11-16.
+  warn_at_fraction: 0.8        # Raise BUD-1 as a warning at 80% of any cap.
+
+validation:
+  budget_usd: 900              # Total recorded spend across all categories before a keep-or-kill decision.
+  window_days: 270             # Counted from the first canary_live. Long because ad-network domain-age
+                               # rules are four to six months and time to first dollar is estimated at
+                               # four to nine months. That estimate is the researcher's, not a sourced figure.
+  checkpoints:
+    day_56:  {metric: canary_index_ratio, min: 0.60}
+    day_120: {metric: gsc_clicks_trailing_28d_best_site, min: 300}
+    day_180: {metric: sessions_trailing_30d_best_site, min: 1000}   # or the affiliate alternative in FACTORY_SPEC
+    day_270: {metric: verified_revenue_usd, min: 1}
+  early_kill_if_below_fraction_of_checkpoint: 0.5   # Raises D-KILL-1 early.
+
+per_run:                       # Passed to the wrapper as --max-turns and --max-budget-usd.
+  niche_discovery:     {max_turns: 40, max_budget_usd: 2.00}
+  dataset_acquisition: {max_turns: 30, max_budget_usd: 1.50}
+  clean_verify:        {max_turns: 60, max_budget_usd: 3.00}   # Per chunk. See chunk size below.
+  site_build:          {max_turns: 80, max_budget_usd: 5.00}
+  content_qa:          {max_turns: 30, max_budget_usd: 1.50}
+  canary_deploy:       {max_turns: 25, max_budget_usd: 1.00}
+  index_telemetry:     {max_turns: 20, max_budget_usd: 0.50}
+  monetise:            {max_turns: 30, max_budget_usd: 1.50}
+  weekly_review:       {max_turns: 40, max_budget_usd: 3.00}
+
+portfolio:
+  max_active_sites: 2          # Sites between raw_acquired and monetised. A third needs D-CAP-1.
+  max_open_niche_packets: 1
+  max_items_per_run: 2
+
+niche:                         # Kill thresholds for niche-discovery. Factory's own numbers, not sourced.
+  min_sampled_queries: 20
+  max_ai_overview_rate: 0.25
+  min_query_set_monthly_volume: 2000
+  min_non_maps_attributes: 3
+  max_spend_per_candidate_usd: 3
+  allowed_geographies: [US]    # AU needs a GEN-1 legal question first. EU and UK are never allowed.
+  excluded_categories: [medical, legal, financial]
+
+data:
+  per_site_acquisition_cap_usd: 60   # A 71,000-row Outscraper pull would cost about USD 212 at the verified
+                                     # price, so this cap forces a cheaper source, a smaller pull or an
+                                     # explicit higher ceiling in the approved packet.
+  min_raw_rows: 500
+  min_verified_records: 150
+  max_cost_per_verified_record_usd: 0.50
+  verify_chunk_records: 200          # Records classified per clean-verify run.
+  evidence_max_age_days: 30
+  refetch_sample_size: 30
+  refetch_sample_max_fail_rate: 0.10
+  crawl:
+    max_pages_per_business_site: 5
+    min_delay_seconds_per_host: 2
+    honour_robots_txt: true          # Not a setting the agent may turn off.
+  store_review_text: false
+  store_photos: false
+  store_personal_fields: false
+
+content_qa:                    # Hard gates in CI. Factory's own numbers, not sourced.
+  max_exact_duplicate_main_content_pages: 0
+  near_duplicate_jaccard_threshold: 0.70       # 5-word shingles over main content with template chrome stripped.
+  max_near_duplicate_page_fraction: 0.05
+  max_page_fraction_sharing_a_non_template_sentence: 0.10   # Sentences of 8 or more words.
+  min_verified_attributes_per_listing_page: 6
+  min_listings_per_category_page: 3
+  allowed_template_fallback_records: 0
+  fact_check_sample_pages: 30
+  fact_check_max_mismatches: 0
+
+indexing:
+  canary_pages: 40
+  page_tiers: [40, 150, 500]
+  max_pages_per_site: 500            # Raising this is D-CAP-1.
+  gate_min_days: 28                  # The gate is not read earlier.
+  canary_deadline_days: 56
+  min_index_ratio_to_pass: 0.60      # Two readings at least 7 days apart, impressions above zero in the last 7 days.
+  kill_index_ratio_at_deadline: 0.30
+  remediation_cycles_allowed: 1
+  remediation_days: 28
+  scale_hold_days: 28
+  prune_to_previous_tier_below_ratio: 0.40
+  cap_raise_min_ratio: 0.70
+  cap_raise_hold_days: 56
+
+monetisation:
+  enabled: false                     # Turned on per site by an approved D-MON-1, never globally by the agent.
+  affiliate_disclosure_required: true   # Not a setting the agent may turn off.
+  no_revenue_review_days: 120
+
+winner:
+  min_net_revenue_usd_per_month: 100
+  consecutive_months: 2
+  trailing_days_revenue_must_exceed_spend: 90
+  min_index_ratio: 0.60
+
+# Everything below stays at zero or disabled until the operator raises it.
+disabled_until_raised:
+  ad_spend_usd: 0
+  paid_link_placement_usd: 0
+  business_outreach_enabled: false   # No email, forms, calls or messages to listed businesses.
+  paid_listings_enabled: false       # Selling listings needs outreach and payments. Out of scope in this version.
+  domain_purchases_by_agent: 0       # The operator buys domains. The agent holds no registrar credentials.
+  account_creation_by_agent: false

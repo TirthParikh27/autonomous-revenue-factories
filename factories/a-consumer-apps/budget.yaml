@@ -1,0 +1,86 @@
+# Factory A: consumer apps. Proposed conservative defaults. Read by the run wrapper and by checks/.
+# Only the operator edits this file (CODEOWNERS and a deny rule). A wish to change it is an escalation.
+# All USD. "proposed" means an operator-tunable default with no sourced benchmark behind it.
+
+factory: a-consumer-apps
+
+monthly_caps_usd:
+  tokens: 150            # Claude usage at API-rate accounting, from total_cost_usd per run
+  paid_api: 60           # Postiz Standard 29 (verified) + ElevenLabs Starter 6 (verified) + headroom
+  ads: 0                 # disabled until the operator raises it
+  total: 210
+
+validation:
+  budget_usd: 900        # all recorded spend, tokens included
+  window_days: 180       # from the first scheduled run
+  on_exhaustion: pause_and_escalate   # trigger BUD-2 if no verified revenue line exists
+
+per_run:                 # passed by the wrapper as --max-turns and --max-budget-usd
+  gap-mining:                 {max_turns: 40,  max_budget_usd: 2.00}
+  spec-differentiation:       {max_turns: 30,  max_budget_usd: 2.00}
+  demand-test:                {max_turns: 60,  max_budget_usd: 5.00}
+  mvp-build:                  {max_turns: 150, max_budget_usd: 12.00}
+  release-readiness:          {max_turns: 60,  max_budget_usd: 5.00}
+  content-drafts:             {max_turns: 50,  max_budget_usd: 3.00}
+  telemetry-winner-detection: {max_turns: 25,  max_budget_usd: 1.00}
+  weekly-review:              {max_turns: 40,  max_budget_usd: 4.00}
+
+per_item_caps_usd:       # cumulative spend on one item while in that stage; exceeding it kills or escalates
+  discovered: 2
+  specced: 3
+  demand_test: 15
+  build: 60              # first overrun raises A-BLD-1, second kills
+
+pipeline:
+  batch_size: 3
+  max_items_discovered_or_specced: 5   # gap mining skips when reached
+  max_concurrent_demand_tests: 2
+  max_concurrent_builds: 1
+
+account_protection:      # the developer account is the scarcest asset
+  platforms: [ios]                     # google_play stays off; new personal accounts need 12 testers for 14 days first (verified 2026-11-16)
+  max_new_app_submissions_per_quarter: 1
+  max_resubmissions_per_app: 1         # each one needs A-REJ-1
+  max_live_apps: 3
+  freeze_submissions_on_4_3_rejection: true
+  max_feature_code_overlap_pct: 30     # proposed; measured by checks/overlap outside the shared scaffold
+  shared_scaffold_paths: [auth, paywall, settings]
+  min_named_competitors_in_spec: 5
+
+demand_test:             # proposed thresholds
+  window_days: 14
+  min_posts_published_by_operator: 6
+  min_unique_visitors: 200
+  min_waitlist_signups: 30
+  min_visitor_to_signup_pct: 8
+  stale_after_days: 60
+
+build:
+  max_days_in_building: 21
+  paywall_default: hard_with_trial
+  trial_days_default: 7                # proposed; RevenueCat data compares 4 days or less with 17 to 32 days only
+
+live_checkpoints:        # proposed; days counted from the item's live date
+  day_14: {min_first_time_downloads: 100, requires_posts_published: 10}
+  day_35: {min_download_to_paid_pct: 2, requires_downloads: 200}
+  day_60: {min_mrr_usd: 100}
+  day_90: {min_mrr_usd: 300, or_min_mom_growth_pct: 20}
+
+winner:
+  mrr_usd_within_90_days: 1000
+  max_refund_rate_pct: 10
+  early_signal: {day: 35, min_download_to_paid_pct: 8, min_downloads: 300}
+
+content:
+  mode: drafts_only                    # never "publish"; enforced by hook, not by this file
+  max_drafts_per_app_per_week: 7
+  max_hashtags: 5
+  allow_realistic_ai_people_or_scenes: false
+  allow_generative_video: false        # off by policy. Sora API shut down 24 Sep 2026; Veo left the Gemini API 22 Oct 2026 (verified 2026-11-16)
+  allow_testimonial_formats: false
+  purchased_engagement: false
+  emails_to_waitlist: disabled         # sending to people is off until the operator raises it
+
+escalation:
+  default_packet_expiry_days: 7
+  consecutive_failures_before_stop: 3

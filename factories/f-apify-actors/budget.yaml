@@ -1,0 +1,83 @@
+# Factory F: Apify actors. Proposed conservative defaults.
+# Read by the run wrapper and by the deterministic scripts. Only the operator edits this file.
+# All amounts are USD. Nothing here has been run, so every number is a starting proposal.
+
+monthly:
+  token_cap_usd: 100            # all model usage for this factory, at API-rate accounting from total_cost_usd
+  apify_prepaid_drawdown_cap_usd: 60   # Creator plan prepaid usage ($500 over 6 months, verified). Cap makes it last the window
+  apify_cash_cap_usd: 0         # real money to Apify beyond prepaid usage. 0 until the operator raises it
+  paid_api_cap_usd: 0           # any other paid API (Firecrawl, search, proxies, data). 0 until raised
+  total_cap_usd: 160            # tokens plus prepaid drawdown plus cash. Wrapper refuses to start a run past this
+
+per_run:                        # enforced by the wrapper with --max-turns and --max-budget-usd
+  gap-scan:        {max_turns: 40,  max_budget_usd: 2.00, batch: 5}
+  spec-compliance: {max_turns: 40,  max_budget_usd: 2.00, batch: 2}
+  build-actor:     {max_turns: 120, max_budget_usd: 8.00, batch: 1}
+  live-test:       {max_turns: 30,  max_budget_usd: 1.50, batch: 2}
+  publish:         {max_turns: 30,  max_budget_usd: 1.00, batch: 3}
+  monitor:         {max_turns: 40,  max_budget_usd: 1.50, batch: all_live}
+  weekly-review:   {max_turns: 60,  max_budget_usd: 5.00, batch: 1}
+
+per_item:
+  max_scout_usd: 1.00           # research cost for one candidate before it is killed
+  max_build_usd_per_item: 15.00 # tokens across all build attempts
+  max_build_attempts: 2
+  max_live_test_attempts: 2
+  max_live_test_platform_usd: 1.50   # Apify usage for the 3 fixture runs together
+  max_repair_attempts: 2
+  max_repairs_per_30d: 3        # more than this raises a retire proposal
+
+unit_economics:                 # hard gate, computed by scripts/unit_econ
+  apify_commission: 0.20        # verified from Apify docs on 2026-11-16. Re-check when the doc changes
+  price_multiple_of_cost: 5     # price per result must be at least 5 x cost_p90 per result
+  max_price_per_result_usd: 0.010   # read examples cluster at 0.002 to 0.005 (V3 source)
+  default_start_price_per_result_usd: 0.005  # recommendation from a V3 source, treat as a guess
+  max_zero_result_run_usd: 0.01 # cost of a run that returns nothing
+  max_block_rate: 0.10          # share of 403, 429 or challenge responses in live test
+  min_fixture_pass_rate: 0.90
+
+portfolio:
+  max_live_actors: 5            # raise only through F-CAP-1
+  per_actor_approval_count: 5   # first 5 published need F-PUB-1 each, then F-PUB-2 per batch
+  max_batch_size: 3
+  min_green_ratio_7d: 0.80      # share of actor-days with a green canary. Below this, no publish packets
+  max_days_degraded: 7
+  max_actors_per_target_family: 2   # avoids near-duplicate monoculture
+
+monitoring:
+  canary_fixture_count: 3
+  canary_cost_cap_usd_per_actor_per_day: 0.05
+  canary_failures_to_degrade: 2      # consecutive daily failures
+  user_run_failure_rate_to_degrade: 0.20   # over 7 days with at least 10 user runs
+  daily_cost_alarm_usd: 2.00         # per actor, any one day. Raises F-COST-1
+  daily_factory_cost_alarm_usd: 5.00 # all Apify usage, any one day
+  negative_profit_window_days: 14    # raises F-ECON-1
+  retire_zero_users_after_days: 30
+  retire_min_profit_60d_usd: 1.00
+
+validation:
+  budget_usd: 350               # total recorded spend before F-VAL-1
+  window_days: 120              # from the first build run
+  min_verified_revenue_usd: 20  # from state/payouts only. Matches Apify's PayPal payout minimum (verified 2026-11-16, Store publishing terms)
+  checkpoint_days_after_first_publish: 45
+  checkpoint_min_external_users: 3   # on at least one actor
+
+winner:                         # 30 day window
+  min_external_users: 10
+  min_profit_usd: 0.01          # positive after commission, platform cost and maintenance tokens
+  min_canary_green_ratio: 0.90
+
+# Disabled until the operator raises them
+outbound:
+  issue_replies_autosend: false # replies are drafts under F-ISSUE-1
+  marketing_spend_usd: 0
+  ad_spend_usd: 0
+  paid_proxy_usd: 0
+side_bet:
+  standalone_mcp_or_x402_usd: 0 # F-SIDE-1 only
+  enabled: false
+auto_actions:
+  auto_publish: false           # the operator makes actors public in the Apify Console
+  auto_price_change: false
+  auto_unpublish_on_cost_alarm: false   # circuit breaker. Needs a confirmed API and the operator's decision
+  auto_promote_schema_preserving_repair: false  # turn on only after a staged build mechanism is confirmed

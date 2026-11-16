@@ -1,0 +1,84 @@
+# Factory G: marketplace micro-tools. Budget and risk limits.
+# Proposed conservative defaults for the operator to edit. Read by the run wrapper and by every skill.
+# Only the operator changes this file (CODEOWNERS plus a deny rule). The factory raises G-SELF-1 or G-BUD-1 instead.
+# Key names are a proposal. The wrapper does not exist yet, so align the names when it is built.
+# All amounts are USD.
+
+factory: g-marketplace-tools
+
+monthly:
+  token_cap_usd: 120        # Model usage, from total_cost_usd in run output. The read experiments burned $1,100 to $2,800 for $0.
+  paid_api_cap_usd: 20      # Firecrawl and any other metered vendor. Firecrawl free tier is 1,000 credits a month (verified 16 Nov 2026).
+  infra_cap_usd: 10         # Hosting for the licence endpoint and policy page. Cloudflare Workers free tier, or Workers Paid at $5 a month (verified 2026-11-16).
+  total_cap_usd: 150        # Wrapper refuses to start a run once month-to-date spend reaches this.
+
+validation:
+  budget_usd: 400           # All-in: tokens, paid APIs, infra, operator-paid fees recorded in the ledger.
+  window_days: 120          # Counted from the first build run.
+  on_exhaustion: pause_and_escalate   # Trigger G-BUD-2 if ledger/revenue.jsonl has no line by then.
+
+per_run:                    # Passed by the wrapper as --max-turns and --max-budget-usd.
+  gap-mine:      {max_turns: 40,  max_budget_usd: 2.00,  batch: 1}   # One marketplace category per run.
+  wtp-spec:      {max_turns: 30,  max_budget_usd: 2.00,  batch: 1}
+  build:         {max_turns: 150, max_budget_usd: 12.00, batch: 1}
+  verify:        {max_turns: 60,  max_budget_usd: 4.00,  batch: 1}
+  store-handoff: {max_turns: 40,  max_budget_usd: 3.00,  batch: 1}
+  telemetry:     {max_turns: 40,  max_budget_usd: 1.50,  batch: 3}
+  weekly-review: {max_turns: 60,  max_budget_usd: 5.00,  batch: 0}
+
+per_item:
+  discovery_spend_cap_usd: 3     # Scout spend on one idea before it is specced or killed.
+  max_scout_runs: 2
+  build_token_cap_usd: 40        # Without green CI the item is killed, not escalated.
+  max_build_runs: 3
+  max_verifier_returns: 2
+  max_same_reason_rejections: 1  # The second rejection for the same reason kills the item.
+
+portfolio:
+  max_items_in_build: 2          # Stages building, built, verified, packaged combined.
+  max_live_items: 3
+  max_new_specs_per_month: 2
+  shopify_max_apps_in_review: 1                    # Shopify rule from 10 Nov 2026 (verified 2026-11-16).
+  shopify_min_paid_installs_before_next_app: 10    # Per published app. Same rule.
+  allow_clones: false
+  allow_templated_variants: false
+
+wtp_gate:
+  min_score: 6                   # Scoring is defined in skills/wtp-spec/SKILL.md.
+  min_independent_sources: 3     # Different URLs and different authors.
+  min_price_monthly_usd: 3
+  min_price_one_off_usd: 15
+
+kill_rules_live:                 # Proposed design defaults. Not derived from research.
+  day_30_min_installs: 25
+  day_60_min_paid_customers: 1
+  day_90_min_net_mrr_usd: 25
+  max_refund_rate_30d: 0.20
+
+winner:
+  min_net_mrr_usd: 136           # Median verified MRR in the TrustMRR-derived dataset.
+  consecutive_months: 2
+  max_refund_rate: 0.10
+  require_revenue_above_item_spend: true
+
+risk:
+  # Everything below stays 0 or false until the operator edits this file.
+  ad_spend_usd: 0
+  paid_promotion_usd: 0
+  outbound_messages_per_day: 0         # Email, review replies, support replies, social posts.
+  customer_replies_enabled: false      # Drafts only, in state/support/drafts/.
+  store_credentials_in_runs: false     # Never set true. Submission is a human gate.
+  stripe_mode_for_runs: test_and_readonly_live   # Test-mode key in CI. Read-only restricted live key for telemetry.
+  stripe_live_writes_enabled: false
+  production_deploy_by_agent: false    # Deploys run in CI from main after the operator merges.
+  broad_host_permissions_allowed: false   # A spec needing them raises G-PERM-1.
+  user_data_beyond_activation_event: false
+  marketplace_page_reading_cleared: []  # Add a marketplace here after G-TOS-1 is approved for it.
+  domain_and_fee_purchases_usd: 0       # Operator pays these after an approved G-ACC-1 packet.
+
+escalation:
+  default_expiry_days: 7
+  submission_expiry_days: 14
+  consecutive_failures_to_stop: 3
+  money_path_failures_to_escalate: 2    # Consecutive days.
+  reconciliation_tolerance_usd: 1.00

@@ -1,0 +1,93 @@
+# Factory E budget and risk limits. Proposed conservative defaults.
+# Read by the run wrapper and by every skill. Only the operator edits this file.
+# All money is USD. Prices not verified in research are marked.
+
+mode: 1                      # 1 = drafts only. 2 needs approved E-LEGAL-1 and E-MODE2-1.
+
+monthly:
+  token_cap_usd: 60          # all model usage for this factory
+  paid_api_cap_usd: 0        # any metered data or API purchase needs E-SPEND-1
+  infra_cap_usd: 0           # static hosting on the Cloudflare Pages free tier (verified 2026-11-16)
+  alert_at_fraction: 0.8     # raises BUD-1
+
+validation:
+  total_budget_usd: 200      # all recorded spend, any category
+  window_weeks: 12           # from the first scheduled run
+  leads_sent_target: 100     # window ends at this count if reached first
+  unit: conversations_booked_per_100_sent
+  checkpoint_sent: 50
+  checkpoint_min_replies: 1  # zero replies at 50 sent raises E-KILL-1 (weak evidence, see spec)
+  continue_min_booked_per_100: 4
+  retry_band_booked_per_100: [2, 3]   # one more batch of 100 with exactly one change
+  max_operator_minutes_per_sent_lead: 10
+  max_operator_hours_per_week: 3
+
+per_run:                     # passed to the wrapper as --max-turns and --max-budget-usd
+  source-signals:   {max_turns: 40, max_budget_usd: 2.00, model: sonnet, batch: 15}
+  qualify-accounts: {max_turns: 20, max_budget_usd: 0.50, model: haiku,  batch: 15}
+  build-demo:       {max_turns: 40, max_budget_usd: 4.00, model: sonnet, batch: 5}
+  qa-demo:          {max_turns: 25, max_budget_usd: 1.50, model: sonnet, batch: 5}
+  draft-outreach:   {max_turns: 30, max_budget_usd: 2.00, model: sonnet, batch: 5}
+  handle-replies:   {max_turns: 30, max_budget_usd: 1.50, model: sonnet, batch: 10}
+  deliver-offer:    {max_turns: 60, max_budget_usd: 5.00, model: sonnet, batch: 1}
+  telemetry-daily:  {max_turns: 20, max_budget_usd: 0.75, model: sonnet}
+  review-weekly:    {max_turns: 40, max_budget_usd: 4.00, model: opus}
+
+per_lead:
+  max_token_usd_signal: 0.50
+  max_token_usd_demo: 3.00   # kill the lead above this. No source gives a real headless cost per lead
+  min_sourced_facts: 3
+  max_signal_age_days: 60
+
+volume:                      # deliberately small. Raising these is an operator edit, never a PR
+  max_new_leads_per_week: 15
+  max_open_drafts: 15        # drafts waiting for the operator
+  max_send_packet_size: 10
+  send_packet_expiry_days: 14
+  max_live_demo_pages: 60
+  demo_page_ttl_days: 45
+  max_active_offers: 1
+
+messages:
+  first_touch_max_words: 80  # Instantly: best first emails are under 80 words
+  max_links: 1
+  max_followup_drafts: 2     # conservative; benchmark sequences run 4 to 7 touches
+  min_days_between_touches: 4
+  close_after_days_no_reply: 10
+
+funnel_bands:                # first guesses. Outside a band raises E-FUNNEL-1
+  qualify_pass_rate: [0.10, 0.80]
+  demo_qa_first_pass_rate: [0.60, 1.00]
+  max_single_rule_rejection_share: 0.50   # on batches of 10 or more
+  min_batch_for_share_check: 10
+
+complaints:
+  pause_at_hostile_or_removal_in_50_sent: 2
+  pause_at_any_spam_complaint: true
+
+delivery:
+  client_work_enabled: false # every client needs E-CLIENT-1
+  max_active_clients: 1
+  scope_alert_at_fraction_of_hours: 0.8   # hour cap itself lives in the offer file
+
+data_purchases:
+  enabled: false
+  require_price_quote_same_run: true
+  max_rows_per_call: 0
+  max_pages_per_call: 0
+  proxies_or_resellers_allowed: false
+
+mode2_sending:               # everything off. No credential should exist
+  enabled: false
+  agent_gmail_send: false
+  daily_send_cap: 0
+  warmup_start_per_day: 0    # research: 5 to 10 a day over 4 to 6 weeks, when enabled
+  max_bounce_rate: 0.02
+  pause_complaint_rate: 0.001
+  pause_complaints_in_7_days: 2
+  unsubscribe_apply_within_working_days: 5   # ACMA requirement; design target is same day
+  monthly_platform_cap_usd: 0                # platform, mailbox and domain prices not obtained
+
+linkedin:
+  automation: false
+  data: false

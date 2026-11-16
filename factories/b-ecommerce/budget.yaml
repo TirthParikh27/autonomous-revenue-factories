@@ -1,0 +1,119 @@
+# Factory B (e-commerce) budget and risk limits.
+# Proposed conservative defaults for the operator to review. Nothing has been run.
+# All amounts are USD. Only the operator edits this file, by commit to main.
+# The key names are a proposal: the shared run wrapper is not built yet and may require different names.
+
+factory: b-ecommerce
+
+monthly_caps_usd:
+  tokens: 100            # Claude usage for all stages. Wrapper refuses to start once ledger tokens reach this.
+  paid_api: 30           # search, scraping, hosting, email sender, creative tools. Free tiers first.
+  infra_and_fees: 20     # domains and fixed platform fees. Shopify Basic is $39 a month ($29 billed yearly), verified 2026-11-16, and is not included.
+  total: 150             # hard stop for the month across the three lines above. Excludes approved ad tests.
+  warn_at_fraction: 0.8  # raises BUD-1 when reached with more than 10 days left in the month
+
+validation:
+  budget_usd: 400        # all-in, excluding operator-approved ad tests
+  window_days: 90        # from the first scheduled run
+  on_exhaustion: pause_and_escalate   # BUD-2, keep-or-kill decision
+
+per_run:                 # passed by the wrapper as --max-turns and --max-budget-usd
+  discover:        {model: sonnet, max_turns: 40, max_budget_usd: 1.50}
+  offer-spec:      {model: sonnet, max_turns: 25, max_budget_usd: 1.00}
+  build-store:     {model: sonnet, max_turns: 80, max_budget_usd: 5.00}
+  purchase-check:  {model: none,   max_turns: 0,  max_budget_usd: 0.00}   # deterministic script in CI
+  purchase-triage: {model: sonnet, max_turns: 20, max_budget_usd: 1.00}   # only after a failed check
+  creative:        {model: sonnet, max_turns: 50, max_budget_usd: 3.00}
+  campaign-draft:  {model: sonnet, max_turns: 15, max_budget_usd: 1.00}
+  telemetry:       {model: sonnet, max_turns: 25, max_budget_usd: 0.75}
+  weekly-review:   {model: opus,   max_turns: 40, max_budget_usd: 3.00}
+
+per_item_caps_usd:
+  discover_per_candidate: 1.50
+  build_tokens: 15
+  before_first_verified_order: 40   # tokens plus paid API attributed to the item
+
+work_in_progress:
+  max_items_discovered_or_specced: 6
+  max_live_products: 2
+  max_concurrent_spend_tests: 1
+  max_iterations_per_item: 2
+  organic_window_days: 30
+  unactivated_draft_expiry_days: 14
+
+variants:
+  digital: enabled
+  pod: disabled            # enable by approved F-SCOPE-1 only
+  tiktok_shop_affiliate: disabled   # possible extension, F-SCOPE-1 only
+  cross_border_dropshipping: out_of_scope   # not available by escalation
+
+ads:
+  # Everything here stays 0 or false until the operator raises it in this file.
+  # An approved F-ADS-1 packet may only approve amounts at or below these ceilings.
+  enabled: false
+  max_daily_cap_usd: 0
+  max_total_test_cap_usd: 0
+  max_cumulative_ad_spend_usd: 0
+  # Suggested starting values if the operator enables a first test. Not active. Not from a verified source.
+  suggested_first_test: {daily_cap_usd: 20, total_test_cap_usd: 150, max_days: 10}
+  platforms_allowed: []          # e.g. [meta] once approved. Official MCP or CLI only.
+  agent_may_activate: false      # fixed. Not changeable by packet.
+  agent_may_change_budget: false # fixed. Not changeable by packet.
+  write_sessions_per_account_per_24h: 1
+  max_write_calls_per_session: 5      # 1 campaign, 1 ad set, up to 3 ads
+  retries_on_write_error: 0
+  edits_to_existing_entities: 0
+
+unit_economics_thresholds:       # applied by tools/unit_econ, not by the model
+  digital:
+    min_price_usd: 9
+    min_contribution_margin_before_ads_fraction: 0.70
+  pod:
+    min_contribution_margin_before_ads_fraction: 0.40   # break-even ROAS of 2.5 or better
+    min_contribution_margin_before_ads_usd: 8
+  target_cac_fraction_of_break_even_cac: 0.6
+  assumptions:                   # placeholders. Replace with figures observed in the processor after first orders.
+    payment_fee_fraction: 0.035      # Stripe Australia, international cards (2.8% from 1 April 2027). Domestic cards are 1.65%. Verified 2026-11-16
+    payment_fee_fixed_usd: 0.30      # Stripe Australia charges A$0.30 per transaction (verified 2026-11-16). Kept at 0.30 as a conservative figure
+    international_and_fx_fee_fraction: 0.02   # Stripe Australia adds 2% when currency conversion is required (verified 2026-11-16)
+    refund_allowance_fraction: 0.08  # assumption, no benchmark found
+    tax_handling: unresolved         # F-TAX-1
+
+winner:                          # all must hold over the approved spend test
+  min_verified_orders: 10
+  contribution_margin_after_ads_usd_greater_than: 0
+  cac_at_or_below_target: true
+  max_refund_rate: 0.10
+  max_chargebacks: 0
+  purchase_check_pass_rate: 1.0
+
+spend_test_kill:
+  zero_orders_at_multiple_of_break_even_cac: 2.0
+  daily_cap_overrun_tolerance_fraction: 0.10
+
+risk:
+  refund_rate_freeze_threshold: 0.10
+  refund_rate_min_orders: 10
+  refunds_in_7_days_freeze: 3
+  chargebacks_before_freeze: 1       # any dispute raises F-RISK-1
+  payout_hold_exposure_days: 120     # used to state cash exposed in F-RISK-1 packets (forum headlines only)
+  fund_ads_from_expected_receipts: false
+
+purchase_check:
+  max_age_hours_for_live_product: 26
+  cadence_live: daily
+  cadence_during_spend_test: hourly
+  delivery_email_max_minutes: 10
+  consecutive_failures_before_stop: 3
+  credential_expiry_warning_days: 14
+
+tax_review:                      # F-TAX-1 re-trigger points. Not legal thresholds.
+  before_first_live_product: true
+  on_new_buyer_country: true
+  on_cumulative_orders: 25
+  on_cumulative_revenue_usd: 1000
+
+sending_to_people:
+  marketing_email: disabled
+  customer_replies_by_agent: disabled
+  delivery_email_on_payment: enabled   # single transactional template only
