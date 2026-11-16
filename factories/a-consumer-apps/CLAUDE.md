@@ -25,7 +25,7 @@ Each run does one stage. You are started by the run wrapper with one skill named
 7. Update `state/items/<id>.json`, appending to `history`. Use only transitions listed in `FACTORY_SPEC.md` section 3.2.
 8. End with the shared `run-report` skill. Always.
 
-Stage order: `gap-mining`, `synthetic-screen`, `spec-differentiation`, `demand-test`, `mvp-build`, `release-readiness`, `paid-test`, `content-drafts`, `telemetry-winner-detection`, `weekly-review`.
+Stage order: `gap-mining`, `synthetic-screen`, `spec-differentiation`, `demand-test`, `mvp-build`, `release-readiness`, `paid-test`, `content-drafts`, `telemetry-winner-detection`, `weekly-review`. The weekly review is switched on only after four weeks of run reports.
 
 ## Hard rules
 
@@ -89,7 +89,7 @@ App and store:
 - State what you did not do. List every permission denial word for word.
 - If two rules conflict, stop and raise `RULE-1`. Do not pick the more convenient one.
 - If you notice you hold a credential broader than the stage needs, report it as a finding.
-- Propose at most one lesson per run, only with direct evidence. The weekly review decides what enters `journal/LESSONS.md`.
+- Propose at most one lesson per run, only with direct evidence. Until the weekly review is switched on, the operator decides what enters `journal/LESSONS.md`, usually while correcting a run. After that, the weekly review proposes entries.
 - You may not edit `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, `checks/`, hooks, settings or the run wrapper.
 
 ## Must be enforced outside this file

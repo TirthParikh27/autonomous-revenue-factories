@@ -106,7 +106,7 @@ A run is a fresh Claude Code session that:
 
 No run carries context to the next. All memory is in files. This is what keeps context small, makes runs cheap to retry, and survives all three official schedulers, each of which starts from a fresh session or a fresh clone.
 
-**Runs are idempotent by construction.** A stage picks its batch from item state, and an item changes stage only after its check passes. A run that crashes leaves its items where they were, so the next run simply picks them up again. No separate retry queue is needed.
+**Crashed runs are retried by the next run.** A stage picks its batch from item state, and an item changes stage only after its check passes. A run that crashes leaves its items where they were, so the next run picks them up again. No separate retry queue is needed. Because a crash can happen after an external side effect and before the item file is written, any step that creates something outside the repo (an ad campaign, a draft post, a deployed page) first reads back whether an object tagged with the item id already exists, and reuses it instead of creating a second one.
 
 **Manual first.** Each skill is written so it can be invoked by hand in an interactive session and by the run wrapper on a schedule, with the same prompt. Every stage is run by hand, with you watching, at least three times before it gets a schedule. You cannot debug an unattended run of a stage you have never driven yourself.
 
@@ -131,7 +131,7 @@ Every headless run goes through one wrapper script. Its job is to make failure l
 - Starts Claude with explicit caps: `--max-turns`, `--max-budget-usd`, `--permission-prompts none`, an allow list for that stage only, and JSON output.
 - After the run, fails the run if the exit code is non-zero, if `permission_denials` is non-empty, if the expected artifact for the stage is missing, or if the run report lacks an evidence block.
 - Appends token cost from `total_cost_usd` to the ledger.
-- Takes a per-factory lock so two runs of one factory never overlap, and releases it when the run ends.
+- Prevents two runs of one factory from overlapping. A local lock file does this for Desktop runs. Cloud scheduled tasks clone fresh and cannot see a local lock, so a factory's scheduled stages are set at different hours, further apart than the longest per-run cap, and any stage run through GitHub Actions uses a per-factory concurrency group. A lock older than the longest per-run cap is treated as stale, removed, and reported in the outbox, so a killed run cannot stall the factory silently.
 - Writes a one line result to the outbox for the daily digest. Three consecutive failures of the same stage write the `STOP` file and raise an escalation, which is delivered immediately.
 
 ### 4.4 Model routing
@@ -146,7 +146,7 @@ A factory is an always-on agent in the sense of Anthropic's guide [Building alwa
 
 | Primitive | Factory implementation now | Add later, when |
 |---|---|---|
-| **Event inbox** | None. A scheduled task calls the run wrapper directly. The wrapper's lock stops overlapping runs, and item state is the source of truth, so a crashed run loses nothing (section 4.1) | A real webhook source arrives (Stripe, a marketplace, a broker). Then add one `events` table in Supabase and a small handler that acknowledges fast and writes the row. The wrapper becomes its single worker |
+| **Event inbox** | None. A scheduled task calls the run wrapper directly. Staggered schedules and the wrapper's lock stop overlapping runs (section 4.3), and item state is the source of truth, so a crashed run loses nothing (section 4.1) | A real webhook source arrives (Stripe, a marketplace, a broker). Then add one `events` table in Supabase and a small handler that acknowledges fast and writes the row. The wrapper becomes its single worker |
 | **Timers** | Schedules are cloud scheduled tasks and GitHub Actions crons. A follow-up is a `next_check` date on the item file. A stage skips items whose `next_check` is in the future. A run that needs to wait sets `next_check` and exits. It never sleeps or polls | The same webhook moment. Follow-ups stay on the item |
 | **Memory** | Instructions are `CLAUDE.md`. Task progress is the item file. A generated `state/INDEX.md` lists live items. `journal/LESSONS.md` holds dated lessons. Metrics and revenue are pointers to the source of truth | Curation by the weekly review once it is switched on (section 5.5) |
 | **Permissions** | Tokens live in GitHub Actions or behind connectors, not in sessions. Auto mode with deny rules. A gated action ends the item's run with an escalation packet. Your commit is the answer, read at the start of the next run | n/a |
@@ -190,7 +190,7 @@ For each scheduled cloud task, the connector list is pruned to the minimum. By d
 Detailed in `factories/_shared/CONVENTIONS.md` and each factory's `ESCALATION.md`. In short:
 
 1. The factory writes an approval packet to `escalations/open/<id>.md`: what it wants to do, evidence, cost, worst case, how to undo it, and what happens if you say no.
-2. It notifies you with one Slack message, sent immediately rather than held for the digest, then moves the item to `awaiting_human` with `next_check` set to the packet's expiry, and continues with other items. The next run reads your decision from `main`.
+2. It notifies you with one Slack message, sent immediately rather than held for the digest, then moves the item to `awaiting_human` with `next_check` set to the packet's expiry, and continues with other items. Every run, and at least the daily telemetry run, checks all `awaiting_human` items for a decision on `main`, whatever their `next_check`, so an approval is acted on within a day even when the item's own stage runs weekly. A decision clears `next_check`.
 3. **Approval is a commit by you** that moves the packet to `escalations/approved/` on `main`. The agent's identity cannot push to `main`, so it cannot approve itself. A Slack reply is a convenience and is never treated as approval on its own.
 4. Silence is never approval. Packets expire after the period stated in the packet and the item is parked.
 

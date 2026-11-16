@@ -29,7 +29,7 @@ Rules:
 - Every transition appends to `history`. History is never rewritten.
 - `awaiting_human` and `killed` exist in every factory. `killed` is terminal and records the reason.
 - A claim without a source does not count as evidence.
-- `next_check` is an ISO date or null. A stage skips an item whose `next_check` is in the future. This is how a run waits: it sets the date and exits.
+- `next_check` is an ISO date or null. A stage skips an item whose `next_check` is in the future. This is how a run waits: it sets the date and exits. The one exception is the decision check on `awaiting_human` items (shared `escalate` skill), which runs every run regardless of `next_check`. An approval or rejection clears `next_check`.
 
 ## Ledger
 
