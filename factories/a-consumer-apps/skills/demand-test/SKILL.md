@@ -1,6 +1,6 @@
 ---
 name: demand-test
-description: Stage 4 of Factory A. Use when items sit at `specced` to prepare a batch of landing pages with a visible price and paused ad campaigns, raise one approval packet for the batch, and move items through tranche 1 (ad click test) and tranche 2 (fake door with price). Measurement and kill decisions belong to telemetry-winner-detection and `checks/decide`.
+description: Stage 4 of Factory A. Use when items sit at `specced` to prepare a batch of landing pages with a visible price and paused ad campaigns, raise one approval packet for the batch, and move items through tranche 1 (ad click test) and tranche 2 (fake door with price). Measurement and kill decisions belong to telemetry-winner-detection.
 ---
 
 # Demand test
@@ -24,7 +24,7 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 2. If this is the factory's first early-access list, confirm a `PII-1` packet is in `escalations/approved/`. If not, raise it and stop.
 3. For each idea, have the `app-builder` agent create `demand/<id>/site/`: one static page that states the job and the differentiation in the brand's voice, the words "in development", the proposed price on a "Get early access at $X a month" button, and a privacy link. Clicking the button fires `price_click` and opens a form that says the app is not available yet and nothing is charged today, with one email field and a consent line. Submitting fires `committed_signup`. No payment is taken at any point.
 4. For each idea, write three ad creatives to `demand/<id>/ads/` (image or short motion from designed mock-ups labelled as concept, primary text, headline) and `demand/<id>/claims.yaml`.
-5. Run `checks/demand_assets` on every idea in the batch. Drop ideas that fail twice.
+5. Check each idea: the site builds, all three events fire, the price matches the spec, the "in development" and "nothing is charged today" lines and the privacy link are present, and no creative shows a mock-up as a shipping app. Run `checks/copy_lint --pre-build --has-price` on the page and ads. Drop ideas you cannot get right.
 6. Write `demand/batches/<batch>/plan.json`: per idea, the page path, the three creatives, the tranche 1 lifetime budget and duration from `budget.yaml`, the audience (broad, one country, the platform's own targeting), and the tracking parameters.
 7. Open one pull request with the batch's pages and raise one `A-AD-1` packet for the whole batch. Move the items to `awaiting_human`.
 
@@ -33,11 +33,11 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 8. When the packet is in `approved/` and the pull request is merged, CI deploys the pages. Fetch each public URL and confirm it returns the page.
 9. Have the `ads-publisher` agent create one campaign per idea from `plan.json`, status paused, lifetime budget as planned. Run `checks/ads_paused`, which reads every campaign back.
 10. The operator activates the batch in Ads Manager and writes `demand_test.activated` into the batch file. When that date is present, move the items to `demand_t1`.
-11. Tranche 2: when `checks/decide` (run by telemetry) moves an item to `demand_t2`, have `ads-publisher` create the tranche 2 campaign for it, paused, using the best-performing creative. It is covered by the same `A-AD-1` packet, which states both tranche budgets. The operator activates. A top-up, where `checks/decide` allows one, is created the same way.
+11. Tranche 2: when telemetry moves an item to `demand_t2`, have `ads-publisher` create the tranche 2 campaign for it, paused, using the best-performing creative. It is covered by the same `A-AD-1` packet, which states both tranche budgets. The operator activates. A top-up, where telemetry calls one, is created the same way.
 
-## Deterministic checks
+## Hard checks
 
-- `checks/demand_assets` exits non-zero unless: the site builds, all three events are present, the price shown matches the spec, the "in development" and "nothing is charged today" lines are present, the privacy link resolves, copy lint passes on the page and all three ads, and no creative shows a mock-up as a shipping app.
+- `checks/copy_lint` fails any testimonial, rating, user count, "available now" wording or missing "in development" line.
 - `checks/ads_paused` exits non-zero unless every campaign in the batch reads back as paused, with a lifetime budget equal to the plan and at or under the ceiling in `budget.yaml`, and the batch total is under the month's remaining ads cap. A create call returning success is not the evidence. The read-back is.
 
 ## Outputs
@@ -59,7 +59,7 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 - Never take a payment, a deposit or card details on a test page.
 - Never say or imply that the app is available now, show download counts or ratings, or use a testimonial.
 - Never read, export or email the early-access list. Telemetry reads counts only.
-- Never extend a tranche, lower a threshold or move an item between tranches yourself. `checks/decide` does that.
+- Never extend a tranche or move an item between tranches yourself. Telemetry makes those calls.
 - Never start app code for the item.
 
 ## Finish

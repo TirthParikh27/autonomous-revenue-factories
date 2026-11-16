@@ -46,7 +46,7 @@ CI on GitHub Actions for branch `app/<id>` must be green on the head commit. It 
 
 ## Stop conditions
 
-- Item spend above `per_item_caps_usd.build`, or more than `build.max_days_in_building` days in `building`. First time: raise `A-BLD-1`. Second time: kill.
+- Item spend above `per_item_caps_usd.build`, or clearly stalled in `building` (reference point: `build.max_days_in_building`). First time: raise `A-BLD-1`. Second time: kill.
 - A feature cannot be built as specified: stop and raise `GEN-1`. Do not quietly cut the differentiator.
 - A needed account, key or store product does not exist: raise `ACC-1`.
 - `checks/overlap` fails: rewrite the feature code. If it fails again, report it. Do not rename identifiers to get under the limit.

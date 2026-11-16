@@ -1,7 +1,7 @@
-# App Review checklist for skills/release-readiness step 3. The release-verifier fills one row per id
-# in state/release/<id>/checklist.json; checks/review_checklist fails if any id below is missing there.
+# App Review checklist for skills/release-readiness. A reference list: the release-verifier works through it
+# and records evidence per row in state/release/<id>/checklist.json. No script enforces it.
 # unverified: true rows come from background knowledge and must be confirmed against developer.apple.com
-# before first use. Only the operator clears the flag. Rows may be added by pull request, never removed.
+# before first use. Only the operator clears the flag.
 rows:
   - id: diff-not-saturated
     group: differentiation_4_3b

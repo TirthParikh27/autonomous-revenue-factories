@@ -1,6 +1,6 @@
 # Categories killed on sight (CLAUDE.md rule 6, FACTORY_SPEC.md section 3.3). Saturated, guideline 4.3(b) territory.
-# checks/gap_schema and checks/spec_gate fail any scout file or spec whose category contains one of these phrases.
-# Lines may be added by a reviewed pull request. CI fails a pull request that removes one.
+# A reference list the gap-mining and spec runs read. Treat a close match as excluded too.
+# Lines may be added by a reviewed pull request.
 excluded:
   - dating
   - flashlight

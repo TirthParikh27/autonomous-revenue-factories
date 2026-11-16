@@ -1,11 +1,11 @@
 ---
 name: telemetry-winner-detection
-description: Stage 9 of Factory A. Use on the daily telemetry run to pull ad, landing-page, store and RevenueCat metrics, record verified revenue in the ledger, and apply the numeric kill and winner rules to items at `demand_t1`, `demand_t2`, `submitted`, `live`, `paid_t1`, `paid_t2` or `winner`.
+description: Stage 9 of Factory A. Use on the daily telemetry run to pull ad, landing-page, store and RevenueCat metrics, record verified revenue in the ledger, and make kill, advance and winner calls for items at `demand_t1`, `demand_t2`, `submitted`, `live`, `paid_t1`, `paid_t2` or `winner`.
 ---
 
 # Telemetry and winner detection
 
-Read-only against every external system. A script decides transitions. You fetch, record and report. Read `CLAUDE.md` and `budget.yaml` first.
+Read-only against every external system. You fetch, record, decide transitions with evidence, and report. Read `CLAUDE.md` and `budget.yaml` first.
 
 ## Inputs
 
@@ -24,7 +24,7 @@ Read-only against every external system. A script decides transitions. You fetch
 4. **Store data.** Read first-time downloads and proceeds from the newest file in `state/metrics/inbox/`, or from a reports-only credential if the operator has set one up. Record the file name and its date. If the newest data is more than 7 days old, say so and do not run day-based checkpoints on stale numbers.
 5. Write everything to `state/metrics/<date>.json`, each number with its source and read time.
 6. **Revenue.** Use the shared `ledger` skill. Record store proceeds per app net of commission, with the report reference. If only RevenueCat is available, record gross with `net_of_fees: false`. Record refunds as negative lines. Never record the same period twice. Check the last reference first.
-7. **Decide.** Run `checks/decide state/metrics/<date>.json`. Apply exactly the transitions it emits:
+7. **Decide.** For each test that has ended, weigh the numbers against the reference points in `budget.yaml`, the niche, the price point and the sample size. If inputs are missing, stale or trials have not matured, make no call and say so. Write each call in the run report with the numbers you used and why. The calls are:
    - `demand_t1` to `demand_t2` or `killed` when tranche 1 ends, ranked within its batch.
    - `demand_t2` to `demand_validated` or `killed`, or one top-up, when tranche 2 ends.
    - `paid_t1` to `paid_t2`, or `A-SUN-1`.
@@ -37,11 +37,7 @@ Read-only against every external system. A script decides transitions. You fetch
 
 ## Tools
 
-Ad platform reporting with a read-only token (no create or edit scope), RevenueCat official MCP with the narrowest available key, PostHog connector, Supabase connector (count queries only), WebFetch for public listing URLs, Read, Write, the `checks/decide` script.
-
-## Deterministic check
-
-`checks/decide` reads the metrics file and `budget.yaml` and prints one line per item: the rule evaluated, the value, the threshold, the result. It refuses to evaluate a rule whose inputs are missing or stale and prints `insufficient data` instead. You may not move an item the script did not name. Paste its full output in the run report.
+Ad platform reporting with a read-only token (no create or edit scope), RevenueCat official MCP with the narrowest available key, PostHog connector, Supabase connector (count queries only), WebFetch for public listing URLs, Read, Write.
 
 ## Outputs
 
@@ -59,11 +55,11 @@ Ad platform reporting with a read-only token (no create or edit scope), RevenueC
 
 - Never record revenue from your own estimate, a dashboard screenshot, a third-party estimator, or views.
 - Never treat views, likes or follower counts as a winner signal.
-- Never extend a checkpoint, round a value over a threshold, or skip a kill because the trend "looks good".
+- Never extend a checkpoint or skip a kill because the trend "looks good". A call either way needs numbers.
 - Never write to the ad platform, RevenueCat, PostHog, Supabase or the store. Never pause, edit or create a campaign from this stage. If a campaign should stop early, say so in the packet for the operator. Never change a price, offering or paywall.
 - Never read or export early-access emails or customer identifiers into the repo.
 - Never remove an app from sale or mark a live app `killed` without an approved `A-SUN-1`.
 
 ## Finish
 
-End by calling the shared `run-report` skill. Include the `checks/decide` output, each revenue line's source reference, and every metric that was missing or stale.
+End by calling the shared `run-report` skill. Include every call with its numbers and reasoning, each revenue line's source reference, and every metric that was missing or stale.

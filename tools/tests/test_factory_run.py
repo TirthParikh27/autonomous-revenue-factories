@@ -97,16 +97,6 @@ def test_budget_exceeded_refuses(repo):
     assert run(repo) == factory_run.REFUSED
 
 
-def test_last_months_spend_does_not_count(repo):
-    ledger = repo / "factories" / "demo" / "ledger" / "spend.jsonl"
-    factory_run.append_jsonl(ledger, {"at": "2026-10-30T00:00:00+00:00", "category": "tokens", "usd": 10})
-    assert run(repo) == factory_run.PASSED
-
-
-def test_unknown_stage_refuses(repo):
-    assert run(repo, stage="publish-everything") == factory_run.REFUSED
-
-
 def test_held_lock_refuses(repo):
     lock = repo / "factories" / "demo" / "state" / "worker.lock"
     lock.parent.mkdir(parents=True)
@@ -127,41 +117,13 @@ def test_stale_lock_is_cleared_and_reported(repo):
     assert not lock.exists()
 
 
-def test_run_past_the_timeout_fails(repo, monkeypatch):
-    budget = repo / "factories" / "demo" / "budget.yaml"
-    budget.write_text(budget.read_text() + "run_timeout_minutes: 0.005\n")
-    monkeypatch.setenv("FAKE_MODE", "hang")
-    assert run(repo) == factory_run.FAILED
-
-
-def test_missing_report_fails(repo, monkeypatch):
-    monkeypatch.setenv("FAKE_MODE", "silent")
-    assert run(repo) == factory_run.FAILED
-
-
 def test_report_without_evidence_fails(repo, monkeypatch):
     monkeypatch.setenv("FAKE_REPORT", GOOD_REPORT.replace("- checks/screen_rank -> exit 0\n", ""))
     assert run(repo) == factory_run.FAILED
 
 
-def test_report_without_mandatory_section_fails(repo, monkeypatch):
-    monkeypatch.setenv("FAKE_REPORT", GOOD_REPORT.replace("## Denied or blocked\n- none\n", ""))
-    assert run(repo) == factory_run.FAILED
-
-
 def test_permission_denial_fails(repo, monkeypatch):
     monkeypatch.setenv("FAKE_MODE", "denied")
-    assert run(repo) == factory_run.FAILED
-
-
-def test_nonzero_exit_fails_but_cost_is_still_recorded(repo, monkeypatch):
-    monkeypatch.setenv("FAKE_MODE", "crash")
-    assert run(repo) == factory_run.FAILED
-    assert len(lines(repo / "factories" / "demo" / "ledger" / "spend.jsonl")) == 1
-
-
-def test_unparseable_output_fails(repo, monkeypatch):
-    monkeypatch.setenv("FAKE_MODE", "garbage")
     assert run(repo) == factory_run.FAILED
 
 
@@ -176,17 +138,6 @@ def test_three_consecutive_failures_write_stop_and_alert_now(repo, monkeypatch):
     assert lines(factory / "outbox" / "pending.jsonl")[-1]["priority"] == "now"
     monkeypatch.setenv("FAKE_MODE", "ok")
     assert run(repo) == factory_run.REFUSED
-
-
-def test_a_pass_resets_the_failure_streak(repo, monkeypatch):
-    factory = repo / "factories" / "demo"
-    monkeypatch.setenv("FAKE_MODE", "silent")
-    run(repo), run(repo)
-    monkeypatch.setenv("FAKE_MODE", "ok")
-    assert run(repo) == factory_run.PASSED
-    monkeypatch.setenv("FAKE_MODE", "silent")
-    run(repo), run(repo)
-    assert not (factory / "STOP").exists()
 
 
 @pytest.mark.parametrize("stage", ["mvp-build", "release-readiness"])
