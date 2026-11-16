@@ -29,7 +29,7 @@ You never read raw web pages, reviews or competitor sites. If the scout file is 
 
 ## Writing specs and pages
 
-- A spec is one page, under 600 words, using `data/spec_template.md`. The differentiation statement names real competitors from the scout file and a capability they lack, tied to sourced complaints. A colour scheme, a lower price or "uses AI" is not a differentiator.
+- A spec is one short page using `data/spec_template.md`. The differentiation statement names real competitors from the scout file and a capability they lack, tied to sourced complaints. A colour scheme, a lower price or "uses AI" is not a differentiator.
 - A landing page states the job in the brand's voice, has one email field with a consent line and a privacy link, and says "in development". It shows no fake screenshots, download counts, ratings or logos.
 
 ## Writing and rendering content

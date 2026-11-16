@@ -25,7 +25,7 @@ One cycle is 100 mined ideas. Costs are ad spend plus tokens.
 | Step | Ideas in | Ideas out | Cost per idea in | Cycle cost | Reads in | Evidence quality |
 |---|---|---|---|---|---|---|
 | Gap mining and synthetic screen | 100 | 50 | about $3 tokens | $300 | Same day | Weak. Ranking only |
-| Spec and distinctness gate | 50 | 30 | about $2 tokens | $100 | Same day | Rule check |
+| Spec and distinctness review | 50 | 30 | about $2 tokens | $100 | Same day | Judgment |
 | Demand test, tranche 1 (ad click test) | 30 | 10 | $30 ads | $900 | 3 days | Real behaviour, weak signal |
 | Demand test, tranche 2 (fake door with price) | 10 | 4 | $170 more ads | $1,700 | 5 to 7 days | Real behaviour, medium signal |
 | Build and release | 4 | 4 | about $100 tokens and build | $400 | 2 to 3 weeks | n/a |
@@ -54,17 +54,17 @@ One run does one stage on a batch. All memory is in files under `state/`.
 
 ### 3.1 Stages
 
-| # | Skill | Input | Process | Deterministic check (outside the model) | Output | Scheduler |
+| # | Skill | Input | Process | Hard check, or what the run judges | Output | Scheduler |
 |---|---|---|---|---|---|---|
-| 1 | `gap-mining` | Seed categories, exclusion list | Scout mines store reviews, keyword popularity and trend signals for unmet jobs. Batch of up to 25 | `checks/gap_schema`: schema valid, every complaint has a fetched source URL, at least 15 sourced complaints across 3 competitor apps, keyword popularity recorded with its source | `state/scout/<id>.json`, item at `discovered` | Cloud task, twice weekly |
-| 2 | `synthetic-screen` | Items at `discovered` | An LLM ranker scores the batch three times with no personas. A script kills the bottom half by median rank | `checks/screen_rank`: three independent score files exist, ranks computed by script, no item promoted on score alone | `state/screen/<batch>.json`, items at `screened` or `killed` | Cloud task, after stage 1 |
-| 3 | `spec-differentiation` | Items at `screened` | One-page spec with a differentiation statement and a proposed price. Verifier scores it | `checks/spec_gate` (competitors, sourced complaints) and `checks/portfolio_distinct`: core job, category and name not shared with any earlier item at `specced` or later | `state/specs/<id>.md`, item at `specced` | Cloud task, weekly |
-| 4 | `demand-test` | Items at `specced` | Builds a landing page with a visible price and three ad creatives per idea. Pages deploy from CI when the operator merges the batch. Publisher creates paused campaigns. Operator activates the batch. Tranche 1 then tranche 2 | `checks/demand_assets`: page builds, analytics events present, privacy link, "in development" wording, copy lint. `checks/ads_paused`: every campaign read back as paused with the lifetime budget in `budget.yaml` | `demand/<id>/`, packet `A-AD-1` per batch, items at `demand_t1`, `demand_t2`, `demand_validated` or `killed` | Cloud task, weekly batch |
+| 1 | `gap-mining` | Seed categories, exclusion list | Scout mines store reviews, keyword popularity and trend signals for unmet jobs. Batch of up to 25 | Judged: enough recent, sourced complaints across several competing apps to show the problem is real and common, keyword popularity with its source, category not excluded | `state/scout/<id>.json`, item at `discovered` | Cloud task, twice weekly |
+| 2 | `synthetic-screen` | Items at `discovered` | An LLM ranker scores the batch several times with no personas. The run drops the weakest ideas by median rank | Judged. The screen can kill but never pass | `state/screen/<batch>.json`, items at `screened` or `killed` | Cloud task, after stage 1 |
+| 3 | `spec-differentiation` | Items at `screened` | One-page spec with a differentiation statement and a proposed price. Verifier scores it | Judged: competitors and complaints come from the scout file, and core job, category and name are not shared with any earlier item at `specced` or later | `state/specs/<id>.md`, item at `specced` | Cloud task, weekly |
+| 4 | `demand-test` | Items at `specced` | Builds a landing page with a visible price and three ad creatives per idea. Pages deploy from CI when the operator merges the batch. Publisher creates paused campaigns. Operator activates the batch. Tranche 1 then tranche 2 | `checks/copy_lint` on page and ads. `checks/ads_paused`: every campaign read back as paused with the lifetime budget in `budget.yaml` | `demand/<id>/`, packet `A-AD-1` per batch, items at `demand_t1`, `demand_t2`, `demand_validated` or `killed` | Cloud task, weekly batch |
 | 5 | `mvp-build` | Item at `demand_validated`, a free build slot | Builds the MVP on branch `app/<id>`: Expo, Supabase, RevenueCat, hard paywall with trial | CI: typecheck, lint, tests, scripted sandbox purchase, `checks/overlap` | `apps/<id>/`, item at `release_candidate` | Cloud task, on demand |
-| 6 | `release-readiness` | Item at `release_candidate` | App Review checklist, similarity checks, cadence check, submission packet. Operator submits | `checks/review_checklist`, `checks/cadence`, `checks/metadata_similarity` | Packet `A-SUB-1`, item at `submitted`, then `live` or `rejected` | Cloud task, on demand |
-| 7 | `paid-test` | Item at `live` | Paused install campaigns optimised for trial start. Operator activates. Tranche 1 then tranche 2 | `checks/ads_paused`, then `checks/decide` on ad spend, trials and payers | Packet `A-AD-2`, item at `paid_t1`, `paid_t2`, `winner` or sunset | Cloud task, on demand |
-| 8 | `content-drafts` | Item at `winner` (organic content is for winners only) | Slideshows and demos from real screenshots, as drafts | `checks/content_lint`, draft read-back | Postiz drafts | Desktop task, weekly per winner |
-| 9 | `telemetry-winner-detection` | Items in any test or live stage | Pulls ad, analytics, store and RevenueCat numbers. A script applies the kill and winner rules | `checks/decide` | `state/metrics/<date>.json`, ledger lines, transitions | Cloud task, daily |
+| 6 | `release-readiness` | Item at `release_candidate` | App Review checklist, similarity checks, cadence check, submission packet. Operator submits | Checklist judged with evidence per row. `checks/cadence`, `checks/metadata_similarity` | Packet `A-SUB-1`, item at `submitted`, then `live` or `rejected` | Cloud task, on demand |
+| 7 | `paid-test` | Item at `live` | Paused install campaigns optimised for trial start. Operator activates. Tranche 1 then tranche 2 | `checks/ads_paused`. Telemetry judges spend, trials and payers | Packet `A-AD-2`, item at `paid_t1`, `paid_t2`, `winner` or sunset | Cloud task, on demand |
+| 8 | `content-drafts` | Item at `winner` (organic content is for winners only) | Slideshows and demos from real screenshots, as drafts | `checks/copy_lint`, draft read-back | Postiz drafts | Desktop task, weekly per winner |
+| 9 | `telemetry-winner-detection` | Items in any test or live stage | Pulls ad, analytics, store and RevenueCat numbers. Makes kill, advance and winner calls | Judged, with the numbers in the run report | `state/metrics/<date>.json`, ledger lines, transitions | Cloud task, daily |
 | 10 | `weekly-review` | Week of journal, ledger, metrics | At most 3 proposals as pull requests | Protected paths untouched | PRs, `journal/LESSONS.md` | Cloud task, weekly, switched on after four weeks of run reports |
 
 ### 3.2 Allowed transitions
@@ -77,7 +77,7 @@ specced            -> awaiting_human            [A-AD-1, one packet per batch of
 awaiting_human     -> demand_t1                 [A-AD-1 approved and operator has activated the batch]
 demand_t1          -> demand_t2 | killed
 demand_t2          -> demand_validated | killed
-demand_validated   -> building | killed         [killed if stale after 45 days]
+demand_validated   -> building | killed         [killed if stale]
 building           -> release_candidate | awaiting_human [A-BLD-1] | killed
 release_candidate  -> awaiting_human            [A-SUB-1; waits here if checks/cadence says not yet]
 awaiting_human     -> submitted                 [A-SUB-1 approved and operator records the submission id]
@@ -103,14 +103,14 @@ A script that fails any ad, caption or page containing: first-person customer st
 
 ## 4. Store account protection
 
-The developer account is the single point of failure for the whole portfolio. These rules are checked by scripts, not by the model.
+The developer account is the single point of failure for the whole portfolio. Most of these rules are checked by scripts, not by the model.
 
 | Risk | Rule | Check |
 |---|---|---|
 | Submission cadence reads as a farm | New-app submissions: 1 a month for the first three approvals, then 2 a month. At least 10 days between new-app submissions. At most 12 new apps in any rolling 12 months. Never two submissions of any kind on the same day (proposed. Apple publishes no number) | `checks/cadence` reads `state/submissions.jsonl` |
-| Near-identical apps (4.3(a), Repetitive Content) | Each app has its own core job and category. Shared code is limited to auth, paywall and settings. Feature code overlap at most 30% | `checks/portfolio_distinct`, `checks/overlap` |
+| Near-identical apps (4.3(a), Repetitive Content) | Each app has its own core job and category. Shared code is limited to auth, paywall and settings. Feature code overlap at most 30% | Spec review, `checks/overlap` |
 | Templated listings | Name, subtitle, description, keywords, screenshots and release notes are written per app. Text similarity to any other listing on the account at most 30% (proposed. The forum case was rejected at 46%) | `checks/metadata_similarity` |
-| Saturated categories (4.3(b)) | Exclusion list killed at stage 1 | `checks/gap_schema` |
+| Saturated categories (4.3(b)) | Exclusion list killed at stage 1 | Gap mining, against `data/excluded_categories.yaml` |
 | Thin apps behind a paywall | Onboarding shows the core job working before the paywall | Checklist row with a test id |
 | One rejection becomes a pattern | Any rejection or notice citing 4.3, spam, 3.2(f) or fraud freezes every submission until `A-ACCT-1` is approved | Wrapper refuses `release-readiness` |
 | Dead apps pile up | An app that fails its paid test goes to `A-SUN-1`. The default recommendation is removal from sale, since 4.3(b) lets Apple remove apps that do not attract customers. At most 6 live apps (proposed) | `checks/cadence` |
@@ -122,25 +122,25 @@ A winner can also be offered as a web app with Stripe billing, which spreads rev
 
 ## 5. Kill criteria
 
-Thresholds live in `budget.yaml`. All are proposed. Benchmarks used as anchors are named.
+The run makes kill, advance and winner calls with judgment and states its evidence. The figures here and in `budget.yaml` are proposed reference points, weighed against the niche, price point and sample size. They are not pass marks. Anything that spends money or cannot be undone still goes to the operator through its packet.
 
 | Stage | Kill when |
 |---|---|
-| Gap mining | Excluded category. Fewer than 15 sourced complaints across 3 competitors. No keyword popularity signal recorded |
-| Synthetic screen | Bottom half of the batch by median rank across three runs. The screen can kill. It can never pass an idea to a build |
-| Spec | Fails `checks/spec_gate` or `checks/portfolio_distinct` twice. Differentiator is only visual or only price |
-| Demand test, tranche 1 ($30, 3 days) | Outside the top third of the batch on cost per landing-page view, or link click-through under 1.0% |
-| Demand test, tranche 2 (to $200 total, 7 days) | With at least 300 visitors: fewer than 1% click the price and leave an email. Between 1% and 2%: one top-up of $100, then kill if still under 2% or if cost per committed signup is over $30. Pass at 2% or more (anchor: guides for cold-traffic fake-door tests put the pass bar at 1% to 2% of visitors committing) |
-| Validated but idle | No build slot within 45 days |
-| Build | 21 days in `building` or over the build cap. First overrun raises `A-BLD-1`. Second kills |
+| Gap mining | Excluded category. Too little recent, sourced complaint evidence to show the problem is real and common. No keyword popularity signal recorded |
+| Synthetic screen | Clearly among the weakest of the batch by median rank (reference point: bottom half). The screen can kill. It can never pass an idea to a build |
+| Spec | Still not distinct from earlier items or competitors after one revision. Differentiator is only visual or only price |
+| Demand test, tranche 1 ($30, 3 days) | Clearly weak against the batch on cost per landing-page view or link click-through (reference points: top third of the batch, 1.0% click-through) |
+| Demand test, tranche 2 (to $200 total, 7 days) | Too few visitors click the price and leave an email, or each signup costs too much for the price point. One top-up of $100 for a close call. Reference points: about 300 visitors, under 1% committing is a clear fail, 2% is a pass, $30 per committed signup (anchor: fake-door guides put the bar at 1% to 2%) |
+| Validated but idle | No build slot for a long time (reference point: 45 days) |
+| Build | Over the build cap, or stalled in `building` (reference point: 21 days). First overrun raises `A-BLD-1`. Second kills |
 | Review | Second rejection of the same app. Any 4.3, spam or fraud citation also freezes the account |
-| Paid test, tranche 1 ($300, 4 days) | Zero trials at $150 spent, or cost per trial over $60 at $300 (anchor: Adapty median about $20, healthy range $20 to $40) |
-| Paid test, tranche 2 ($300 more, 14 days) | Trial-to-paid under 15% with at least 10 matured trials (anchor: 27.8% median), or cost per payer over $120 (anchor: $43 to $82), or day-7 return on ad spend under 25% (anchor: 34% to 75%) |
-| Winner hold | After `winner`: two consecutive weeks with day-7 return under 40%, or refunds over 10% of transactions |
+| Paid test, tranche 1 ($300, 4 days) | No trials, or trials too costly for the price to pay back. Reference points: zero trials at $150, $60 per trial at $300 (anchor: Adapty median about $20, healthy $20 to $40) |
+| Paid test, tranche 2 ($300 more, 14 days) | Too few trials convert, or payers cost too much to pay back. Reference points: 15% trial-to-paid over about 10 matured trials (anchor: 27.8%), $120 per payer (anchor: $43 to $82), 25% day-7 return on ad spend (anchor: 34% to 75%) |
+| Winner hold | After `winner`: return or refunds stay clearly below what a winner needs (reference points: day-7 return under 40% two weeks running, refunds over 10%) |
 
-Small numbers warning: 300 visitors and 6 signups can tell 0.5% from 3%. They cannot tell 2% from 3%. The thresholds are set to catch clear failures cheaply, not to rank close calls.
+Small numbers warning: 300 visitors and 6 signups can tell 0.5% from 3%. They cannot tell 2% from 3%. The reference points catch clear failures cheaply. They do not rank close calls.
 
-**Winner (proposed):** cost per payer at or under $60, day-7 return on ad spend at or above 60%, at least 20 payers, refunds under 10%, no open review or account warning. A winner raises `A-WIN-1`, which asks for a scale budget in tranches. Scale spend is never automatic.
+**Winner:** payers cheap enough and early return strong enough that scale spend should pay back, with enough payers to trust it, low refunds and no open review or account warning. Reference points: $60 per payer, 60% day-7 return, 10 payers, refunds under 10%. A winner raises `A-WIN-1`, which asks for a scale budget in tranches. Scale spend is never automatic.
 
 **Factory validation budget (proposed):** $6,000 total recorded spend or 150 days from the first scheduled run, whichever comes first. That is one full cycle. If no app has reached `winner`, the factory raises `BUD-2` and pauses everything except telemetry for a keep-or-kill decision.
 
@@ -181,11 +181,11 @@ Factory-level numbers tracked weekly: ideas killed per stage and cost per kill, 
 | Account termination takes every app and unpaid proceeds | Section 4: cadence, similarity and distinctness checks, freeze on any spam or fraud citation, hand submission, no second account |
 | Building things nobody wants | Two tranches of real paid traffic before any code. Build slots only for validated ideas |
 | Synthetic demand signals overstate interest | The LLM screen may only kill. Price and pass decisions use real traffic. Screen accuracy is tracked against tranche 1 |
-| Signups that do not become payers | The fake door shows the price. The paid test measures trials and payers, and the winner rule needs 20 payers |
-| Ad spend runs away | Campaigns are created paused with lifetime budgets. The operator activates. Meta account spending limit. Monthly ads cap in `budget.yaml`. Telemetry kills by script |
+| Signups that do not become payers | The fake door shows the price. The paid test measures trials and payers, and the winner call rests on payers |
+| Ad spend runs away | Campaigns are created paused with lifetime budgets. The operator activates. Meta account spending limit. Monthly ads cap in `budget.yaml`. Telemetry calls kills with evidence |
 | Ad account ban | Copy lint on every ad. No fake testimonials, no invented customers, no "available now" wording before launch. One ad account, operator-owned |
-| Revenue bought at a loss | Winner rule is on cost per payer and return on ad spend, not on MRR |
+| Revenue bought at a loss | The winner call is on cost per payer and return on ad spend, not on MRR |
 | Fake testimonials breach 16 CFR Part 465 and Australian Consumer Law | Copy lint, no AI "customers", brand-voice product claims only |
-| Agents report success that did not happen | Every stage has a script-level check and an outcome read-back |
+| Agents report success that did not happen | Every call is written with its evidence. Money, accounts and copy have script checks. Outcomes are read back |
 | Scout reads untrusted reviews and pages | Scout has no credentials and no write connectors |
 | Operator overload | Batch approvals: one packet per 15 ideas, not per idea. At most 6 live apps |

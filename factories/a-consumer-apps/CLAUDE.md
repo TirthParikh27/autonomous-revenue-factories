@@ -11,6 +11,7 @@ Test many differentiated subscription app ideas cheaply with real paid traffic, 
 - Only behaviour from real traffic counts as demand evidence. The synthetic screen, surveys and your own judgement can kill an idea. They cannot pass one.
 - Apple's guideline 4.3(b) (verified on developer.apple.com, 2026-11-16) rejects apps indistinguishable from what is widely available, threatens Developer Program removal for repeated low-effort submissions, and lets Apple remove apps that do not attract customers. 4.3(a) forbids multiple Bundle IDs of the same app. One bad pattern can cost every app on the account.
 - A run that reports a problem has succeeded. A run that hides one has failed.
+- Use judgment for quality and demand calls. Treat money, account and legal limits as fixed.
 
 ## Operating loop
 
@@ -21,7 +22,7 @@ Each run does one stage. You are started by the run wrapper with one skill named
 3. Read `escalations/open/`, `approved/` and `rejected/`. Apply decisions as the shared `escalate` skill describes.
 4. Select up to `pipeline.batch_size` items in the stage this skill owns. Do not touch items in other stages.
 5. Load the one skill for this stage from `skills/` and follow it.
-6. Run the stage's deterministic check from `checks/`. Its exit code decides the transition. Your opinion does not.
+6. Where the stage has a hard check (`checks/ads_paused`, `checks/cadence`, `checks/copy_lint`, `checks/metadata_similarity`, `checks/overlap`), its exit code is final. Everywhere else you decide, and you write the decision, the evidence and the numbers you relied on in the run report.
 7. Update `state/items/<id>.json`, appending to `history`. Use only transitions listed in `FACTORY_SPEC.md` section 3.2.
 8. End with the shared `run-report` skill. Always.
 
@@ -33,7 +34,7 @@ Stage order: `gap-mining`, `synthetic-screen`, `spec-differentiation`, `demand-t
 2. **You never submit to a store.** You prepare a submission packet. The operator submits. You hold no App Store Connect or Play Console write credential, and you do not ask for one.
 3. **Every submission is an escalation**, including updates to a live app and resubmissions after rejection.
 4. **Respect the release cadence** in `budget.yaml` under `account_protection`: submissions per month, days between submissions, the rolling 12-month ceiling and the live app cap. `checks/cadence` decides. Do not argue for an exception inside a run. Raise `A-CAP-1` if you believe one is warranted. A validated app that has to wait for a slot waits.
-5. **No templated reskins.** Only auth, paywall and settings may be shared scaffold. Feature code is written for the app's own differentiator. Listing text, screenshots and release notes are written per app. `checks/overlap`, `checks/portfolio_distinct` and `checks/metadata_similarity` must pass.
+5. **No templated reskins.** Only auth, paywall and settings may be shared scaffold. Feature code is written for the app's own differentiator. Listing text, screenshots and release notes are written per app. `checks/overlap` and `checks/metadata_similarity` must pass, and no two items share a core job.
 6. **Excluded categories are dead on arrival:** dating, flashlight, sound effect, wallpaper, simple timer, fortune telling, drinking game, fart and burp, and anything else in `data/excluded_categories.yaml`.
 7. **Content is drafts only.** You create Postiz drafts. You never publish, never choose audio on a device, never drive a phone or the TikTok app, and never create or warm a social account.
 8. **Any rejection or notice citing 4.3, spam, 3.2(f) or fraud freezes all submissions** until the operator approves `A-ACCT-1`.
@@ -112,7 +113,7 @@ Deterministic gates:
 - Deny rules for `adb`, device automation tools, and any store submission command.
 - A `PreToolUse` hook that blocks creation of `apps/<id>/` unless the item's stage is `demand_validated` or later.
 - A hook limiting the scout agent's writes to `state/scout/` and removing all connectors with write access from scout runs.
-- `checks/cadence` run by the wrapper before `release-readiness`, reading submission history from `state/`, not from the model. `checks/metadata_similarity` and `checks/portfolio_distinct` run in CI.
+- `checks/cadence` run by the wrapper before `release-readiness`, reading submission history from `state/`, not from the model. `checks/metadata_similarity` and `checks/overlap` run in CI.
 - A `PreToolUse` hook on every ad platform call that rejects any payload whose status is not paused, any budget above the tranche ceiling in `budget.yaml`, and any update to an existing campaign.
 - Landing pages deploy only from CI on a merge to `main`. No agent session holds the hosting token.
 - CI as the only source of test results. A `Stop` hook on build runs that executes the real test command.

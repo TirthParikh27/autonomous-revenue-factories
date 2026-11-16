@@ -1,0 +1,69 @@
+# App Review checklist for skills/release-readiness. A reference list: the release-verifier works through it
+# and records evidence per row in state/release/<id>/checklist.json. No script enforces it.
+# unverified: true rows come from background knowledge and must be confirmed against developer.apple.com
+# before first use. Only the operator clears the flag.
+rows:
+  - id: diff-not-saturated
+    group: differentiation_4_3b
+    requirement: The app is not in a category listed in data/excluded_categories.yaml or another named saturated category.
+    unverified: false
+  - id: diff-one-minute-test
+    group: differentiation_4_3b
+    requirement: A reviewer can tell the app from the 5 nearest competitors in the spec within one minute of use.
+    unverified: false
+  - id: diff-overlap-under-cap
+    group: differentiation_4_3b
+    requirement: checks/overlap reports feature-code overlap under max_feature_code_overlap_pct against every earlier app.
+    unverified: false
+  - id: diff-no-lookalike-assets
+    group: differentiation_4_3b
+    requirement: The store name, icon and screenshots do not resemble any competitor's.
+    unverified: false
+  - id: substance-core-job-works
+    group: substance
+    requirement: The core job works end to end with no placeholder content.
+    unverified: false
+  - id: substance-onboarding-before-paywall
+    group: substance
+    requirement: Onboarding shows the core job working before the paywall appears.
+    unverified: false
+  - id: subs-terms-visible
+    group: subscriptions
+    requirement: Price, period and trial terms are visible on the paywall before purchase.
+    unverified: true
+  - id: subs-restore
+    group: subscriptions
+    requirement: Restore purchases works and is reachable from the paywall and settings.
+    unverified: true
+  - id: subs-legal-links
+    group: subscriptions
+    requirement: The paywall links to the terms of use and the privacy policy.
+    unverified: true
+  - id: privacy-answers-match-sdks
+    group: privacy
+    requirement: The App Store privacy answers match the SDKs actually present in the build.
+    unverified: true
+  - id: privacy-account-deletion
+    group: privacy
+    requirement: If the app creates accounts, account deletion is available inside the app.
+    unverified: true
+  - id: review-access
+    group: review_access
+    requirement: A demo account or review notes let a reviewer reach every feature.
+    unverified: true
+  - id: content-ugc-moderation
+    group: content_rules
+    requirement: There is no user-generated content without moderation and a compliance plan (guideline 1.2).
+    unverified: false
+  - id: content-no-promo-live-activities
+    group: content_rules
+    requirement: Live Activities are not used for promotion (guideline 4.5.3).
+    unverified: false
+  - id: listing-claims-evidenced
+    group: listing_honesty
+    requirement: Every listing claim is in claims.yaml with evidence from this build.
+    unverified: false
+  - id: listing-screenshots-this-build
+    group: listing_honesty
+    requirement: Every store screenshot is from this build and its hash is in state/build/<id>/screenshots.json.
+    unverified: false

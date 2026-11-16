@@ -27,7 +27,7 @@ The developer account is the scarcest asset in this factory. This stage exists t
    - **Review access (unverified):** a demo account or review notes that let a reviewer reach every feature.
    - **Content rules:** no user-generated content without moderation and a compliance plan (guideline 1.2). No Live Activities used for promotion (4.5.3).
    - **Listing honesty:** every listing claim is in `claims.yaml` with evidence. Screenshots are from this build.
-4. Run `checks/review_checklist`.
+4. Confirm every row has evidence that exists on disk or in CI, and none is a fail.
 5. On pass: write the store listing copy and privacy answers to `apps/<id>/store/`, open a pull request from `app/<id>` to `main`, and raise `A-SUB-1`. The operator merges, builds from that commit, submits, and appends the submission id and date to `state/submissions.jsonl`. When that line exists, move the item to `submitted`.
 6. On fail: return the item to `building` with the failed rows listed, unless the failure is differentiation, in which case raise `GEN-1` with a kill recommendation.
 
@@ -40,9 +40,9 @@ The developer account is the scarcest asset in this factory. This stage exists t
 
 Read, Write, Bash for check scripts and for reading CI simulator results (no local Xcode), GitHub connector to open the pull request. No store tools of any kind.
 
-## Deterministic check
+## Hard checks
 
-`checks/review_checklist` exits non-zero if any row lacks evidence that exists on disk or in CI, or any row is a fail. `checks/cadence` reads `state/submissions.jsonl` against every limit under `account_protection`. `checks/metadata_similarity` compares listing text across the account. All three run outside the model and their output goes in the packet.
+`checks/cadence` reads `state/submissions.jsonl` against every limit under `account_protection`. `checks/metadata_similarity` compares listing text across the account. Both run outside the model and their output goes in the packet.
 
 ## Outputs
 
@@ -66,4 +66,4 @@ Read, Write, Bash for check scripts and for reading CI simulator results (no loc
 
 ## Finish
 
-End by calling the shared `run-report` skill. Include all three check outputs and the submission counts against each cadence limit.
+End by calling the shared `run-report` skill. Include both check outputs and the submission counts against each cadence limit.

@@ -1,6 +1,11 @@
 # Factory A: consumer app portfolio, revision 2. Proposed defaults. Read by the run wrapper and by checks/.
 # Only the operator edits this file (CODEOWNERS and a deny rule). A wish to change it is an escalation.
 # All USD. "proposed" means an operator-tunable default with no sourced benchmark behind it.
+#
+# Hard limits (money, accounts, legal) are enforced by the wrapper and checks: monthly_caps_usd, ads,
+# validation, run_timeout_minutes, per_run, per_item_caps_usd, account_protection, the content safety
+# flags and escalation. Everything under "Reference points" at the end is guidance the run weighs
+# against the niche, price point and sample size. It is not a gate.
 
 factory: a-consumer-apps
 
@@ -27,6 +32,8 @@ validation:
   window_days: 150       # from the first scheduled run
   on_exhaustion: pause_and_escalate   # trigger BUD-2 if no item has reached winner
 
+run_timeout_minutes: 60   # the wrapper kills a longer run; an older lock is stale
+
 per_run:                 # passed by the wrapper as --max-turns and --max-budget-usd
   gap-mining:                 {max_turns: 60,  max_budget_usd: 4.00}
   synthetic-screen:           {max_turns: 20,  max_budget_usd: 1.50}
@@ -49,8 +56,8 @@ per_item_caps_usd:       # cumulative token spend on one item while in that stag
 pipeline:
   gap_mining_batch_size: 25
   max_items_awaiting_screen: 50
-  screen_kill_fraction: 0.5            # bottom half by median rank across 3 runs
-  screen_runs: 3
+  screen_kill_fraction: 0.5            # reference point, not a gate
+  screen_runs: 3                       # reference point, not a gate
   max_concurrent_demand_tests: 30
   max_concurrent_builds: 2
   max_concurrent_paid_tests: 2
@@ -69,10 +76,26 @@ account_protection:      # the developer account is the single point of failure 
   max_feature_code_overlap_pct: 30     # checks/overlap, outside the shared scaffold
   max_listing_text_similarity_pct: 30  # checks/metadata_similarity. A forum case was rejected at 46%
   shared_scaffold_paths: [auth, paywall, settings]
-  min_named_competitors_in_spec: 5
+  min_named_competitors_in_spec: 5     # reference point, not a gate
   additional_developer_accounts: never_as_workaround   # an organisation account is an ACC-1 decision
 
-demand_test:             # proposed thresholds, applied by checks/decide
+content:                 # organic content is produced for winners only
+  mode: drafts_only                    # never "publish"; enforced by hook, not by this file
+  max_drafts_per_app_per_week: 7
+  max_hashtags: 5                      # reference point
+  allow_realistic_ai_people_or_scenes: false
+  allow_generative_video: false
+  allow_testimonial_formats: false
+  purchased_engagement: false
+  emails_to_early_access_list: disabled   # sending to people is off until the operator raises it
+
+escalation:
+  default_packet_expiry_days: 7
+  consecutive_failures_before_stop: 3
+
+# Reference points: guidance for judgment, not gates. The run states the numbers it relied on.
+
+demand_test:             # proposed
   t1:
     keep_top_fraction_of_batch: 0.34   # ranked by cost per landing-page view
     min_link_ctr_pct: 1.0
@@ -84,12 +107,12 @@ demand_test:             # proposed thresholds, applied by checks/decide
     top_ups_allowed: 1
   stale_after_days: 45
 
-build:
+build:                   # reference points, except the build cap under per_item_caps_usd
   max_days_in_building: 21
   paywall_default: hard_with_trial
   trial_days_default: 7                # proposed
 
-paid_test:               # proposed thresholds. Anchors: Adapty Q3 2026 Meta benchmarks
+paid_test:               # proposed. Anchors: Adapty Q3 2026 Meta benchmarks
   t1:
     kill_if_zero_trials_at_spend_usd: 150
     max_cost_per_trial_usd: 60         # anchor about 20, healthy 20 to 40
@@ -99,23 +122,9 @@ paid_test:               # proposed thresholds. Anchors: Adapty Q3 2026 Meta ben
     max_cost_per_payer_usd: 120        # anchor 43 to 82
     min_d7_roas_pct: 25                # anchor 34 to 75
 
-winner:
+winner:                  # proposed
   max_cost_per_payer_usd: 60
   min_d7_roas_pct: 60
-  min_payers: 20
+  min_payers: 10                       # the most a $600 test can produce at $60 a payer
   max_refund_rate_pct: 10
   hold: {min_d7_roas_pct: 40, consecutive_weeks_below: 2}
-
-content:                 # organic content is produced for winners only
-  mode: drafts_only                    # never "publish"; enforced by hook, not by this file
-  max_drafts_per_app_per_week: 7
-  max_hashtags: 5
-  allow_realistic_ai_people_or_scenes: false
-  allow_generative_video: false
-  allow_testimonial_formats: false
-  purchased_engagement: false
-  emails_to_early_access_list: disabled   # sending to people is off until the operator raises it
-
-escalation:
-  default_packet_expiry_days: 7
-  consecutive_failures_before_stop: 3

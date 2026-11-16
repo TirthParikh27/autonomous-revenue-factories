@@ -31,7 +31,7 @@ Generative video and realistic AI people or scenes are disabled in `budget.yaml`
 3. Have the `app-builder` agent write scripts and captions, then render assets into `content/<id>/<batch>/`. Check the ElevenLabs price against the ledger before any voiceover call.
 4. Write `manifest.json`: for each post the format, asset paths, caption, hashtags, source screenshot hashes, claims used, `concept`, `ai_generated_elements` (for example synthetic voice), and `ai_label_required`.
 5. Set `ai_label_required: true` if any realistic AI-generated person or scene is present. For synthetic voiceover only, set `ai_label_review: true` so the operator decides at publish time. TikTok's rule for voice was not confirmed from a primary source.
-6. Run `checks/content_lint content/<id>/<batch>/`.
+6. Run `checks/copy_lint --claims` with the item's `claims.yaml` on every caption and overlay. Confirm every live-mode frame has a source hash in `screenshots.json`, every concept frame carries the concept wording, and every post has its label fields.
 7. If this is the first batch for the app, a new format, or any post has `ai_label_required: true`: raise `A-CNT-1` and stop before Postiz.
 8. Otherwise hand the manifest to the `draft-publisher` agent. It creates each post in Postiz as a draft and reads it back.
 9. Post one Slack message: number of drafts, the app, and anything the operator must decide when publishing (audio, label).
@@ -40,9 +40,9 @@ Generative video and realistic AI people or scenes are disabled in `budget.yaml`
 
 Simulator recording from CI artefacts, HeyGen CLI and HyperFrames skills as installed locally (verified 2026-11-16; run HyperFrames with `npx hyperframes`), ffmpeg, ElevenLabs API, Postiz through `draft-publisher`, Read, Write, Bash.
 
-## Deterministic check
+## Hard check
 
-`checks/content_lint` exits non-zero if: any caption or overlay matches a testimonial pattern, rating or review count, any claim is not in `claims.yaml`, any live-mode frame lacks a source hash present in `screenshots.json`, any concept frame lacks the concept wording, a post has more than `content.max_hashtags` hashtags, or a label field is missing. Then the Postiz read-back for every post must return a draft state. If any post is not a draft, treat it as an incident: report it first in the run report and raise `GEN-1`.
+`checks/copy_lint` fails testimonial patterns, ratings, counts and claims not in `claims.yaml`. Then the Postiz read-back for every post must return a draft state. If any post is not a draft, treat it as an incident: report it first in the run report and raise `GEN-1`.
 
 ## Outputs
 
