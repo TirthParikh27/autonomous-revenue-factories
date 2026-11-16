@@ -1,6 +1,6 @@
 ---
 name: mvp-build
-description: Stage 4 of Factory A. Use when an item is at `demand_validated` or `building` and a submission slot is free this quarter, to build the MVP with Expo and React Native, Supabase and RevenueCat on its own branch until CI is green. Never use for an item that has not passed its demand test.
+description: Stage 5 of Factory A. Use when an item is at `demand_validated` or `building` and a build slot is free, to build the MVP with Expo and React Native, Supabase and RevenueCat on its own branch until CI is green. Never use for an item that has not passed its demand test.
 ---
 
 # MVP build
@@ -17,7 +17,7 @@ Runs as a cloud scheduled task with GitHub Actions for CI. The operator's Mac ha
 
 ## Steps
 
-1. Preconditions. Confirm the item's stage. Run `checks/quota`. If no submission slot is free this quarter, or `max_concurrent_builds` or `max_live_apps` is reached, do not start. Leave the item at `demand_validated` and report.
+1. Preconditions. Confirm the item's stage. Run `checks/cadence`. If submissions are frozen, or `max_concurrent_builds` or `max_live_apps` is reached, do not start. A build may start while the next submission date is still ahead, since a finished app can wait at `release_candidate`. Leave the item at `demand_validated` and report.
 2. If the item is new to this stage: create branch `app/<id>`, move the item to `building`, record the start date, and write `state/build/<id>/plan.md` with one task per spec feature, each with its acceptance test.
 3. Delegate implementation to the `app-builder` agent, one task from the plan per call. It works in `apps/<id>/` only.
 4. Stack rules:

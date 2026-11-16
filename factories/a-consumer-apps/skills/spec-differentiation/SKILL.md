@@ -1,6 +1,6 @@
 ---
 name: spec-differentiation
-description: Stage 2 of Factory A. Use when items sit at `discovered` to write a one-page spec with a differentiation statement and pass it through the differentiation gate, moving the item to `specced` or `killed`. Not for building anything.
+description: Stage 3 of Factory A. Use when items sit at `screened` to write a one-page spec with a differentiation statement and pass it through the differentiation gate, moving the item to `specced` or `killed`. Not for building anything.
 ---
 
 # Spec and differentiation gate
@@ -9,7 +9,7 @@ You are a fresh session. Read `CLAUDE.md` and `budget.yaml` first. You work only
 
 ## Inputs
 
-- Items at `discovered` in `state/items/`, up to `pipeline.batch_size`.
+- Items at `screened` in `state/items/`, up to 10 a run. Each spec also states one proposed monthly price, taken from the price range of the named competitors, because the demand test shows it. After `checks/spec_gate`, run `checks/portfolio_distinct`: the core job, category and working name must not match any earlier item at `specced` or later.
 - Each item's `state/scout/<id>.json`.
 - `state/specs/` for every earlier item, including killed ones.
 - `data/spec_template.md`.

@@ -1,6 +1,6 @@
 ---
 name: release-readiness
-description: Stage 5 of Factory A. Use when an item is at `release_candidate`, `submitted` or `rejected` to run the App Review guideline checklist with evidence, assemble the submission packet for the operator, and record outcomes. The operator submits to the store. This skill never does.
+description: Stage 6 of Factory A. Use when an item is at `release_candidate`, `submitted` or `rejected` to run the App Review guideline checklist with evidence, assemble the submission packet for the operator, and record outcomes. The operator submits to the store. This skill never does.
 ---
 
 # Release readiness
@@ -16,7 +16,8 @@ The developer account is the scarcest asset in this factory. This stage exists t
 
 ## Steps for `release_candidate`
 
-1. Run `checks/quota`. If the quarterly cap is reached or submissions are frozen by `A-ACCT-1`, stop and report. Raise `A-CAP-1` only if the evidence is unusually strong.
+1. Run `checks/cadence`. It reads `state/submissions.jsonl` and `account_protection` in `budget.yaml`: submissions this month, days since the last new-app submission, new apps in the rolling 12 months, submissions today, live apps. If submissions are frozen by `A-ACCT-1`, stop and report. If the cadence says not yet, finish the checklist, leave the item at `release_candidate` with the earliest allowed date, set a follow-up for that date, and stop.
+1a. Run `checks/metadata_similarity` on the draft listing (name, subtitle, description, keywords, release notes, screenshot captions) against every other listing on the account. Over the limit in `budget.yaml`, rewrite the listing from the app's own spec and rerun once. A second fail goes back to `building`. Raise `A-CAP-1` only if the evidence is unusually strong.
 2. Delegate the checklist to the `release-verifier` agent. For each row it records pass or fail and the evidence: a file path, a test id, or a screenshot hash. It writes `state/release/<id>/checklist.json`.
 3. Checklist groups. Rows marked (unverified) come from background knowledge and must be confirmed against developer.apple.com before first use:
    - **Differentiation, 4.3(b):** not in a named saturated category. One-minute test against the 5 nearest competitors. `checks/overlap` under the cap. Store name, icon and screenshots do not resemble a competitor's.
@@ -33,7 +34,7 @@ The developer account is the scarcest asset in this factory. This stage exists t
 ## Steps for `submitted` and `rejected`
 
 - `submitted`: do nothing here. The telemetry stage moves it to `live` when the public listing is reachable.
-- When the operator records a rejection in `state/submissions.jsonl`: move the item to `rejected` and raise `A-REJ-1`. If the text cites 4.3 or spam, or this is the second rejection on the account this quarter, also raise `A-ACCT-1`. Draft a factual reply for the operator to consider. Do not argue the guideline.
+- When the operator records a rejection in `state/submissions.jsonl`: move the item to `rejected` and raise `A-REJ-1`. If the text cites 4.3, spam, 3.2(f) or fraud, or this is the second rejection on the account this quarter, also raise `A-ACCT-1`. Draft a factual reply for the operator to consider. Do not argue the guideline.
 
 ## Tools
 
@@ -41,7 +42,7 @@ Read, Write, Bash for check scripts and for reading CI simulator results (no loc
 
 ## Deterministic check
 
-`checks/review_checklist` exits non-zero if any row lacks evidence that exists on disk or in CI, or any row is a fail. `checks/quota` counts lines in `state/submissions.jsonl` for the current quarter against `account_protection`. Both run outside the model and their output goes in the packet.
+`checks/review_checklist` exits non-zero if any row lacks evidence that exists on disk or in CI, or any row is a fail. `checks/cadence` reads `state/submissions.jsonl` against every limit under `account_protection`. `checks/metadata_similarity` compares listing text across the account. All three run outside the model and their output goes in the packet.
 
 ## Outputs
 
@@ -60,8 +61,9 @@ Read, Write, Bash for check scripts and for reading CI simulator results (no loc
 - Never mark a row as passed on reasoning alone.
 - Never change app code in this stage.
 - Never write to `state/submissions.jsonl`. Only the operator records submissions and outcomes.
+- Never propose submitting two apps close together to catch up, or another account as a way around a freeze.
 - Never propose resubmitting unchanged, or more than `max_resubmissions_per_app` times.
 
 ## Finish
 
-End by calling the shared `run-report` skill. Include both check outputs and the count of submissions used this quarter.
+End by calling the shared `run-report` skill. Include all three check outputs and the submission counts against each cadence limit.

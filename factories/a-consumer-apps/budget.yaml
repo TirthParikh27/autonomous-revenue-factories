@@ -1,85 +1,120 @@
-# Factory A: consumer apps. Proposed conservative defaults. Read by the run wrapper and by checks/.
+# Factory A: consumer app portfolio, revision 2. Proposed defaults. Read by the run wrapper and by checks/.
 # Only the operator edits this file (CODEOWNERS and a deny rule). A wish to change it is an escalation.
 # All USD. "proposed" means an operator-tunable default with no sourced benchmark behind it.
 
 factory: a-consumer-apps
 
 monthly_caps_usd:
-  tokens: 150            # Claude usage at API-rate accounting, from total_cost_usd per run
-  paid_api: 60           # Postiz Standard 29 (verified) + ElevenLabs Starter 6 (verified) + headroom
-  ads: 0                 # disabled until the operator raises it
-  total: 210
+  tokens: 300            # Claude usage at API-rate accounting, from total_cost_usd per run
+  paid_api: 120          # keyword data 15 to 45, Postiz 29 once a winner exists, ElevenLabs 6, headroom
+  ads: 0                 # STARTS AT ZERO. The operator raises it. Design value for one cycle running: 2000
+  total: 420             # raise together with ads
+
+ads:                     # every number below is a ceiling the publisher step and checks/ads_paused enforce
+  platform: meta
+  created_status: paused               # the agent never activates. A hook rejects any other status
+  account_spending_limit_set_by_operator: required   # hard backstop inside Meta, outside the agent
+  demand_t1: {lifetime_budget_usd: 30,  days: 3}
+  demand_t2: {lifetime_budget_usd: 170, days: 7, one_top_up_usd: 100}
+  paid_t1:   {lifetime_budget_usd: 300, days: 4}
+  paid_t2:   {lifetime_budget_usd: 300, days: 14}
+  max_ideas_per_batch: 15
+  max_creatives_per_idea: 3
+  scale_spend: requires_A-WIN-1        # never automatic
 
 validation:
-  budget_usd: 900        # all recorded spend, tokens included
-  window_days: 180       # from the first scheduled run
-  on_exhaustion: pause_and_escalate   # trigger BUD-2 if no verified revenue line exists
+  budget_usd: 6000       # all recorded spend, tokens and ads included. One full cycle of 100 ideas
+  window_days: 150       # from the first scheduled run
+  on_exhaustion: pause_and_escalate   # trigger BUD-2 if no item has reached winner
 
 per_run:                 # passed by the wrapper as --max-turns and --max-budget-usd
-  gap-mining:                 {max_turns: 40,  max_budget_usd: 2.00}
-  spec-differentiation:       {max_turns: 30,  max_budget_usd: 2.00}
-  demand-test:                {max_turns: 60,  max_budget_usd: 5.00}
+  gap-mining:                 {max_turns: 60,  max_budget_usd: 4.00}
+  synthetic-screen:           {max_turns: 20,  max_budget_usd: 1.50}
+  spec-differentiation:       {max_turns: 40,  max_budget_usd: 3.00}
+  demand-test:                {max_turns: 80,  max_budget_usd: 8.00}
   mvp-build:                  {max_turns: 150, max_budget_usd: 12.00}
   release-readiness:          {max_turns: 60,  max_budget_usd: 5.00}
+  paid-test:                  {max_turns: 40,  max_budget_usd: 3.00}
   content-drafts:             {max_turns: 50,  max_budget_usd: 3.00}
-  telemetry-winner-detection: {max_turns: 25,  max_budget_usd: 1.00}
+  telemetry-winner-detection: {max_turns: 30,  max_budget_usd: 1.50}
   weekly-review:              {max_turns: 40,  max_budget_usd: 4.00}
 
-per_item_caps_usd:       # cumulative spend on one item while in that stage; exceeding it kills or escalates
+per_item_caps_usd:       # cumulative token spend on one item while in that stage
   discovered: 2
+  screened: 1
   specced: 3
-  demand_test: 15
-  build: 60              # first overrun raises A-BLD-1, second kills
+  demand_test: 6         # tokens only. Ad spend is capped under ads:
+  build: 100             # first overrun raises A-BLD-1, second kills
 
 pipeline:
-  batch_size: 3
-  max_items_discovered_or_specced: 5   # gap mining skips when reached
-  max_concurrent_demand_tests: 2
-  max_concurrent_builds: 1
+  gap_mining_batch_size: 25
+  max_items_awaiting_screen: 50
+  screen_kill_fraction: 0.5            # bottom half by median rank across 3 runs
+  screen_runs: 3
+  max_concurrent_demand_tests: 30
+  max_concurrent_builds: 2
+  max_concurrent_paid_tests: 2
 
-account_protection:      # the developer account is the scarcest asset
-  platforms: [ios]                     # google_play stays off; new personal accounts need 12 testers for 14 days first (verified 2026-11-16)
-  max_new_app_submissions_per_quarter: 1
+account_protection:      # the developer account is the single point of failure for the portfolio
+  platforms: [ios]                     # google_play stays off; new personal accounts need 12 testers for 14 days first
+  new_app_submissions_per_month_initial: 1
+  clean_approvals_before_ramp: 3
+  new_app_submissions_per_month_after_ramp: 2
+  min_days_between_new_app_submissions: 10
+  max_new_apps_rolling_12_months: 12
+  max_submissions_of_any_kind_per_day: 1
   max_resubmissions_per_app: 1         # each one needs A-REJ-1
-  max_live_apps: 3
-  freeze_submissions_on_4_3_rejection: true
-  max_feature_code_overlap_pct: 30     # proposed; measured by checks/overlap outside the shared scaffold
+  max_live_apps: 6
+  freeze_submissions_on: [guideline_4_3, spam, dpla_3_2_f, fraud, account_warning]
+  max_feature_code_overlap_pct: 30     # checks/overlap, outside the shared scaffold
+  max_listing_text_similarity_pct: 30  # checks/metadata_similarity. A forum case was rejected at 46%
   shared_scaffold_paths: [auth, paywall, settings]
   min_named_competitors_in_spec: 5
+  additional_developer_accounts: never_as_workaround   # an organisation account is an ACC-1 decision
 
-demand_test:             # proposed thresholds
-  window_days: 14
-  min_posts_published_by_operator: 6
-  min_unique_visitors: 200
-  min_waitlist_signups: 30
-  min_visitor_to_signup_pct: 8
-  stale_after_days: 60
+demand_test:             # proposed thresholds, applied by checks/decide
+  t1:
+    keep_top_fraction_of_batch: 0.34   # ranked by cost per landing-page view
+    min_link_ctr_pct: 1.0
+  t2:
+    min_visitors: 300
+    kill_below_committed_pct: 1.0      # price click followed by an email
+    pass_at_committed_pct: 2.0
+    max_cost_per_committed_signup_usd: 30
+    top_ups_allowed: 1
+  stale_after_days: 45
 
 build:
   max_days_in_building: 21
   paywall_default: hard_with_trial
-  trial_days_default: 7                # proposed; RevenueCat data compares 4 days or less with 17 to 32 days only
+  trial_days_default: 7                # proposed
 
-live_checkpoints:        # proposed; days counted from the item's live date
-  day_14: {min_first_time_downloads: 100, requires_posts_published: 10}
-  day_35: {min_download_to_paid_pct: 2, requires_downloads: 200}
-  day_60: {min_mrr_usd: 100}
-  day_90: {min_mrr_usd: 300, or_min_mom_growth_pct: 20}
+paid_test:               # proposed thresholds. Anchors: Adapty Q3 2026 Meta benchmarks
+  t1:
+    kill_if_zero_trials_at_spend_usd: 150
+    max_cost_per_trial_usd: 60         # anchor about 20, healthy 20 to 40
+  t2:
+    min_matured_trials: 10
+    min_trial_to_paid_pct: 15          # anchor 27.8 median
+    max_cost_per_payer_usd: 120        # anchor 43 to 82
+    min_d7_roas_pct: 25                # anchor 34 to 75
 
 winner:
-  mrr_usd_within_90_days: 1000
+  max_cost_per_payer_usd: 60
+  min_d7_roas_pct: 60
+  min_payers: 20
   max_refund_rate_pct: 10
-  early_signal: {day: 35, min_download_to_paid_pct: 8, min_downloads: 300}
+  hold: {min_d7_roas_pct: 40, consecutive_weeks_below: 2}
 
-content:
+content:                 # organic content is produced for winners only
   mode: drafts_only                    # never "publish"; enforced by hook, not by this file
   max_drafts_per_app_per_week: 7
   max_hashtags: 5
   allow_realistic_ai_people_or_scenes: false
-  allow_generative_video: false        # off by policy. Sora API shut down 24 Sep 2026; Veo left the Gemini API 22 Oct 2026 (verified 2026-11-16)
+  allow_generative_video: false
   allow_testimonial_formats: false
   purchased_engagement: false
-  emails_to_waitlist: disabled         # sending to people is off until the operator raises it
+  emails_to_early_access_list: disabled   # sending to people is off until the operator raises it
 
 escalation:
   default_packet_expiry_days: 7

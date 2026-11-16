@@ -1,6 +1,6 @@
 ---
 name: weekly-review
-description: Stage 8 of Factory A, the self-improvement loop. Use on the weekly review run to read the week's journal, ledger, metrics and operator decisions, and to produce at most three evidence-backed proposals as pull requests plus dated lessons. Never use to change rules, budgets or checks directly.
+description: Stage 10 of Factory A, the self-improvement loop. Use on the weekly review run to read the week's journal, ledger, metrics and operator decisions, and to produce at most three evidence-backed proposals as pull requests plus dated lessons. Never use to change rules, budgets or checks directly.
 ---
 
 # Weekly review
@@ -19,10 +19,10 @@ You propose. The operator merges or closes. Read `CLAUDE.md` and `budget.yaml` f
 ## Steps
 
 1. Build the funnel table from item histories, not from run report prose: counts entering and leaving each stage this week and to date, kill reasons, and spend per stage from the ledger.
-2. Compute: cost per killed idea by stage, cost per demand-validated idea, submissions used this quarter against the cap, verified revenue minus recorded spend for the factory and per live app.
+2. Compute: cost per killed idea by stage, cost per demand-validated idea, cost per shipped app, both against the estimates in `FACTORY_SPEC.md` section 2, the synthetic screen's rank correlation with tranche 1 results from `state/screen/accuracy.jsonl`, submissions against the cadence, verified revenue minus recorded spend for the factory and per live app.
 3. Look for these specific problems:
    - Ideas dying late that could have died earlier. A demand-test kill whose cause was visible in the scout file is a gap-mining defect.
-   - Specs that passed the gate and were then rejected by the operator at `A-DEM-1` or `A-SUB-1`. The gate is too loose.
+   - Specs that passed the gate and were then rejected by the operator at `A-AD-1` or `A-SUB-1`. The gate is too loose.
    - Run reports claiming an outcome without a read-back or check output.
    - Repeated permission denials or missing tools.
    - Content angles ranked by signups or downloads per published post. Flag any angle with reach and no conversions.

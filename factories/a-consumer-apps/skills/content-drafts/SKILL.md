@@ -1,6 +1,6 @@
 ---
 name: content-drafts
-description: Stage 6 of Factory A. Use weekly for each app at `live` or `winner`, or in concept mode when called by demand-test, to render short-form slideshows and screen-recording videos from real screenshots and schedule them in Postiz as drafts for the operator to publish. Never use to publish.
+description: Stage 8 of Factory A. Use weekly for each app at `winner`, to render short-form slideshows and screen-recording videos from real screenshots and schedule them in Postiz as drafts for the operator to publish. Never use to publish.
 ---
 
 # Content drafts
@@ -9,7 +9,7 @@ Runs on the operator's Mac, because the HeyGen CLI and HyperFrames skills are in
 
 ## Inputs
 
-- One app at `live` or `winner`, or an item passed in concept mode.
+- One app at `winner`. Organic content is made for winners only. Demand tests and paid tests use ads, prepared by their own skills.
 - `state/build/<id>/screenshots.json` and the screenshot files (live mode). Spec angles (concept mode).
 - `demand/<id>/claims.yaml` or the app's updated `claims.yaml`.
 - `data/content_formats.yaml`: approved formats and hook templates.
@@ -32,7 +32,7 @@ Generative video and realistic AI people or scenes are disabled in `budget.yaml`
 4. Write `manifest.json`: for each post the format, asset paths, caption, hashtags, source screenshot hashes, claims used, `concept`, `ai_generated_elements` (for example synthetic voice), and `ai_label_required`.
 5. Set `ai_label_required: true` if any realistic AI-generated person or scene is present. For synthetic voiceover only, set `ai_label_review: true` so the operator decides at publish time. TikTok's rule for voice was not confirmed from a primary source.
 6. Run `checks/content_lint content/<id>/<batch>/`.
-7. In concept mode, stop here and return the manifest to `demand-test`. Its `A-DEM-1` packet covers approval. Otherwise, if this is the first batch for the app, a new format, or any post has `ai_label_required: true`: raise `A-CNT-1` and stop before Postiz.
+7. If this is the first batch for the app, a new format, or any post has `ai_label_required: true`: raise `A-CNT-1` and stop before Postiz.
 8. Otherwise hand the manifest to the `draft-publisher` agent. It creates each post in Postiz as a draft and reads it back.
 9. Post one Slack message: number of drafts, the app, and anything the operator must decide when publishing (audio, label).
 

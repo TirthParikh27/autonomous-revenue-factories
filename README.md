@@ -5,6 +5,6 @@ Self-running software factories using Claude Code, MCP integrations, and schedul
 
 Research and design only. Nothing in this repository has been built or run yet.
 
-- [`RESEARCH_REPORT.md`](RESEARCH_REPORT.md): what is verifiably earning money, seven factory models ranked, a tooling matrix with verified prices and MCP status, and an audit of the operator environment.
+- [`RESEARCH_REPORT.md`](RESEARCH_REPORT.md): what is verifiably earning money, seven factory models ranked by portfolio expected value (consumer app portfolio first), a review of demand-testing services, a tooling matrix with verified prices and MCP status, and an audit of the operator environment.
 - [`ARCHITECTURE.md`](ARCHITECTURE.md): the shared runtime, control plane, escalation protocol and build sequence.
 - [`factories/`](factories/): one self-contained blueprint per factory (`FACTORY_SPEC.md`, `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, `skills/`, `agents/`), plus shared conventions in [`factories/_shared/`](factories/_shared/).

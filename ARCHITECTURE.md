@@ -1,6 +1,7 @@
 # Revenue Factories: System Architecture
 
-Status: blueprint for review. Nothing here has been built or run. Date: 16 November 2026.
+Status: blueprint for review, revision 2. Nothing here has been built or run. Date: 16 November 2026.
+Revision 2 changes the ranking lens to portfolio expected value at the operator's direction, makes the consumer app factory the first build, and adds section 2.1.
 Companion document: `RESEARCH_REPORT.md` (evidence, rankings, tooling matrix).
 
 ## 1. What the research changes about the design
@@ -10,28 +11,50 @@ The original brief assumed the hard part was building. The research says the opp
 1. **No verified case of a fully autonomous revenue loop was found in any of the seven models.** Every public "agent runs a business" experiment that could be read made $0 or lost money (Autocomp: 39 days, about $1,117 in tokens, $0. Bottleneck Labs: $2,833 in tokens, $0. Andon Labs shop: $100k down to $61k). Building is cheap. Demand and distribution are the bottleneck.
 2. **Agents report success that did not happen.** A cloud run marked "Succeeded" only means the session ended. Documented cases include a scoreboard that overstated a funnel by 57%, an agent reporting "all clear" while the payment path was dead, and campaigns returning 200 OK with no senders attached. So every stage needs a deterministic check outside the model.
 3. **Model-level guardrails leak.** Anthropic's own figures: auto mode misses about 17% of overeager actions, and a red-team credential exfiltration succeeded 24 of 25 times. Limits that must hold go in deny rules, hooks, scoped tokens and branch protection. `CLAUDE.md` is guidance only.
-4. **Platforms are closing the door on templated volume.** Apple's June 2026 rewrite of guideline 4.3(b), Google's 2026 spam updates, YouTube's inauthentic-content policy and Meta's "created PAUSED" ads design all punish or block unattended mass output. Factories therefore optimise for a small number of validated outputs, not throughput.
+4. **Platforms are closing the door on templated volume.** Apple's June 2026 rewrite of guideline 4.3(b), Google's 2026 spam updates, YouTube's inauthentic-content policy and Meta's "created PAUSED" ads design all punish or block unattended mass output. So volume has to sit where platforms do not see it as spam: in cheap tests of ideas, not in published outputs.
+5. **A low hit rate is acceptable if shots are cheap, fast to read and independent.** The operator's goal is a portfolio in which one real winner becomes likely, with a person in the loop. The chance of at least one hit in N independent shots is 1 − (1 − p)^N. The design work is therefore to cut the cost of a shot, shorten the time to read it, and stop shots failing together.
 
 Design consequences:
 
-- Each factory is a **validation funnel with cheap kills**, not a production line. The default outcome of any idea is "killed early at low cost".
-- Factories that sell into **existing marketplace demand** (Apify Store, Chrome Web Store, Shopify App Store) are preferred over factories that must create their own traffic.
+- Each factory is a **validation funnel with cheap kills**, not a production line. The default outcome of any idea is "killed early at low cost". The funnel is wide at the top: many ideas tested, few built.
+- Factories are ranked by **portfolio expected value**: cost per shot, time to read a shot, shots a year, hit rate, payoff on a hit, and whether shots fail together. Marketplace factories remain the lowest-risk option, but their payoff per winner is small.
+- **Demand evidence means behaviour from real traffic.** Synthetic users, surveys and the agent's judgement may kill an idea. They may not pass one.
+- **Accounts are the scarce asset.** A developer, ad or payment account that is lost takes every shot with it, so cadence and distinctness limits are enforced by scripts.
 - The human gate is not only for capital. It also covers anything published under your name, anything sent to a person, and anything irreversible.
 - Honest telemetry comes from the source of truth (Stripe, the marketplace payout page, the broker statement), never from the agent's own summary.
 
 ## 2. Factory portfolio
 
-Seven factories are blueprinted. The build order is the one in `RESEARCH_REPORT.md`, which weights evidence quality first, then capital at risk, then platform and legal exposure. It is a recommendation for you to overrule.
+Seven factories are blueprinted. The build order is the portfolio ranking in `RESEARCH_REPORT.md`. It is a recommendation for you to overrule. The first revision's lowest-risk order (Apify first) is kept in the report for comparison.
 
 | Order | Directory | Model | Default posture |
 |---|---|---|---|
-| 1 | `factories/f-apify-actors` | Apify Store actor portfolio (also the practical way to sell to agents) | Build and publish with approval per actor |
-| 2 | `factories/g-marketplace-tools` | Chrome extensions and niche micro-tools sold through marketplaces | Build freely, human submits to stores. Shopify's 10 November 2026 rules rule out a Shopify app portfolio |
-| 3 | `factories/a-consumer-apps` | Consumer apps with short-form video distribution | A few distinct apps on one account, human publishes. Needs cloud builds because there is no Xcode on your Mac |
-| 4 | `factories/d-directories` | Programmatic SEO and directories, local and transactional intent only | One data-rich site, small verified dataset, indexing canary before scale |
+| 1 | `factories/a-consumer-apps` | Consumer app portfolio, test-first | About 100 ideas tested per cycle with real paid traffic, about 4 built, releases paced at 1 to 2 new apps a month. Operator activates ads and submits to the store. Needs cloud builds because there is no Xcode on your Mac |
+| 2 | `factories/g-marketplace-tools` | Chrome extensions and niche micro-SaaS | Uses the same landing-page test pattern as factory A before building. Human submits to stores. Shopify's 10 November 2026 rules rule out a Shopify app portfolio |
+| 3 | `factories/f-apify-actors` | Apify Store actor portfolio (also the practical way to sell to agents) | Build and publish with approval per actor. Lowest risk, small payoff per winner |
+| 4 | `factories/d-directories` | Programmatic SEO and directories, local and transactional intent only | One data-rich site, small verified dataset, indexing canary before scale. Slow to read, and sites fail together |
 | 5 | `factories/e-outbound` | B2B demo-first outbound | Drafts only. Automated sending stays off until you have legal advice on the Australian Spam Act |
-| 6 | `factories/c-trading` | Strategy research, backtest and paper trading | Paper only, a research harness with no revenue expectation. Live capital is a separate, explicit gate |
-| 7 | `factories/b-ecommerce` | E-commerce, digital products first | No ad spend without approval. Physical dropshipping is out of scope |
+| 6 | `factories/b-ecommerce` | E-commerce, digital products first | No ad spend without approval. Physical dropshipping is out of scope |
+| 7 | `factories/c-trading` | Strategy research, backtest and paper trading | Paper only, a research harness with no revenue expectation. More strategies tested means more false positives, so portfolio logic does not apply |
+
+### 2.1 Portfolio economics of the first factory
+
+All figures are estimates built from published benchmarks. Sources and the full funnel are in `RESEARCH_REPORT.md` and `factories/a-consumer-apps/FACTORY_SPEC.md`.
+
+| Quantity | Value |
+|---|---|
+| One cycle | 100 ideas mined, 50 pass an LLM screen, 30 get a $30 ad click test, 10 get a fake-door test with a price (to $200 each), 4 are built, each gets a paid test of $300 to $600 |
+| Cycle cost and length | About $5,200 to $5,500, about 10 weeks |
+| Cost per idea tested, per app shipped | About $55, about $1,350 |
+| Your time per cycle | About 12 to 15 hours: two ad-batch approvals and activations, four store submissions, packet reviews |
+| Capacity on one Apple account | 200 to 400 ideas tested a year, 8 to 12 apps shipped |
+| Base rate per shipped app | 17.3% reach $1K a month within two years, 4.6% reach $10K (RevenueCat) |
+| Chance of at least one $1K-a-month app | 53% with 4 apps, 85% with 10, 98% with 20, if apps perform at the base rate and independently |
+| Chance of at least one $10K-a-month app | 17% with 4, 38% with 10, 61% with 20 |
+
+Three limits on that arithmetic. The thresholds are revenue, and revenue bought with ads can be unprofitable, so the factory's winner rule is cost per payer and return on ad spend, not MRR. Independence fails if the developer account is lost, which is why release cadence, per-app listings and code distinctness are script-enforced and any 4.3, spam or fraud citation freezes all submissions. And "100 apps" is achievable as 100 tested ideas a quarter, not as 100 store submissions: many similar apps shipped quickly is the pattern Apple's guideline 4.3 and Google Play's Repetitive Content policy remove accounts for.
+
+The landing-page test stage (page, paused campaigns, operator activation, scripted kill rules) is designed once, and factory G follows the same pattern.
 
 Factories are independent. Nothing in one factory imports from another. They share only the conventions in `factories/_shared/`.
 
@@ -202,6 +225,8 @@ Verification status for prices and for which integrations are official is in the
 | Product analytics and LLM cost traces | PostHog | Already connected, covers analytics, errors and LLM costs | Yes |
 | Error tracking | Sentry | Closes the deploy then triage loop | No, one click |
 | Video and motion | HyperFrames and HeyGen, ffmpeg, ElevenLabs for voice | Programmatic, cents per clip, no per-second generative pricing | Yes: ffmpeg, HeyGen CLI and HyperFrames skills on your Mac |
+| Paid traffic for tests | Meta Ads through the official MCP. Campaigns are created paused, you activate, and an account spending limit you set is the backstop | The only pre-build demand signal that is behaviour. Ad spend is the main cost of a shot | No, new account |
+| Search demand data | Appfigures, MobileAction or Astro | Shows that people search for a problem. Not evidence they will pay | No |
 | Social scheduling | Postiz, as drafts | API, MCP and CLI on the entry plan | No |
 
 Third-party MCP servers outside the Claude connector directory are treated as untrusted code: pinned versions, reviewed before use, tested against fake data, and never given credentials they do not need. This follows documented registry-poisoning incidents in 2025 and 2026.
@@ -218,15 +243,16 @@ Third-party MCP servers outside the Claude connector directory are treated as un
 
 1. Create the repository, protect `main`, add CODEOWNERS for `escalations/approved/`, `budget.yaml`, `CLAUDE.md` and `ESCALATION.md`.
 2. Build the shared run wrapper and its tests. Prove the failure paths first: missing artifact, permission denial, budget exceeded, `STOP` present.
-3. Build factory 1 as a walking skeleton: one item pushed through every stage by hand-triggered runs, with you approving the one publish.
+3. Build factory 1 as a walking skeleton: one batch of five ideas pushed through the screen, the spec gate and a tranche 1 ad test by hand-triggered runs, with you approving and activating the one batch. This proves the test rig before any app is built. The store accounts (Apple Developer, RevenueCat, Expo) are opened in parallel, since identity checks take days.
 4. Only then turn on schedules, at the slowest cadence, with the connector list pruned.
 5. Add the second factory after the first has produced two weeks of honest run reports.
 
 ## 8. Decisions needed from you
 
-1. Which factory to build first. The recommendation is `f-apify-actors`.
-2. Whether to approve the default toolset in section 6, in particular the new accounts it implies (Apify, Firecrawl, Cloudflare, Stripe, Sentry, Postiz).
-3. Monthly ceilings for tokens and for paid APIs, per factory. Blueprints propose conservative defaults.
+1. Which factory to build first. The recommendation is `a-consumer-apps`, run as a test-first portfolio. `g-marketplace-tools` is the close second and `f-apify-actors` is the lowest-risk alternative.
+2. Whether to approve the default toolset in section 6, in particular the new accounts factory A implies: Apple Developer, Meta Ads, RevenueCat, Expo, Cloudflare, a keyword tool, and later Postiz.
+3. Monthly ceilings for tokens, paid APIs and ads. Factory A's ad cap starts at $0 and nothing spends until you raise it. One full cycle needs about $4,400 to $4,700 of ad budget over about ten weeks, released in tranches you approve batch by batch.
+3a. The release cadence for factory A. The blueprint proposes one new app a month until three are approved cleanly, then two a month, with at most 12 in any 12 months. Apple publishes no safe number, so this is a judgement.
 4. Whether Factory E should exist at all in outbound form, given the Australian Spam Act position, or be redesigned as inbound-led.
 5. Whether you are comfortable running this on a work-managed Mac and a personal Claude subscription. Unattended use on a subscription is currently permitted but Anthropic paused a change to it in 2026, so the design keeps an API-key path as well.
 6. Branch protection on `main` in the new repository, which the approval mechanism depends on.
