@@ -1,6 +1,7 @@
 """The wrapper's failure paths are proven first (ARCHITECTURE.md section 7, step 2)."""
 import datetime as dt
 import json
+import os
 import stat
 import sys
 from pathlib import Path
@@ -28,6 +29,8 @@ GOOD_REPORT = """# Run {run}
 FAKE_CLAUDE = """#!/usr/bin/env python3
 import json, os, pathlib, sys
 mode = os.environ.get("FAKE_MODE", "ok")
+if mode == "hang":
+    import time; time.sleep(5)
 run = os.environ["FACTORY_RUN_ID"]
 report = pathlib.Path("journal") / "2026-11-20" / (run + ".md")
 out = {"total_cost_usd": 0.42, "permission_denials": [], "is_error": False}
@@ -108,8 +111,27 @@ def test_held_lock_refuses(repo):
     lock = repo / "factories" / "demo" / "state" / "worker.lock"
     lock.parent.mkdir(parents=True)
     lock.write_text("other run")
+    os.utime(lock, (NOW.timestamp() - 600,) * 2)
     assert run(repo) == factory_run.REFUSED
     assert lock.exists()
+
+
+def test_stale_lock_is_cleared_and_reported(repo):
+    factory = repo / "factories" / "demo"
+    lock = factory / "state" / "worker.lock"
+    lock.parent.mkdir(parents=True)
+    lock.write_text("dead-run")
+    os.utime(lock, (NOW.timestamp() - 2 * 3600,) * 2)
+    assert run(repo) == factory_run.PASSED
+    assert "dead-run" in lines(factory / "outbox" / "pending.jsonl")[0]["text"]
+    assert not lock.exists()
+
+
+def test_run_past_the_timeout_fails(repo, monkeypatch):
+    budget = repo / "factories" / "demo" / "budget.yaml"
+    budget.write_text(budget.read_text() + "run_timeout_minutes: 0.005\n")
+    monkeypatch.setenv("FAKE_MODE", "hang")
+    assert run(repo) == factory_run.FAILED
 
 
 def test_missing_report_fails(repo, monkeypatch):
@@ -165,3 +187,18 @@ def test_a_pass_resets_the_failure_streak(repo, monkeypatch):
     monkeypatch.setenv("FAKE_MODE", "silent")
     run(repo), run(repo)
     assert not (factory / "STOP").exists()
+
+
+@pytest.mark.parametrize("stage", ["mvp-build", "release-readiness"])
+def test_submission_freeze_refuses_build_and_release(repo, stage):
+    factory = repo / "factories" / "demo"
+    (factory / "skills" / stage).mkdir(parents=True)
+    (factory / "skills" / stage / "SKILL.md").write_text(f"# {stage}\n")
+    (factory / "budget.yaml").write_text(
+        "monthly_caps_usd: {tokens: 10, total: 20}\n"
+        f"per_run: {{screen: {{max_turns: 5, max_budget_usd: 1.0}}, {stage}: {{max_turns: 5, max_budget_usd: 1.0}}}}\n"
+    )
+    assert run(repo, stage=stage) == factory_run.PASSED
+    (factory / "state" / "SUBMISSIONS_FROZEN").write_text("A-ACCT-1 2026-11-20\n")
+    assert run(repo, stage=stage) == factory_run.REFUSED
+    assert run(repo, stage="screen") == factory_run.PASSED  # other stages keep running

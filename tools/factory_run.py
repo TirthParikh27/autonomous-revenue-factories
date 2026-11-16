@@ -26,6 +26,8 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 REFUSED, FAILED, PASSED = 2, 1, 0
+# Stages that stop while state/SUBMISSIONS_FROZEN exists (ESCALATION.md, A-ACCT-1).
+FROZEN_STAGES = ("mvp-build", "release-readiness")
 
 
 class Refused(Exception):
@@ -70,6 +72,9 @@ def preflight(repo_root: Path, factory_dir: Path, state_dir: Path, budget: dict,
     for stop in (repo_root / "STOP", factory_dir / "STOP", state_dir / "STOP"):
         if stop.exists():
             raise Refused(f"STOP file present: {stop}")
+    frozen = state_dir / "state" / "SUBMISSIONS_FROZEN"
+    if stage in FROZEN_STAGES and frozen.exists():
+        raise Refused(f"submissions frozen (A-ACCT-1): {frozen} exists, so '{stage}' may not run")
     caps = (budget.get("per_run") or {}).get(stage)
     if not caps:
         raise Refused(f"stage '{stage}' has no per_run caps in budget.yaml")
@@ -158,8 +163,15 @@ def run(factory: str, stage: str, repo_root: Path = REPO_ROOT, state_root: Path 
         print(f"REFUSED {run_id}: {why}")
         return REFUSED
 
+    # No run may outlast this, so a lock older than it belongs to a killed run.
+    timeout_s = 60 * float(budget.get("run_timeout_minutes", 60))
     lock = state_dir / "state" / "worker.lock"
     lock.parent.mkdir(parents=True, exist_ok=True)
+    if lock.exists() and now.timestamp() - lock.stat().st_mtime > timeout_s:
+        append_jsonl(outbox, {"id": next_id(outbox, "o"), "at": now.isoformat(), "run": run_id,
+                              "priority": "digest", "link": None,
+                              "text": f"cleared stale lock left by run {lock.read_text().strip() or 'unknown'}"})
+        lock.unlink()
     try:
         fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
     except FileExistsError:
@@ -169,10 +181,14 @@ def run(factory: str, stage: str, repo_root: Path = REPO_ROOT, state_root: Path 
     os.close(fd)
 
     try:
-        proc = subprocess.run(build_command(stage, caps, run_id), cwd=factory_dir,
-                              capture_output=True, text=True, env={**os.environ, "FACTORY_RUN_ID": run_id})
         try:
-            output = json.loads(proc.stdout)
+            proc = subprocess.run(build_command(stage, caps, run_id), cwd=factory_dir, timeout=timeout_s,
+                                  capture_output=True, text=True, env={**os.environ, "FACTORY_RUN_ID": run_id})
+            returncode, stdout = proc.returncode, proc.stdout
+        except subprocess.TimeoutExpired:
+            returncode, stdout = 124, ""
+        try:
+            output = json.loads(stdout)
         except (json.JSONDecodeError, TypeError):
             output = None
 
@@ -185,7 +201,7 @@ def run(factory: str, stage: str, repo_root: Path = REPO_ROOT, state_root: Path 
             })
 
         report = state_dir / "journal" / now.strftime("%Y-%m-%d") / f"{run_id}.md"
-        reasons = judge(proc.returncode, output, report)
+        reasons = judge(returncode, output, report)
         limit = int((budget.get("escalation") or {}).get("consecutive_failures_before_stop", 3))
         streak = record_failures(state_dir, stage, bool(reasons))
 
