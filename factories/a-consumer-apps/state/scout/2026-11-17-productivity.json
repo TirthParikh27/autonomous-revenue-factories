@@ -1,0 +1,59 @@
+{
+  "category": "Productivity (iOS App Store)",
+  "scout_date": "2026-11-17",
+  "status": "incomplete: page fetches were refused by the proxy, so no verbatim complaints could be collected",
+  "candidates": [
+    {
+      "unmet_job": "Home-screen widget on a to-do app that lets the user add or check off a task without opening the app, and that stays in sync.",
+      "competing_apps": [
+        {"name": "Todoist", "store_url": "https://apps.apple.com/app/todoist-to-do-list-task/id572688855"},
+        {"name": "Bullet (as named on its feedback board)", "store_url": null}
+      ],
+      "complaints": [],
+      "keyword_data": [],
+      "trend_signals": [],
+      "secondary_signals": [
+        {"note": "Search-result summary only, not opened or verified. Reports a missing add-task button in the Todoist widget and widget sync/check-off problems on a Bullet feedback board dated Feb 2026.", "source_urls": ["https://marlvel.ai/api/llm/apps/productivity/com-todoist-ios", "https://bullet.userjot.com/board/p/widgets-broken"], "reliability": "low"}
+      ],
+      "evidence_strength": "thin"
+    },
+    {
+      "unmet_job": "Reminders that keep firing after iOS updates, without the user having to re-grant notification permission.",
+      "competing_apps": [
+        {"name": "Todoist", "store_url": "https://apps.apple.com/app/todoist-to-do-list-task/id572688855"},
+        {"name": "Things 3", "store_url": null},
+        {"name": "Microsoft To Do", "store_url": null}
+      ],
+      "complaints": [],
+      "keyword_data": [],
+      "trend_signals": [],
+      "secondary_signals": [
+        {"note": "Aggregator blog claims 1-3 star reviews across several to-do apps describe reminders not firing after iOS 17/18 updates. Not opened or verified. Review count unknown.", "source_urls": ["https://unstar.app/blog/todoist-ticktick-things-3-microsoft-todo-apple-reminders-todo-apps-ranked-2026"], "reliability": "low"}
+      ],
+      "evidence_strength": "thin"
+    },
+    {
+      "unmet_job": "Core to-do features (such as reminders) available without a recurring Pro subscription, or at a price users consider fair.",
+      "competing_apps": [
+        {"name": "Todoist", "store_url": "https://apps.apple.com/app/todoist-to-do-list-task/id572688855"}
+      ],
+      "complaints": [],
+      "keyword_data": [],
+      "trend_signals": [],
+      "secondary_signals": [
+        {"note": "Search-result summaries mention reviewers saying Todoist features have moved behind Pro and that it is expensive. Not opened or verified. Only one app involved.", "source_urls": ["https://kimola.com/reports/mixed-reviews-todoist-worth-price-141009", "https://talk.macpowerusers.com/t/todoist-increases-its-subscription/43385", "https://www.macrumors.com/guide/best-to-do-apps-ios"], "reliability": "low"}
+      ],
+      "evidence_strength": "thin"
+    }
+  ],
+  "not_found_or_not_opened": [
+    "Every WebFetch call returned 'proxy refused the connection': appshunter.io Todoist reviews, bullet.userjot.com widgets-broken, unstar.app comparison, apps.apple.com Todoist listing. I did not retry through other routes.",
+    "No Bash tool was available, so I could not read the proxy status endpoint.",
+    "No verbatim, dated complaint quotes were collected. The search tool returns summaries, so none are included.",
+    "No keyword volume or difficulty data was found. No trend data was found.",
+    "Store URLs for Things 3, Microsoft To Do and Bullet were not confirmed. Only the Todoist URL appeared in search results.",
+    "Fewer than the 5 candidates requested were reported, because the rest had no evidence."
+  ],
+  "excluded": [],
+  "injection_suspected": []
+}

@@ -1,0 +1,63 @@
+{
+  "category": "Business (iOS App Store)",
+  "scout_date": "2026-11-17",
+  "evidence_status": "thin",
+  "evidence_note": "WebFetch returned 'proxy refused the connection' for every page fetch attempted (appshunter.io, appfollow.io, justuseapp.com, apps.apple.com). Only WebSearch result summaries were available. Those summaries paraphrase, so almost no verbatim, dated, per-app complaint quotes could be verified. Complaints below are limited to the strings that appeared in quotation in search output. Everything else is listed under not_found. Reddit was not used.",
+  "candidates": [
+    {
+      "unmet_job": "Create and manage recurring invoices from the iPhone/iPad app, and export invoice data (for example CSV).",
+      "competing_apps": [
+        {"name": "InvoiceAir", "store_url": "https://apps.apple.com/app/id1109397812"},
+        {"name": "Invoice.app: Invoice Maker", "store_url": "https://appshunter.io/ios/app/1370893360/reviews", "note": "aggregator page, not the Apple listing URL"},
+        {"name": "Tiny Invoice", "store_url": "https://apps.apple.com/ca/app/tiny-invoice/id679572722"},
+        {"name": "Zoho Invoice (mobile)", "store_url": null, "note": "store URL not found in this run; source is a Zoho community thread"}
+      ],
+      "complaints": [
+        {
+          "quote": "Is there a way to manage recurring invoices on the iphone/ipad app? If not, are there plans to add this at some point in the future?",
+          "app": "Zoho (iPhone/iPad app)",
+          "source_url": "https://help.zoho.com/portal/en/community/topic/recurring-invoices-on-iphone-ipad-app?page=12",
+          "date": null,
+          "note": "Date not seen. This is a vendor community post, not an App Store review. Quote taken from search result text, page itself not opened."
+        }
+      ],
+      "keyword_data": [],
+      "trend_signals": [],
+      "thin_evidence_notes": "Search summary says an InvoiceAir reviewer who complained of missing recurring billing later found a Recurring checkbox, which weakens that data point. An Invoice.app reviewer asked for CSV export, but I could not open the page to quote it. A newer iPad invoice app advertises recurring invoices, so the gap may be closing."
+    },
+    {
+      "unmet_job": "Log business mileage automatically without missed trips and without a free-tier cap on trips.",
+      "competing_apps": [
+        {"name": "MileIQ", "store_url": "https://apps.apple.com/app/578830929"},
+        {"name": "Everlance (Mileage Tracker by Everlance)", "store_url": "https://apps.appfollow.io/ios/mileage-tracker-by-everlance/985378916?country=it", "note": "aggregator page, not the Apple listing URL"},
+        {"name": "Triplog Mileage Tracker", "store_url": "https://apps.apple.com/app/triplog-mileage-tracker-log/id585918522"},
+        {"name": "Driversnote", "store_url": "https://apps.apple.com/app/mileage-tracker-by-driversnote/id924418916"}
+      ],
+      "complaints": [],
+      "keyword_data": [],
+      "trend_signals": [],
+      "thin_evidence_notes": "Only secondary guide pages (hackceleration.com, joingerald.com) describe missed trips from iOS battery and Low Power Mode and free-tier caps (Everlance free plan listed at 30 auto trips). I did not open them and could not verify them. No verbatim reviews obtained."
+    },
+    {
+      "unmet_job": "Scan business cards to contacts with accurate OCR without paying for a subscription to get unlimited scans or export.",
+      "competing_apps": [
+        {"name": "Covve Scan", "store_url": "https://appshunter.io/ios/app/1459654107", "note": "aggregator page, not the Apple listing URL"},
+        {"name": "CamCard", "store_url": "https://justuseapp.com/en/app/349447615/camcard-business-card-scanner/reviews", "note": "aggregator page, not the Apple listing URL"},
+        {"name": "ABBYY Business Card Reader", "store_url": "https://apps.appfollow.io/ios/business-card-reader/898215947?country=us", "note": "aggregator page, not the Apple listing URL"}
+      ],
+      "complaints": [],
+      "keyword_data": [],
+      "trend_signals": [],
+      "thin_evidence_notes": "Search summaries say Covve lists $59.99 per year for unlimited scans and ABBYY gates unlimited recognition and Excel export behind Premium. Complaint percentages come from marlvel.ai automated reports, which I could not verify, so I include none. Zoho Card Scanner reviews are reportedly mixed up with a trading-card app on one aggregator."
+    }
+  ],
+  "excluded": [],
+  "injection_suspected": [],
+  "not_found": [
+    "No page fetch succeeded (proxy refused every WebFetch), so no review text, date or rating was read first-hand.",
+    "No keyword volume or difficulty data source was reached.",
+    "No trend data (search interest, rank history) was found.",
+    "Only 3 candidates, not 5. Two more were not researched because fetches were failing.",
+    "Complaint counts are 1 for candidate 1 (undated, vendor forum) and 0 for candidates 2 and 3. None meets the 3-app complaint target."
+  ]
+}

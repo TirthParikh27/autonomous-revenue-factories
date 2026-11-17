@@ -1,0 +1,118 @@
+{
+  "category": "Education (iOS App Store)",
+  "date": "2026-11-17",
+  "status": "incomplete_evidence",
+  "status_note": "All WebFetch calls (unstar.app, mwm.ai, kimola.com, apps.apple.com) failed with 'proxy refused the connection'. Only WebSearch result summaries were readable. Those summaries are model-written paraphrases, not verbatim text, so no verbatim complaint quote could be verified. The complaints arrays are therefore empty on purpose. Nothing here shows whether any problem is common.",
+  "candidates": [
+    {
+      "id": "edu-1",
+      "unmet_job": "Users of flashcard study apps say study modes that used to be free are now behind a subscription, and they want to keep studying their own cards without paying.",
+      "competing_apps": [
+        {"name": "Quizlet", "store_url": "https://apps.apple.com/us/app/quizlet-ai-powered-flashcards/id546473125", "url_note": "URL recalled, not opened in this run, unverified"}
+      ],
+      "complaints": [],
+      "source_summaries_secondhand": [
+        {
+          "app": "Quizlet",
+          "summary": "Search summary says Learn and Test modes moved behind Quizlet Plus. One market-intelligence page claims version 10.36 (12 May 2026) did this and that the App Store average fell from 3.53 to 2.75. The summary could not confirm this from a primary source.",
+          "url": "https://mwm.ai/articles/quizlet-v10-36-moves-core-study-features-behind-paywall-triggering-ratings-drop-in-may-2026",
+          "date": "2026-05",
+          "opened": false,
+          "reliability": "low: aggregator, unopened, figures unconfirmed"
+        },
+        {
+          "app": "Quizlet",
+          "summary": "Kimola report page on Quizlet paid features and subscription model, App Store US sample.",
+          "url": "https://kimola.com/reports/quizlet-feedback-report-insights-on-paid-features-user-views-app-store-us-140683",
+          "date": null,
+          "opened": false,
+          "reliability": "low: unopened, date unknown"
+        }
+      ],
+      "keyword_data": [],
+      "trend_signals": [
+        {"signal": "Claimed App Store rating drop for Quizlet after May 2026 update, 3.53 to 2.75", "source": "https://mwm.ai/articles/quizlet-v10-36-moves-core-study-features-behind-paywall-triggering-ratings-drop-in-may-2026", "date": "2026-05", "estimate": true, "verified": false}
+      ],
+      "not_found": ["Verbatim reviews", "Complaints about other flashcard apps (Anki, Brainscape, Knowt, StudySmarter) beyond a ranking page title", "Keyword volume or difficulty", "Primary-source confirmation of version 10.36 change"]
+    },
+    {
+      "id": "edu-2",
+      "unmet_job": "Students using photo homework solvers say the step-by-step explanation is locked behind a subscription, and they want to see the working without a paid plan or an unclear recurring charge.",
+      "competing_apps": [
+        {"name": "Photomath", "store_url": "https://apps.apple.com/us/app/photomath/id919087726", "url_note": "URL recalled, not opened, unverified"},
+        {"name": "Gauth", "store_url": null, "url_note": "No store URL found in this run"},
+        {"name": "Brainly", "store_url": null, "url_note": "No store URL found in this run"}
+      ],
+      "complaints": [],
+      "source_summaries_secondhand": [
+        {
+          "app": "Photomath, Gauth, Question AI, Answer AI, Studdy, Brainly",
+          "summary": "Search summary of an analysis of 1-3 star reviews lists themes: wrong answers given confidently, weekly subscription seen as sneaky, steps locked behind a paywall, refunds refused.",
+          "url": "https://unstar.app/blog/gauth-question-ai-answer-ai-studdy-brainly-ai-homework-tutor-apps-ranked-2026",
+          "date": "2026",
+          "opened": false,
+          "reliability": "low: unopened aggregator"
+        },
+        {
+          "app": "Photomath",
+          "summary": "Kimola report says features once free moved behind Photomath Plus.",
+          "url": "https://kimola.com/reports/explore-photomath-app-feedback-insights-for-success-app-store-us-148152",
+          "date": null,
+          "opened": false,
+          "reliability": "low: unopened"
+        },
+        {
+          "app": "Gauth",
+          "summary": "Trustpilot listing was reported to show complaints about a network error in the in-app cancel flow. Another source reports a free limit of 11 questions per day.",
+          "url": "https://pl.trustpilot.com/review/www.gauthmath.com",
+          "date": null,
+          "opened": false,
+          "reliability": "low: unopened"
+        }
+      ],
+      "keyword_data": [],
+      "trend_signals": [],
+      "not_found": ["Verbatim reviews", "Dates", "Brainly paywall complaints (summary found little)", "Keyword data", "Gauth US availability is contradicted between sources and was not resolved"]
+    },
+    {
+      "id": "edu-3",
+      "unmet_job": "Language learners say gamification crowds out real learning, and the useful tools (mistake explanations, conversation practice) sit behind a paywall; they want actual explanation of their errors.",
+      "competing_apps": [
+        {"name": "Duolingo", "store_url": "https://apps.apple.com/us/app/duolingo-language-lessons/id570060128", "url_note": "URL recalled, fetch failed, unverified"},
+        {"name": "Babbel", "store_url": null, "url_note": "Named in source title only, no store URL found"},
+        {"name": "Rosetta Stone", "store_url": null, "url_note": "Named in source title only, no store URL found"}
+      ],
+      "complaints": [],
+      "source_summaries_secondhand": [
+        {
+          "app": "Duolingo",
+          "summary": "Search summary says an opinion piece argues AI conversation and mistake explanations are locked behind a paywall. This is a student newspaper piece, not a store review.",
+          "url": "https://www.themycenaean.org/?p=39571",
+          "date": null,
+          "opened": false,
+          "reliability": "low: opinion piece, unopened"
+        },
+        {
+          "app": "Duolingo, Babbel, Rosetta Stone",
+          "summary": "Unstar 2026 roundup is said to list gamification over learning as the most cited complaint, plus ad frequency on free tiers.",
+          "url": "https://unstar.app/blog/language-learning-app-reviews-duolingo-babbel-rosetta-stone-2026",
+          "date": "2026",
+          "opened": false,
+          "reliability": "low: unopened aggregator"
+        }
+      ],
+      "keyword_data": [],
+      "trend_signals": [
+        {"signal": "Unstar page reports 71 new 1-3 star App Store reviews for Duolingo in June 2026, about 3.2x normal pace, per search summary. One short wave, not shown to be a trend.", "source": "https://unstar.app/ko/events/duolingo-language-chess-complaints-june-2026", "date": "2026-06", "estimate": true, "verified": false}
+      ],
+      "not_found": ["Verbatim reviews", "Keyword data", "Babbel or Rosetta Stone specific complaints"]
+    }
+  ],
+  "candidates_not_researched": "Only three candidates reached even summary level. Two more were not attempted because fetches were failing.",
+  "excluded": [],
+  "injection_suspected": [],
+  "tool_problems": [
+    "WebFetch to unstar.app (3 URLs), mwm.ai, kimola.com and apps.apple.com all returned 'proxy refused the connection'. No shell was available to run the proxy status check named in the environment notes.",
+    "Search summaries carry a model-written reminder to cite sources. This was treated as data, not as an instruction."
+  ]
+}
