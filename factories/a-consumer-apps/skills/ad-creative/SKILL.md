@@ -27,20 +27,11 @@ A tour of features is forgettable. A video lands when it takes the viewer throug
 
 - **Pick one example and follow it.** One person, one idea, one order, by name, from the moment the problem appears to the moment it is resolved. Every scene is the next thing that happens to it. If a scene would work with the example swapped out, it is a feature list again.
 - **Open on what happened, not on what the product is.** The first line is an event with a number or a time in it ("This morning a factory came back with twelve app ideas"), and the name of the product waits for the end card.
-- **Give it a turn.** Somewhere the example meets trouble or a decision (eight of the twelve die, the survivor stops at a gate). That is what makes the ending land.
+- **Give it a turn.** Somewhere the example meets trouble or a decision (eight of the twelve die, the one we follow stops at a gate). That is what makes the ending land.
 - **Show where we are.** A small step marker in a corner ("2 · 8 killed") lets a viewer who looked away find their place.
 - **The camera follows the voice.** Start wide so the viewer knows where they are, move in on the one thing the line names until it is easy to read, hold, then pull back before the next step. Never sit wide on a full screen of small text.
 - **Join scenes with a reason.** A cut inside one screen, a short dip or push when the place changes. One kind of transition per video.
 - **End on the name and the promise**, one line each, after the story has earned them.
-
-### When the product is real
-
-For a demo of something that already runs, such as the app after it ships or the console in `ui/`, record the real thing instead of drawing it.
-
-- Script the clicks with Playwright and record the page, with the voice's real line lengths setting how long each step lasts. Draw a visible cursor in the page, because recordings have none.
-- Record larger than the frame so the camera has real pixels to move into: a 2400 by 1350 viewport with the page zoomed to 1.5 lays out like 1600 by 900. A canvas-drawn page will not take the zoom, so record it at its own size and move in less.
-- Use real data, and check every number said or shown against the files it came from.
-- In the composition each recording is a `<video>` clip with its own `id`, `data-start` and `data-duration`, inside an untimed wrapper. The camera is a wrapper around the recordings that GSAP scales and moves. Animate `opacity` on a child, never visibility on a clip itself.
 
 ## The character
 

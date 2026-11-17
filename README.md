@@ -6,7 +6,7 @@ A keiretsu is a family of businesses in different industries run as one group. T
 
 [![What a factory did before breakfast: click to play](ui/demo/keiretsu.jpg)](ui/demo/keiretsu.mp4)
 
-*One idea's morning, from a complaint in an app review to a decision waiting on you, in 54 seconds ([`ui/demo/keiretsu.mp4`](ui/demo/keiretsu.mp4)).*
+*One idea's morning, from a complaint in an app review to a decision waiting on you, in under a minute ([`ui/demo/keiretsu.mp4`](ui/demo/keiretsu.mp4)).*
 
 ## How it works
 

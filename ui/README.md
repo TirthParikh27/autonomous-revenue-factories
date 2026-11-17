@@ -30,3 +30,12 @@ The UI cannot approve anything. A decision is still made by moving its packet to
 The server listens on 127.0.0.1 only and refuses requests that arrive under any other host name, so another site open in the browser cannot read the data or flip a switch.
 
 The pages load fonts and three.js from a CDN. Offline, the Live view falls back to line drawings.
+
+## The demo video
+
+`demo/keiretsu.mp4` is a recording of the real console, following one idea through its morning. To remake it:
+
+- Script the clicks with Playwright and record the page, with the voice's real line lengths setting how long each step lasts. Draw a visible cursor in the page, because recordings have none.
+- Record larger than the frame so the camera has real pixels to move into: a 2400 by 1350 viewport with the page zoomed to 1.5 lays out like 1600 by 900. A canvas-drawn page will not take the zoom, so record it at its own size and move in less.
+- Use real data, and check every number said or shown against the files it came from.
+- In the composition each recording is a `<video>` clip with its own `id`, `data-start` and `data-duration`, inside an untimed wrapper. The camera is a wrapper around the recordings that GSAP scales and moves. Animate `opacity` on a child, never visibility on a clip itself.
