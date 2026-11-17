@@ -217,3 +217,48 @@ def test_publish_drafts_writes_drafts_and_refuses_bad_copy(tmp_path):
     assert json.loads((tmp_path / "drafts.json").read_text())["drafts"] == [{"post": 1, "id": "dry-1", "state": "draft"}]
     manifest.write_text(json.dumps({"posts": [{"caption": "Users love it. Rated 4.8 out of 5"}]}))
     assert publish.publish_drafts(manifest, [])
+
+
+# ---- page_check.js: walks a test page's funnel in a real browser. Skipped where Node or Playwright is missing.
+
+PAGE = """<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><body>
+<button id="p" data-walk="1">Get early access</button>
+<form id="f" hidden><input type="email" id="e" data-walk="2"><button data-walk="3">Join</button></form>
+<script>
+var C = window.LAUNCH || {};
+function track(n){ if (C.eventEndpoint && navigator.sendBeacon) navigator.sendBeacon(C.eventEndpoint, JSON.stringify({event:n})); }
+track("page_view");
+p.onclick=function(){track("price_click");%s};
+f.onsubmit=function(ev){ev.preventDefault();fetch(C.signupEndpoint,{method:"POST",body:"{}"}).then(function(){track("committed_signup");});};
+</script>"""
+
+
+def run_page_check(tmp_path, page):
+    import shutil, subprocess
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    if not shutil.which("node"):
+        pytest.skip("node not installed")
+    site = tmp_path / "site"
+    site.mkdir()
+    (site / "index.html").write_text(page)
+    proc = subprocess.run(["node", str(root / "page_check.js"), str(site)], capture_output=True, text=True, timeout=120)
+    if "Cannot find module 'playwright'" in proc.stderr or "Executable doesn't exist" in proc.stderr:
+        pytest.skip("playwright not installed")
+    return proc
+
+
+def test_page_check_walks_a_working_funnel(tmp_path):
+    proc = run_page_check(tmp_path, PAGE % "f.hidden=false")
+    assert proc.returncode == 0, proc.stderr
+    report = json.loads(proc.stdout)
+    assert report["events"] == ["page_view", "price_click", "committed_signup"]
+    assert report["signup_posted"] and not report["external_requests"]
+    assert all(__import__("os").path.exists(s) for s in report["screenshots"])
+
+
+def test_page_check_fails_when_a_step_cannot_be_used(tmp_path):
+    proc = run_page_check(tmp_path, PAGE % "")   # the button never opens the form
+    assert proc.returncode == 1
+    report = json.loads(proc.stdout)
+    assert "committed_signup" not in report["events"] and not report["signup_posted"]

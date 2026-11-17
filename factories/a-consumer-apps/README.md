@@ -34,7 +34,7 @@ The factory prepares everything and never spends or launches by itself. Your par
 
 Once:
 
-1. Tools on the machine that runs stages: Node 20 or later, then at the repo root `npm install playwright` and `npx playwright install chromium`. Demo videos render with `npx hyperframes`, which downloads itself.
+1. Tools on the machine that runs stages: Node 20 or later, then at the repo root `npm install playwright` and `npx playwright install chromium`. Demo videos render with `npx hyperframes`, which downloads itself. For the free narration voice: `pip install kokoro-onnx soundfile` into a Python environment and set `HYPERFRAMES_PYTHON` to that Python. Without it, ads are made silent with captions.
 2. A Meta ad account with an account spending limit. Raise `monthly_caps_usd.ads` in `budget.yaml` from 0.
 3. A Cloudflare Pages project that serves the `demand/` folder, and a Supabase table for the early-access list.
 4. Fill in `demand/config.js` (pixel id, sign-up endpoint and its publishable key, event endpoint). Every test page reads this one file.
