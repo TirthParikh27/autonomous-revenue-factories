@@ -1,4 +1,4 @@
-# Consumer app factory: how to run it
+# Consumer app and web product factory: how to run it
 
 The factory is built end to end and needs no accounts to try. Each run does one stage and writes a report in `journal/`.
 
@@ -20,7 +20,7 @@ The wrapper refuses to start if a `STOP` file exists or the month's budget in `b
 |---|---|
 | Idea mining, screen, spec | Fully. Costs tokens only |
 | Demand test | Writes landing pages, ads and the ad plan. `publish.py ads` runs dry: it writes `readback.json` and contacts nobody |
-| Build | Writes the app and its tests. Store builds need an Expo token |
+| Build | Writes the app or web product and its tests. Store builds need an Expo token. Web payments need a Stripe test key |
 | Content | Writes drafts. `publish.py drafts` runs dry and writes `drafts.json` |
 | Telemetry, paid test | Need real numbers, so they wait for accounts |
 
@@ -34,6 +34,7 @@ Idea mining reads Apple's search and review feeds, so the machine running it mus
 2. Ads: a Meta ad account with an account spending limit, then raise `monthly_caps_usd.ads` in `budget.yaml` from 0. Campaigns are always created paused. You activate them.
 3. Content: a Postiz account. Posts are always drafts. You publish them.
 4. Store: an Apple developer account. You submit every build yourself.
+5. Web products: a Stripe account and a Cloudflare account. You create the live price and merge the launch yourself.
 
 Live mode for `publish.py` is added when the first two exist.
 
