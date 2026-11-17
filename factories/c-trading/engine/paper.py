@@ -107,7 +107,12 @@ def main() -> int:
         return 2
     confirmed = []
     for item_path in sorted((trials.state_dir() / "items").glob("*.json")):
-        item, sid = json.loads(item_path.read_text()), item_path.stem
+        sid = item_path.stem
+        try:
+            item = json.loads(item_path.read_text())
+        except ValueError:
+            print(f"{sid}: item file unreadable")
+            continue
         # A watched strategy failed only the luck score. It is tracked on new days only, at the version the
         # gate judged, and never joins the combined book. Starting any earlier would publish the held-back
         # window that later exams depend on.

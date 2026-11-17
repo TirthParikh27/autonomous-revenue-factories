@@ -176,9 +176,14 @@ def test_lint_blocks_files_network_and_clock():
                 # numpy and pandas can reach files, the network, the clock and the shell on their own
                 "bars.close.to_csv('x.csv')", "pd.read_csv('https://example.com/x')", "pd.read_pickle('x')",
                 "pd.Timestamp.now()", "np.random.rand(3)", "pd.io.common.os.system('ls')", "np.save('x', a)",
-                "np.load('x.npy')", "df.eval('a + b')", "bars.close.to_pickle('x')", "vars(pd)"):
+                "np.load('x.npy')", "df.eval('a + b')", "bars.close.to_pickle('x')", "vars(pd)",
+                "from pandas import read_csv", "from numpy import random", "from lib.indicators import talib",
+                "from numpy import *", "__builtins__['open']('x')", "pd.core.generic.pickle.loads(b'')",
+                "pd.core.common.builtins", "np.lib.format.open_memmap('x')", "np.fromregex('x', 'a', float)",
+                "bars._private", "match np:\n    case object(random=r):\n        pass"):
         assert strat.lint(bad), bad
-    assert strat.lint("w = bars.close.rolling(5).mean().to_numpy()\nd = pd.to_datetime(x)\n") == []
+    assert strat.lint("w = bars.close.rolling(5).mean().to_numpy()\nd = pd.to_datetime(x)\n"
+                      "from lib import indicators\nfrom lib.indicators import ema\nfrom numpy import sqrt\n") == []
 
 
 def test_code_hash_covers_universe_and_band(tmp_path):

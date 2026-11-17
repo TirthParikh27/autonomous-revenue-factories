@@ -28,8 +28,9 @@ BANNED_NAMES = {"open", "exec", "eval", "compile", "__import__", "globals", "loc
                 "delattr", "input", "breakpoint"}
 # numpy and pandas can themselves reach files, the network, the clock and the shell. These attribute
 # names are refused wherever they appear. This is a lint, not a sandbox: the reviewer agent reads the
-# code as well, and the judge's job runs strategy code with no repository token.
-BANNED_ATTRS = {"io", "os", "sys", "system", "popen", "subprocess", "now", "today", "utcnow", "random", "eval", "query",
+# code as well, and the judge's job runs strategy code with read-only access to the repository.
+BANNED_ATTRS = {"talib", "core", "lib", "compat", "util", "api", "errors", "plotting", "tseries", "arrays", "builtins", "pickle",
+                "fromregex", "open_memmap", "format", "io", "os", "sys", "system", "popen", "subprocess", "now", "today", "utcnow", "random", "eval", "query",
                 "load", "save", "savez", "savez_compressed", "savetxt", "loadtxt", "genfromtxt", "fromfile", "tofile",
                 "memmap", "DataSource", "ctypeslib", "f2py", "testing", "HDFStore", "ExcelWriter", "ExcelFile", "pipe"}
 ALLOWED_TO = {"to_numpy", "to_frame", "to_series", "to_list", "to_dict", "to_period", "to_timestamp", "to_datetime",
@@ -48,27 +49,31 @@ class Strategy:
     band: float | None = None      # the strategy's own no-trade band; None means the engine default
 
 
+def _bad_attr(a: str) -> bool:
+    return (a.startswith("_") or a in BANNED_ATTRS or a.startswith("read_")
+            or (a.startswith("to_") and a not in ALLOWED_TO))
+
+
 def lint(source: str) -> list[str]:
-    """Problems that would let strategy code reach files, the network or the clock."""
+    """Problems that would let strategy code reach files, the network, the clock or the shell."""
     problems = []
     for node in ast.walk(ast.parse(source)):
-        if isinstance(node, ast.Import):
-            names = [a.name for a in node.names]
-        elif isinstance(node, ast.ImportFrom):
-            names = [node.module or ""]
-        else:
-            if isinstance(node, ast.Name) and node.id in BANNED_NAMES:
-                problems.append(f"line {node.lineno}: use of '{node.id}' is not allowed")
-            if isinstance(node, ast.Attribute):
-                a = node.attr
-                if a.startswith("__"):
-                    problems.append(f"line {node.lineno}: dunder attribute access is not allowed")
-                elif a in BANNED_ATTRS or a.startswith("read_") or (a.startswith("to_") and a not in ALLOWED_TO):
-                    problems.append(f"line {node.lineno}: use of '.{a}' is not allowed")
-            continue
-        for name in names:
-            if name not in ALLOWED_IMPORTS:
-                problems.append(f"line {node.lineno}: import of '{name}' is not allowed")
+        line = getattr(node, "lineno", 0)
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            module = [node.module or ""] if isinstance(node, ast.ImportFrom) else [a.name for a in node.names]
+            for name in module:
+                if name not in ALLOWED_IMPORTS:
+                    problems.append(f"line {line}: import of '{name}' is not allowed")
+            if isinstance(node, ast.ImportFrom):       # `from pandas import read_csv` is the same as `pd.read_csv`
+                for a in node.names:
+                    if a.name == "*" or (_bad_attr(a.name) and (node.module, a.name) != ("lib", "indicators")):
+                        problems.append(f"line {line}: import of '{a.name}' from '{node.module}' is not allowed")
+        elif isinstance(node, ast.Name) and (node.id in BANNED_NAMES or node.id.startswith("__")):
+            problems.append(f"line {line}: use of '{node.id}' is not allowed")
+        elif isinstance(node, ast.Attribute) and _bad_attr(node.attr):
+            problems.append(f"line {line}: use of '.{node.attr}' is not allowed")
+        elif isinstance(node, (ast.Match, ast.Global, ast.Nonlocal)):
+            problems.append(f"line {line}: this statement is not allowed in a strategy")
     return problems
 
 

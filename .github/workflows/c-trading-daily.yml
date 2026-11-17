@@ -4,14 +4,16 @@ name: c-trading-daily
 #   2. Paper stage and health watch for every strategy that passed, and for near misses on watch.
 # A schedule always runs the copy of this file on main, with the engine from main.
 # From the factory-state branch come each strategy's strategy.py and params.yaml and the run state
-# (items, trial log, gate files). Strategy code runs here without a repository token.
+# (items, trial log, gate files).
+# Two jobs. `judge` runs strategy code and can only read the repository. `record` holds the write
+# permission, never runs strategy code, and commits only the result files the judge handed over.
 # Prices after the development cutoff are downloaded here and nowhere else.
 on:
   workflow_dispatch:
   schedule:
     - cron: "23 5 * * *"     # yesterday's bars are published about three hours after midnight UTC
 permissions:
-  contents: write
+  contents: read
 concurrency: c-trading-daily
 env:
   FACTORY: factories/c-trading
@@ -39,7 +41,10 @@ jobs:
           for p in sorted((state / "state" / "items").glob("*.json")):
               if not re.fullmatch(r"[a-z0-9-]+", p.stem):
                   continue
-              stage = json.loads(p.read_text()).get("stage")
+              try:
+                  stage = json.loads(p.read_text()).get("stage")
+              except ValueError:
+                  continue
               sat = (state / "exam" / f"{p.stem}.json").exists()
               if stage == "optimised" and not sat:
                   exam.append(p.stem)
@@ -72,20 +77,44 @@ jobs:
             python -m engine.exam "$id" 2> /dev/null || true
           done
           python -m engine.paper 2> /dev/null
-      - name: Record the results
+      - name: Hand over what the judge wrote
         if: always() && steps.find.outputs.all != ''
-        working-directory: state-branch
-        env:
-          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p out/state
+          for d in exam paper health state/items state/gate state/trials; do
+            [ -d "$STATE/$d" ] && cp -r "$STATE/$d" "out/$d"
+          done
+          true
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.find.outputs.all != ''
+        with:
+          name: judge-results
+          path: out
+          retention-days: 3
+    outputs:
+      ran: ${{ steps.find.outputs.all != '' }}
+  record:
+    needs: judge
+    if: always() && needs.judge.outputs.ran == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: factory-state
+      - uses: actions/download-artifact@v4
+        with:
+          name: judge-results
+          path: factories/c-trading
+      - name: Record the results
         run: |
           git config user.name "trading factory judge"
           git config user.email "actions@users.noreply.github.com"
-          # Only what the judge writes. Nothing else that appeared in this folder is committed.
           for d in exam paper health state/items state/gate state/trials; do
             [ -e "factories/c-trading/$d" ] && git add -A "factories/c-trading/$d"
           done
           git diff --cached --quiet && exit 0
           git commit -q -m "Exam and paper results"
-          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}"
-          git pull -q --rebase "$remote" factory-state
-          git push -q "$remote" HEAD:factory-state
+          git pull -q --rebase
+          git push -q

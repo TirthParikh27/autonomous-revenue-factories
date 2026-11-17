@@ -52,7 +52,7 @@ Left of the line, agents work in seconds on development data. Right of the line,
 A strategy is one folder, `strategies/<id>/`:
 
 - `card.md`: the idea, the reason someone pays for this edge, the markets, the parameter ranges, and what result would kill it. Written before the first test.
-- `strategy.py`: one function, `weights(bars, params)`. It returns the target weight of every symbol at every bar, decided with data up to and including that bar. It may import only numpy, pandas and the shared indicator library. A lint step refuses the imports, names and numpy or pandas calls that reach files, the network, the clock or randomness. A lint is not a sandbox, so the reviewer agent also reads the code, and the judge's job runs it with no repository token.
+- `strategy.py`: one function, `weights(bars, params)`. It returns the target weight of every symbol at every bar, decided with data up to and including that bar. It may import only numpy, pandas and the shared indicator library. A lint step refuses the imports, names and numpy or pandas calls that reach files, the network, the clock or randomness. A lint is not a sandbox, so the reviewer agent also reads the code, and the judge's job runs it with read-only access to the repository. A second job, which never runs strategy code, commits the result files.
 - `params.yaml`: the dataset, the declared parameter ranges, the chosen parameters, and optionally the strategy's own no-trade band.
 
 The engine trades a target at the next bar's open, so a strategy cannot trade on a price it has just seen. The function sees the whole history at once for speed, so the leak test (4.2) proves it only used the past.
@@ -171,6 +171,7 @@ Only these are enforced in code. Everything else is guidance that a run weighs a
 |---|---|
 | Paper only | No broker account or key of any kind exists. The paper stage is a calculation |
 | Agents cannot edit the engine, gate rules, trial log or exam results | Path deny rules in `.claude/settings.json`, and the exam job uses `main`'s copy |
+| Strategy code cannot reach files, the network, the clock or the repository | Lint on imports, names and numpy or pandas calls; the reviewer agent reads the code; the job that runs it has read-only access. This is defence in depth, not a sandbox |
 | Agents evaluate strategies only through the engine | The allow list permits `python3 -m engine` and no other program |
 | Prices after the cutoff are never where agents work | They are fetched only inside the judge's GitHub job |
 | Every trial is counted | The engine logs before it prints, and the exam fails if trials are missing |
@@ -183,7 +184,7 @@ Known gap: an agent with web access could look up recent prices itself. Deny rul
 
 The judge is tested before any strategy is mined, and again after every engine change. Results are in `engine/VALIDATION.json`.
 
-| Test | Result (17 Nov 2026, engine version 1) |
+| Test | Result (17 Nov 2026, engine version 3) |
 |---|---|
 | Matches an independent backtest | The engine's equity curve matches a hand-written loop to within 0.1% (`tests/test_judge.py`) |
 | Catches look-ahead | A strategy using the next bar, and one normalising with the full-sample mean, both fail the leak test |
