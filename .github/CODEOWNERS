@@ -10,6 +10,12 @@
 /factories/*/fetch_reviews.py       @TirthParikh27
 /factories/*/.claude/               @TirthParikh27
 /factories/*/.mcp.json              @TirthParikh27
+/factories/*/tools/                 @TirthParikh27
+# Stop and freeze files: only the operator restarts a factory.
+/STOP                               @TirthParikh27
+/factories/*/STOP                   @TirthParikh27
+/factories/*/state/STOP             @TirthParikh27
+/factories/*/state/SUBMISSIONS_FROZEN @TirthParikh27
 /factories/*/escalations/approved/  @TirthParikh27
 /factories/*/escalations/rejected/  @TirthParikh27
 /tools/                             @TirthParikh27

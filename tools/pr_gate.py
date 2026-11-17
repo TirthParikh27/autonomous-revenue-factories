@@ -103,9 +103,11 @@ def main() -> int:
 
     # The list on the base branch counts too, as on GitHub, so a pull request cannot unprotect its own files.
     on_base = subprocess.run(
-        ["git", "show", f"{args.base}:.github/CODEOWNERS"], cwd=ROOT, capture_output=True, text=True,
+        ["git", "show", f"{args.base}:.github/CODEOWNERS"],
+        cwd=ROOT, capture_output=True, text=True, errors="replace",
     ).stdout
-    patterns = protected_patterns(on_base + "\n" + (ROOT / ".github" / "CODEOWNERS").read_text())
+    here = ROOT / ".github" / "CODEOWNERS"
+    patterns = protected_patterns(on_base + "\n" + (here.read_text() if here.exists() else ""))
     changes = parse_name_status(git_diff(args.base, "-z", "--name-status", "-M100%"))
     untested, protected = judge(changes, patterns)
     opt_outs = coverage_opt_outs(git_diff(

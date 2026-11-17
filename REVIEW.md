@@ -56,7 +56,8 @@ The author's session merges its own pull request once CI is green and the verdic
 - publishes, launches or submits anything outside the repository (ads, store releases, posts, emails);
 - adds, reads or changes how keys and credentials are handled;
 - was opened by a factory run;
-- changes a file listed in [`.github/CODEOWNERS`](.github/CODEOWNERS) on `main` or in the pull request. These are each factory's rules and budgets, guard checks, publishers, CI and these review rules. `python tools/pr_gate.py` names them.
+- removes a stop or freeze file, or otherwise restarts something Tirth stopped;
+- changes a file listed in [`.github/CODEOWNERS`](.github/CODEOWNERS) on the base branch or in the pull request. These are each factory's rules and budgets, guard checks, publishers, CI and these review rules. `python tools/pr_gate.py` names them.
 
 When in doubt, it waits.
 

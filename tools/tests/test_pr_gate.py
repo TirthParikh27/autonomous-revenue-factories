@@ -83,8 +83,8 @@ def test_end_to_end_in_a_real_repository(tmp_path, monkeypatch, capsys):
     (tmp_path / "factories" / "caf\u00e9").mkdir()
     (tmp_path / "factories" / "caf\u00e9" / "budget.yaml").write_text("cap: 1\n")
     (tmp_path / "run.py").write_text("print('hi')\n")
-    # The change also drops the rule that protects what it edits. The base's list still applies.
-    (tmp_path / ".github" / "CODEOWNERS").write_text("/docs/ @op\n")
+    # The change also deletes the list that protects what it edits. The base's list still applies.
+    (tmp_path / ".github" / "CODEOWNERS").unlink()
     (tmp_path / "na\u00efve.py").write_text("def f():  # pragma: no cover\n    return 1\n")
     git("add", "-A")
     git("commit", "-q", "-m", "code only")
