@@ -86,7 +86,7 @@ def preflight(repo_root: Path, factory_dir: Path, state_dir: Path, budget: dict,
         raise Refused(f"monthly token cap reached: {spent.get('tokens', 0.0):.2f} of {monthly.get('tokens')}")
     if spent["total"] >= float(monthly.get("total", 0)):
         raise Refused(f"monthly total cap reached: {spent['total']:.2f} of {monthly.get('total')}")
-    return caps
+    return {"model": budget.get("model"), **caps}
 
 
 def build_command(stage: str, caps: dict, run_id: str, factory_dir: Path | None = None) -> list[str]:
@@ -113,7 +113,7 @@ def build_command(stage: str, caps: dict, run_id: str, factory_dir: Path | None 
         "--max-turns", str(caps["max_turns"]),
         "--max-budget-usd", str(caps["max_budget_usd"]),
         "--permission-prompts", "none",
-    ] + tools
+    ] + (["--model", str(caps["model"])] if caps.get("model") else []) + tools
 
 
 def evidence_ok(report: Path) -> bool:

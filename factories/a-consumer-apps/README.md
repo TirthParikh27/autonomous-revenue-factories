@@ -32,3 +32,12 @@ The wrapper refuses to start if a `STOP` file exists or the month's budget in `b
 4. Store: an Apple developer account. You submit every build yourself.
 
 Live mode for `publish.py` is added when the first two exist.
+
+## Not built yet, on purpose
+
+These are in the architecture and wait until they are needed:
+
+- Schedules. Every stage is run by hand first.
+- The daily Slack digest. Runs write to `outbox/pending.jsonl`; nothing sends it yet.
+- Tool hooks on ad and Postiz calls. They matter once live mode exists.
+- Branch protection on `main` and a `factory-state` branch rule. These are GitHub settings only you can change.

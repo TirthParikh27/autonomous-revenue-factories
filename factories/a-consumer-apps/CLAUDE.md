@@ -113,7 +113,7 @@ Deterministic gates:
 - Deny rules for `adb`, device automation tools, and any store submission command.
 - A `PreToolUse` hook that blocks creation of `apps/<id>/` unless the item's stage is `demand_validated` or later.
 - A hook limiting the scout agent's writes to `state/scout/` and removing all connectors with write access from scout runs.
-- `checks/cadence` run by the wrapper before `release-readiness`, reading submission history from `state/`, not from the model. `checks/metadata_similarity` and `checks/overlap` run in CI.
+- `checks/cadence` run in the `release-readiness` stage, reading submission history from `state/`, not from the model. The wrapper itself refuses build and release runs while `state/SUBMISSIONS_FROZEN` exists. `checks/metadata_similarity` and `checks/overlap` run in CI.
 - A `PreToolUse` hook on every ad platform call that rejects any payload whose status is not paused, any budget above the tranche ceiling in `budget.yaml`, and any update to an existing campaign.
 - Landing pages deploy only from CI on a merge to `main`. No agent session holds the hosting token.
 - CI as the only source of test results. A `Stop` hook on build runs that executes the real test command.
