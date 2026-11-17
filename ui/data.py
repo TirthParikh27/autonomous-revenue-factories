@@ -23,6 +23,29 @@ def read_json(path: Path):
         raise ValueError(f"{path}: {err}") from err
 
 
+def read_item(path: Path) -> dict:
+    """An item file, checked for the fields the pages rely on, so a bad one is named instead of half-drawn."""
+    item = read_json(path)
+    if not isinstance(item, dict) or not all(isinstance(item.get(key), str) for key in ("id", "stage")):
+        raise ValueError(f"{path}: an item needs an id and a stage")
+    if not isinstance(item.get("history") or [], list) or not isinstance(item.get("blocked_by") or "", str):
+        raise ValueError(f"{path}: history must be a list and blocked_by a path")
+    if not isinstance(item.get("spend_usd", 0), (int, float)):
+        raise ValueError(f"{path}: spend_usd must be a number")
+    return item
+
+
+def read_caps(path: Path) -> dict:
+    """budget.yaml's monthly dollar caps. Other settings kept beside them, such as warn_at_fraction, are not caps."""
+    if not path.exists():
+        return {}
+    try:
+        caps = (yaml.safe_load(path.read_text()) or {}).get("monthly_caps_usd") or {}
+        return {kind: float(cap) for kind, cap in caps.items() if not kind.endswith("_fraction")}
+    except (yaml.YAMLError, AttributeError, TypeError, ValueError) as err:
+        raise ValueError(f"{path}: {err}") from err
+
+
 def read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
@@ -53,7 +76,7 @@ def skill_of(run: str | None) -> str | None:
 
 def reached(item: dict) -> list[str]:
     """Every real stage the item has been in, oldest first."""
-    stages = [step["to"] for step in item.get("history", []) if step.get("to") not in PARKED]
+    stages = [step["to"] for step in item.get("history") or [] if step.get("to") not in PARKED]
     if item["stage"] not in PARKED and item["stage"] not in stages:
         stages.append(item["stage"])
     return stages
@@ -99,15 +122,13 @@ def paper_line(folder: Path, item_id: str) -> list[float] | None:
 
 
 def factory(folder: Path, root: Path, shown: dict, now: dt.datetime) -> dict:
-    items = [read_json(path) for path in sorted((folder / "state" / "items").glob("*.json"))]
+    items = [read_item(path) for path in sorted((folder / "state" / "items").glob("*.json"))]
     cols = columns(shown.get("stages", []), items)
     col_of_stage = {stage: col["id"] for col in cols for stage in col["from"]}
     col_of_skill = {skill: col["id"] for col in cols for skill in col["runs"]}
     ledger = read_jsonl(folder / "ledger" / "spend.jsonl")
     outbox = read_jsonl(folder / "outbox" / "pending.jsonl")
-    caps = {}
-    if (folder / "budget.yaml").exists():
-        caps = (yaml.safe_load((folder / "budget.yaml").read_text()) or {}).get("monthly_caps_usd") or {}
+    caps = read_caps(folder / "budget.yaml")
 
     approvals, seen = {}, {}
     for path in sorted((folder / "escalations" / "open").glob("*.md")):
@@ -131,7 +152,7 @@ def factory(folder: Path, root: Path, shown: dict, now: dt.datetime) -> dict:
         packet = approvals.get(Path(item.get("blocked_by") or "").name)
         killed = item["stage"] == "killed"
         waiting = item["stage"] == "awaiting_human"
-        history = item.get("history", [])
+        history = item.get("history") or []
         scores = item.get("scores") or {}
         # an item waiting on a decision sits at the stage whose run asked for it
         asked_by = next((skill_of(step.get("run")) for step in reversed(history) if step.get("to") == "awaiting_human"), None)
@@ -200,6 +221,14 @@ def factory(folder: Path, root: Path, shown: dict, now: dt.datetime) -> dict:
     }
 
 
+def read_factory(folder: Path, root: Path, shown: dict, now: dt.datetime) -> dict:
+    """factory(), with any file of the wrong shape reported as a ValueError that names the factory."""
+    try:
+        return factory(folder, root, shown, now)
+    except (KeyError, TypeError, AttributeError) as err:
+        raise ValueError(f"{folder}: a file has the wrong shape ({type(err).__name__}: {err})") from err
+
+
 def build(root: Path, now: dt.datetime | None = None) -> dict:
     """Everything the pages show, for the factories under root/factories."""
     now = now or dt.datetime.now().astimezone()
@@ -210,5 +239,5 @@ def build(root: Path, now: dt.datetime | None = None) -> dict:
     ]
     return {
         "asOf": now.strftime("%d %b %Y, %I:%M %p").lstrip("0"),
-        "factories": [factory(folder, root, shown.get(folder.name, {}), now) for folder in folders],
+        "factories": [read_factory(folder, root, shown.get(folder.name, {}), now) for folder in folders],
     }

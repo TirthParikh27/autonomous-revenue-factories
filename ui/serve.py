@@ -62,10 +62,13 @@ class Handler(SimpleHTTPRequestHandler):
             return self.reply(403, {"error": "this UI only answers on 127.0.0.1"})
         if self.path.split("?")[0] != "/api/data":
             return super().do_GET()
+        self.send_data()
+
+    def send_data(self) -> None:
         try:
             self.reply(200, data.build(self.root))
-        except (ValueError, KeyError, OSError) as err:      # a broken state file: say which, do not guess
-            self.reply(500, {"error": f"{type(err).__name__}: {err}"})
+        except (ValueError, OSError) as err:      # a broken state file: say which, do not guess
+            self.reply(500, {"error": f"Could not read the factory files. {err}"})
 
     def do_POST(self) -> None:
         parts = self.path.strip("/").split("/")
@@ -86,7 +89,7 @@ class Handler(SimpleHTTPRequestHandler):
             return self.reply(409, {"error": str(err)})
         except ValueError as err:
             return self.reply(400, {"error": str(err)})
-        self.reply(200, data.build(self.root))
+        self.send_data()                        # the switch has moved: answer with the files as they now are
 
     def log_message(self, *args) -> None:
         pass

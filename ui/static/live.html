@@ -932,7 +932,7 @@ function buildLabels() {
       const its = alive(f).filter(it => it.stage === s.id);
       if (its.length) {
         const cw = label("lv-fac", [x, 0, f.z], phone ? "c-right" : "c-below",
-          `<div class="chips">${its.map(it => `<button class="chip s-${it.state}${st.sel === it.id ? " sel" : ""}${hlItems && !hlItems.includes(it.id) ? " dim" : ""}" type="button" data-i="${it.id}"><i></i><span>${esc(it.name)}<small>${esc(chipFact(it))}</small></span>${phone ? "" : sparkline(it.pnl, 46, 22, "mini")}</button>`).join("")}</div>`, phone ? 26 : 76 + (off[s.id] || 0));
+          `<div class="chips">${its.map(it => `<button class="chip s-${it.state}${st.sel === it.id ? " sel" : ""}${hlItems && !hlItems.includes(it.id) ? " dim" : ""}" type="button" data-i="${esc(it.id)}"><i></i><span>${esc(it.name)}<small>${esc(chipFact(it))}</small></span>${phone ? "" : sparkline(it.pnl, 46, 22, "mini")}</button>`).join("")}</div>`, phone ? 26 : 76 + (off[s.id] || 0));
         cw.querySelectorAll("[data-i]").forEach(c => c.onclick = () => openItem(c.dataset.i));
       }
     });
@@ -1004,7 +1004,7 @@ function show(html) {
   d.classList.add("on"); d.setAttribute("aria-hidden", "false"); $("dx").onclick = closeDetail;
 }
 function closeDetail() { const d = $("detail"); d.classList.remove("on"); d.setAttribute("aria-hidden", "true"); if (st.hl || st.sel) { st.hl = null; st.sel = null; buildLabels(); hud(); } }
-const histHtml = h => h ? `<ul class="hist">${h.map(x => `<li><time>${x[0]}</time><div><b>${esc(x[1])}</b><span>${esc(x[2])}</span></div></li>`).join("")}</ul>` : "";
+const histHtml = h => h ? `<ul class="hist">${h.map(x => `<li><time>${esc(x[0])}</time><div><b>${esc(x[1])}</b><span>${esc(x[2])}</span></div></li>`).join("")}</ul>` : "";
 function openItem(id) {
   const f = st.fac, it = f.items.find(i => i.id === id), ci = f.stages.findIndex(s => s.id === it.stage);
   st.sel = id; st.hl = null; buildLabels(); hud();

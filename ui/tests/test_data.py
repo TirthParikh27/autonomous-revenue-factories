@@ -55,7 +55,7 @@ def root(tmp_path):
         {"at": "2026-11-17T07:56:08Z", "run": RUN, "text": "demand-test passed ($1.01)"},
         {"at": "2026-11-17T08:00:00Z", "run": None, "text": "digest sent"},
     ]))
-    (apps / "budget.yaml").write_text("monthly_caps_usd:\n  tokens: 300\n  ads: 0\n  total: 420\n")
+    (apps / "budget.yaml").write_text("monthly_caps_usd:\n  tokens: 300\n  ads: 0\n  total: 420\n  warn_at_fraction: 0.8\n")
     (tmp_path / "factories" / "_shared").mkdir()
     (tmp_path / "factories" / "g-marketplace-tools").mkdir()
     (tmp_path / "factories" / "b-ecommerce").mkdir()
@@ -97,7 +97,7 @@ def test_a_factory_is_read_from_its_files(root):
     assert (newest["skill"], newest["stage"], newest["cost"]) == ("wrapper", None, 0)
     assert (demand["stage"], demand["cost"], demand["failed"]) == ("demand", 1.01, False)
     assert (mining["stage"], mining["failed"]) == ("mine", True)
-    # October's line is not this month's spend, and each cap in budget.yaml gets its own line
+    # October's line is not this month's spend. Each dollar cap in budget.yaml gets its own line; warn_at_fraction is not one
     assert apps["spend"] == {"month": 33.01, "monthBudget": 420, "runs": 2, "caps": [
         {"kind": "tokens", "spent": 3.01, "cap": 300}, {"kind": "ads", "spent": 30, "cap": 0}]}
 
@@ -202,3 +202,45 @@ def test_the_real_config_matches_the_real_factories():
             missing = [skill for col in shown.get("stages", []) for skill in col.get("runs", []) if not (skills / skill).exists()]
             assert not missing, (name, missing)
     assert [f["id"] for f in data.build(repo, NOW)["factories"]]     # the checkout itself reads without error
+
+
+@pytest.mark.parametrize("path, text", [
+    ("state/items/list.json", "[1, 2]"),
+    ("state/items/no-stage.json", '{"id": "x"}'),
+    ("state/items/null-history.json", '{"id": "x", "stage": "discovered", "history": 7}'),
+    ("state/items/odd-block.json", '{"id": "x", "stage": "discovered", "blocked_by": 3}'),
+    ("state/items/odd-spend.json", '{"id": "x", "stage": "discovered", "spend_usd": "1"}'),
+    ("state/items/odd-step.json", '{"id": "x", "stage": "discovered", "history": ["moved"]}'),
+    ("budget.yaml", "monthly_caps_usd: [unclosed"),
+    ("budget.yaml", "monthly_caps_usd:\n  ads: lots\n"),
+    ("budget.yaml", "- a list\n"),
+    ("ledger/spend.jsonl", '{"at": "2026-11-17T07:00:00Z", "usd": "1.5"}\n'),
+    ("ledger/spend.jsonl", "[]\n"),
+    ("outbox/pending.jsonl", '{"at": 5, "text": "x"}\n'),
+])
+def test_a_file_of_the_wrong_shape_is_an_error_that_says_where(root, path, text):
+    (root / "factories" / "a-consumer-apps" / path).write_text(text)
+    with pytest.raises(ValueError, match="a-consumer-apps"):
+        data.build(root, NOW)
+
+
+def test_an_item_with_null_history_still_reads(root):
+    item(root / "factories" / "a-consumer-apps", "bare", "discovered", [])
+    path = root / "factories" / "a-consumer-apps" / "state" / "items" / "bare.json"
+    path.write_text(json.dumps({"id": "bare", "stage": "discovered", "history": None, "blocked_by": None}))
+    assert by_id(data.build(root, NOW)["factories"][0]["items"])["bare"]["stage"] == "mine"
+
+
+def test_the_pages_escape_what_they_put_in_attributes():
+    """Item files come from factory runs. An id holding HTML must not become script in the operator's page,
+    where it could flip a switch. Every value a page writes into an attribute is escaped or is not file text."""
+    import re
+    plain = re.compile(r'''[\w.\s?:"'=!<>&|+*(),/-]*''')      # flags, counts and sizes: no text from a file
+    from_files = re.compile(r"\.(id|name|short|title|detail|summary|text|file|why|category|platform|skill|expires|gate|kind|killed|blockedBy)\b|\[\d\]")
+    for page in sorted((data.CONFIG.parent / "static").iterdir()):
+        for value in re.findall(r'''="\$\{((?:[^{}]|\{[^{}]*\})*)\}''', page.read_text()):
+            if value.startswith("esc("):
+                continue
+            assert plain.fullmatch(value), (page.name, value)
+            assert not from_files.search(re.sub(r"[\w.]+ ?[=!]== ?[\w.]+", "", value)), (page.name, value)
+    assert 'data-i="${esc(it.id)}"' in (data.CONFIG.parent / "static" / "live.html").read_text()

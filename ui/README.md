@@ -13,13 +13,13 @@ Then open http://127.0.0.1:8765. Without `--root` it reads this checkout. Run st
 
 ## What it reads
 
-Only the files in [`factories/_shared/CONVENTIONS.md`](../factories/_shared/CONVENTIONS.md): `state/items/`, `escalations/open/`, `ledger/spend.jsonl`, `outbox/pending.jsonl`, `budget.yaml`, STOP files, and c-trading's `paper/`. Spend is counted per UTC month, as the run wrapper counts it. [`data.py`](data.py) turns them into one dict and the pages draw it. A file that cannot be read is an error naming the file, not a gap in the picture.
+Only the files in [`factories/_shared/CONVENTIONS.md`](../factories/_shared/CONVENTIONS.md): `state/items/`, `escalations/open/`, `ledger/spend.jsonl`, `outbox/pending.jsonl`, `budget.yaml`, STOP files, and c-trading's `paper/`. Spend is counted per UTC month, as the run wrapper counts it. Budgets and caps are the ones in the `budget.yaml` of the checkout it reads, which on `factory-state` can lag `main`. [`data.py`](data.py) turns them into one dict and the pages draw it. A file that cannot be read is an error naming the file, not a gap in the picture.
 
 [`factories.yaml`](factories.yaml) names each factory and orders its stage columns. A stage's `id` picks the machine the Live view draws for it, and `short` is its label in tight places. A new factory folder appears without an entry: its columns come from the stages its items have been through. A factory with no items and no runs shows as planned.
 
 ## The on/off switch
 
-Off writes `factories/<name>/STOP`, the file every run checks before it starts. On asks first, then removes that file, but only if the UI wrote it. The run wrapper writes the same file after three failed runs in a row, and the UI will not remove that one: it shows what the file says, and you remove it by hand once you have read it. The root `STOP` is never touched. While any STOP file exists the factory stays off and the UI says which file holds it.
+Off writes `factories/<name>/STOP`, the file every run checks before it starts. On asks first, then removes that file, but only if the UI wrote it. The run wrapper writes the same file after three failed runs in a row (or `<state-root>/STOP` when it is run with `--state-root`), and the UI will not remove that one: it shows what the file says, and you remove it by hand once you have read it. The root `STOP` is never touched. While any STOP file exists the factory stays off and the UI says which file holds it.
 
 The switch changes the file in the checkout the server reads. A scheduled run in the cloud sees it once that checkout is committed and pushed.
 
