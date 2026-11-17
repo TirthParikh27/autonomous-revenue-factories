@@ -1,157 +1,216 @@
-# Factory C: Trading strategy research factory
+# Factory C: Trading strategy factory
 
-Status: blueprint. Nothing is built or run. Date: 16 November 2026.
-Nothing in this factory is financial advice. It is an engineering and research harness for the operator's own account.
+Status: architecture, revision 2 (17 November 2026). Nothing is built or run.
+Nothing in this factory is financial advice. It is a research harness on paper accounts.
 
-## 1. Purpose and honest evidence summary
+This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md). The other files in this folder (`CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, `skills/`, `agents/`) still describe the earlier blueprint and are rewritten in build step 1.
 
-The factory generates trading hypotheses, turns them into deterministic strategy code, tests them under strict overfitting controls, and forward-tests survivors on a paper account. The LLM is a researcher and code writer. It is never the trader, and no model call sits in the order path.
+## 1. Purpose
 
-What the research found (`factory_c_algo_trading.md`, 16 Nov 2026):
+The factory continuously proposes, tests, optimises and maintains trading strategies on 15-minute, hourly and daily data. It tells the operator about a strategy only when it can state, with evidence, how likely that strategy is to be real.
 
-- No verifiable live track record of a solo developer running a "generate, backtest, iterate" LLM loop to sustained net profit was found.
-- The best academic test read (arXiv 2505.07078, 2004 to 2024, survivorship-corrected) found buy-and-hold significantly outperformed the LLM agents tested, with no significant alpha. Published results shrink or reverse as the test window lengthens.
-- The only real-money public evidence (Alpha Arena) has the LLM as the trader. Four of six models lost 42% to 59% in about 17 days (sources conflict on the exact loss figures). In Season 1.5 (Nov to Dec 2025) 6 of 32 accounts ended in profit and the combined pool fell about 26% in two weeks (secondary sources). Season 2 had not run as of November 2026. That is why this factory keeps the model out of the order path.
-- One practitioner found 14 of 20 LLM-generated strategies were the same mean-reversion idea.
-- Retail base rates are poor (97% of persistent day traders lost money in the best long-run dataset read).
+The product is the process. Profit is not the goal. No real money is involved.
 
-The most likely honest output of this factory is "no strategy passed". That is a valid, reported result, not a failure of the run. Paper profit is never revenue.
+Three findings from the research shape everything below:
+
+- **Testing many strategies manufactures false winners.** With five years of daily data, about 45 variations are enough to produce a Sharpe of 1 by luck. So every trial is counted and the bar rises with the count.
+- **Models are good builders and poor judges.** Independent audits rejected nearly everything LLM agents found, and agents game what they can touch. So a fixed engine judges, and models only propose, build and diagnose.
+- **Paper trading cannot prove profit quickly.** A Sharpe-1 strategy needs about three years to confirm. So paper trading checks that a strategy runs correctly and behaves as predicted, and reports say exactly that.
+
+"Nothing passed" is the most likely result of any run. It is a correct result and is reported as one.
 
 ## 2. Scope
 
-- In scope: US-listed equities and ETFs, long only, no leverage, daily bars, orders placed once per trading day, on an Alpaca paper account.
-- Default universe: a fixed list of large, liquid, broad ETFs chosen by the operator. Reason: the notes could not confirm that any data source available here includes delisted single stocks, and survivorship-free constituents are required for honest single-stock tests. A fixed ETF list chosen today still carries a mild selection bias, which every report must state.
-- Out of scope: prediction markets. Verified 2026-11-16: Polymarket is on ACMA's blocked gambling list, Kalshi's Member Agreement names Australia as a Restricted Jurisdiction, and ASIC's statement of 30 Oct 2026 says prediction market contracts "have all the features of a bet". Never proposed.
-- Later, separately approved extensions only (trigger `F-VENUE-1`): crypto perps, single stocks, shorting, margin, options, intraday strategies.
-- Live trading: not built. Live keys do not exist in the factory's environment. See `F-CAP-1`.
+- **Timeframe:** 15-minute, hourly and daily bars, holding periods from under an hour to a few weeks. All three data sources provide 15-minute history. The shorter the bar, the larger the share of return that costs take, so a 15-minute strategy has to clear the same cost tests with far less room.
+- **Markets:** US ETFs and spot crypto (Alpaca paper account), FX (OANDA demo account).
+- **Data:** Alpaca bars (US, from 2016), OANDA candles (FX, from 2005), Binance public archive (crypto). Pulled by scripts into fixed snapshots.
+- **Strategy families:** any that bar data can test honestly. Trend, momentum, mean reversion, carry, breakout, seasonality, cross-market signals, and combinations.
+- **Out of scope:** real money; anything faster than 15-minute bars or dependent on speed (arbitrage across venues, market making); single stocks until survivorship-free data is bought; crypto derivatives until a paper venue open to Australians is confirmed; prediction markets. Adding any of these is escalation `F-VENUE-1`.
 
-## 3. Trust boundaries (the design in one table)
-
-| Component | Who writes it | Agent access |
-|---|---|---|
-| `strategies/<id>/` (hypothesis card, strategy module, params, unit tests) | Builder agent, on `claude/` branches | Read and write |
-| `engine/` (backtest engine, cost model, walk-forward, PBO, deflated Sharpe, gate checker, similarity check, paper runner, journal script) | Operator, reviewed by hand | Read only. Edits denied |
-| Market data, development window | Data job in CI | None. The agent never sees real price data |
-| Market data, holdout window | Data job in CI, separate storage | None, and CI returns pass or fail only |
-| `registry/trials.jsonl` (append-only, hash-chained) | CI only | Read only |
-| `results/<trial id>/metrics.json`, `gate.json` | CI only | Read only |
-| `paper/deployments.yaml` on `main` | Operator merge | Proposes by pull request |
-| `paper/journal/<date>.json` | Journal script in CI | Read only |
-| Alpaca paper API keys | CI secrets, usable only by workflows on `main` | None |
-
-Consequence: the agent cannot run a backtest that is not counted. Every look at real data is a CI job that appends a trial to the registry before it returns anything.
-
-The backtest engine itself is a build-time decision for the operator. The notes did not verify the maintenance status of any open-source Python backtester, and QuantConnect's remote MCP needs a paid agent node and the free A-MICRO node cannot connect (verified 2026-11-16; prices from a secondary source only). The blueprint only fixes the contract: the engine takes a strategy module, a params file and a data snapshot id, and writes `metrics.json` and a registry line. Formulas for PBO and the deflated Sharpe ratio must be implemented from the primary papers (Bailey and Lopez de Prado), which the research did not read. Do not implement them from this document.
-
-## 4. State machine
-
-Item = one strategy (`state/items/<id>.json`, format in `factories/_shared/CONVENTIONS.md`). Extra fields: `mechanism`, `cluster`, `parent` (for evolved variants), `trials_used`, `paper_start`, `paper_clock_restarts`.
-
-| Stage (item moves to) | Input | Process | Tools | Deterministic check (outside the model) | Output artifact | Run by | Scheduler and cadence |
-|---|---|---|---|---|---|---|---|
-| **Input:** `hypothesized` | Mechanism taxonomy, registry, `journal/LESSONS.md`, killed items | Write up to 3 hypothesis cards, each answering "who pays you and why", with rules, parameter ranges and the kill result fixed before any test | Web search for the scout only (Claude Code built-in search, or the Parallel Search or Exa connector, one click), Read, Write | `engine/similarity_check` on the card: mechanism quota and text similarity against every card in the registry. `engine/card_schema` validation | `strategies/<id>/hypothesis.md`, item file | skill `hypothesize`, agent `hypothesis-scout` | Cloud scheduled task, weekly |
-| **Process:** `implemented` | One `hypothesized` card | Write a pure strategy function against the engine interface, plus unit tests on synthetic fixture data. Open a PR with a trial request | Read, Write, Edit, Bash (pytest on fixtures), `gh` | CI: unit tests, import allowlist lint (no file, network or clock access in strategy code), look-ahead audit script, card-to-code parameter match | PR on `claude/strategy-<id>`, `trials/requests/<trial id>.yaml` | skill `implement`, agent `strategy-builder`, then `overfit-verifier` | Cloud scheduled task, daily, only if the queue is non-empty |
-| **QA / Backtest:** `validated` or `killed` | Trial request on a branch | CI runs the engine on development data with costs and slippage, walk-forward, then PBO and deflated Sharpe over all logged trials, then the return-correlation cluster check. If every gate passes, CI runs the single holdout evaluation | GitHub Actions only. No model | `engine/gate_check` writes `gate.json` with pass or fail per gate. Thresholds in `budget.yaml` | Registry line, `results/<trial id>/metrics.json`, `gate.json` | GitHub Actions (backtest), then skill `backtest-validate` reads the verdict and moves state | Actions on trial request. Skill: cloud task, daily |
-| **Output:** `paper_trading` | `validated` item, approved `F-PAPER-1` | Open a PR adding the strategy to `paper/deployments.yaml`. After the operator merges, the deterministic runner trades it on Alpaca paper | `gh`, Read, Write. Runner: Python script in Actions with paper keys | Runner refuses any deployment whose code hash differs from the validated trial. Runner checks `STOP` before every order | Deployment PR, paper orders (placed by the runner, never by a model) | skill `paper-trade`, agent `paper-deployer`. Runner: GitHub Actions | Runner: every US trading day, before the open. Skill: cloud task, daily |
-| **Telemetry:** stays `paper_trading`, or `paper_passed`, or `killed` | Alpaca paper account: orders, fills, positions | Journal script pulls fills, compares each fill to the backtest's assumed price and cost, records heartbeat. Skill reads the journal and applies paper gates | Journal: Python script in Actions. Skill: Read, Write | `engine/paper_gate`: days, trade count, fill divergence, heartbeat, drawdown | `paper/journal/<date>.json`, `state/metrics/<date>.json` | GitHub Actions (journal), skill `paper-trade` | Journal: every US trading day after the close. Skill: daily |
-| **Self-improvement (strategy):** new variant item at `hypothesized` | A `validated` or `paper_trading` parent with trial budget left | Propose parameter variants inside the ranges declared on the card. Each variant is a new item and a counted trial | Read, Write, `gh` | Per-family and global trial budgets enforced by CI. Deflated Sharpe is recomputed with the larger trial count | Variant items, trial requests | skill `evolve`, agent `strategy-builder` | Cloud scheduled task, weekly |
-| **Capital gate:** `awaiting_human` | `paper_passed` item | Assemble the evidence packet for `F-CAP-1`. Nothing else | Read, Write, shared `escalate` skill | `engine/packet_check`: every number in the packet matches a file CI wrote | `escalations/open/<date>-live-<id>.md` | skill `capital-gate`, agent `overfit-verifier` for the packet audit | On demand, when an item reaches `paper_passed` |
-| **Self-improvement (factory):** no item move | Week of journals, registry, ledger, metrics, rejected packets | At most 3 proposals as PRs to skills or agents. Verify registry integrity. Report funnel counts | Read, Write, `gh`, Slack and Linear connectors | `engine/registry_verify` (hash chain, every request has a trial line). Wrapper checks | Weekly report, PRs, `journal/LESSONS.md` entries | skill `weekly-review` | Cloud scheduled task, weekly, Opus |
-
-Model routing follows ARCHITECTURE.md section 4.4. Sub-hourly work does not exist in this factory. The runner and journal are plain scripts.
-
-## 5. Allowed transitions
+## 3. The design in one picture
 
 ```
-(new)            -> hypothesized
-hypothesized     -> implemented | killed
-implemented      -> validated | killed | awaiting_human
-validated        -> awaiting_human            (F-PAPER-1, paper deployment)
-awaiting_human   -> paper_trading             (F-PAPER-1 approved and deployment PR merged)
-awaiting_human   -> live_small                (F-CAP-1 approved; live path is not built in this blueprint)
-awaiting_human   -> <stage named in the packet's "If you say no"> | killed
-paper_trading    -> paper_passed | killed | awaiting_human
-paper_passed     -> awaiting_human            (F-CAP-1)
-paper_passed     -> killed                    (operator rejects, or packet expires twice)
-live_small       -> awaiting_human            (any auto-pause trigger; resume is manual, F-LIVE-1)
-live_small       -> killed
-any stage        -> awaiting_human            (SEC-1, F-INT-1, F-LEGAL-*, GEN-1)
-any stage        -> killed
-killed           -> (terminal)
+            agents (local, fast)                     |        fixed judge
+                                                     |
+  idea-scout -> card -> build -> optimise on dev data --> final exam (GitHub job)
+                  ^        |           |             |        | pass
+                  |     reviewer   every run is      |        v
+                  |   (reject only) logged first     |   paper trading (scripts)
+                  |                                  |        |
+                  +---- maintain: diagnose, act <----+-- health watch (script)
+                                                     |        |
+                                                     |   winner packet -> operator
 ```
 
-A variant created by `evolve` is a new item with `parent` set. It enters at `hypothesized` and goes through every later stage on its own. There is no transition from `killed` to anything, and no transition that skips `validated` or `paper_passed`.
+Left of the line, agents work in seconds on development data. Right of the line, nothing is written by a model: the exam, the paper runner and the health watch are scripts.
 
-## 6. Gates and kill criteria
+## 4. Components
 
-Thresholds marked [playbook] come from one practitioner playbook read in the research (AI Fin Hub, "backtest to paper to live"). It is one source's rules of thumb, not an industry standard. Thresholds marked [proposed] are this blueprint's own conservative defaults with no external source. All numbers live in `budget.yaml`.
+### 4.1 Strategy and card
 
-| Stage | Kill when (any one) |
+A strategy is one folder, `strategies/<id>/`:
+
+- `card.md`: the idea, the reason someone pays for this edge, the markets, the parameter ranges, and what result would kill it. Written before the first test.
+- `strategy.py`: one function. It receives price history up to the current bar and the parameters, and returns target positions. It has no file, network or clock access.
+- `params.yaml`: the chosen parameters, inside the card's ranges.
+
+The engine acts on a target at the next bar. A strategy cannot trade on a price it has just seen, which blocks the commonest look-ahead by construction.
+
+### 4.2 Engine
+
+`engine/` is a small Python package in the repo. Agents can run it and read it. They cannot edit it.
+
+- **Backtester.** Positions lagged one bar, costs charged on every change in position, returns recorded per bar. A few hundred readable lines, cross-checked against vectorbt on a reference case.
+- **Cost model.** Fees, half the spread, slippage that grows with order size, and funding where it applies. One table per market, sourced from venue fee pages. Every result is also produced at raised costs.
+- **Leak test.** Changes data after a date and checks that decisions before that date do not move. Run on every candidate.
+- **Statistics.** Deflated Sharpe ratio using the effective number of trials, probability of backtest overfitting across a parameter sweep, sub-period stability, parameter-neighbourhood stability, comparison with buy-and-hold. Implemented from the primary papers and cross-checked against skfolio and purgedcv.
+- **Similarity check.** Compares a new strategy with every earlier one by rules and by return correlation, so a copy is not counted as a new idea.
+- **Trial log.** `trials/<dataset>.jsonl`, append-only. The engine writes the line before it prints a result. The run wrapper commits it.
+
+### 4.3 The gate
+
+The engine decides pass or fail. Its rules sit in `engine/gate.yaml`, which only the operator changes.
+
+A strategy passes when, on net-of-cost returns:
+
+1. The deflated Sharpe ratio shows the result is unlikely to be the best of that many lucky trials. The trial count is every logged trial on the same dataset, grouped by how correlated their returns are.
+2. It stays positive at raised costs.
+3. It beats buy-and-hold of the same markets after costs.
+4. The leak test passes.
+
+These four are coded. The remaining evidence is reported for judgement, not coded as thresholds: overfitting probability of the sweep, stability across sub-periods and neighbouring parameters, and trade count. The reviewer weighs it and can reject, with reasons written to the item file.
+
+### 4.4 Development data and the final exam
+
+- Development data stops at a cutoff date. It is the only market data that exists where agents work.
+- The held-back window, from the cutoff to today, exists only inside one GitHub Actions job.
+- An agent requests an exam by opening a pull request with the strategy folder. The job takes the engine and its own workflow from `main` and only the strategy folder from the branch. It checks that the strategy's local trials are in the log, re-runs the gate on development data, then runs the strategy once on the held-back window.
+- The job writes `exam/<id>.json`: pass or fail per check, nothing else. Agents never see held-back returns.
+- A failed strategy's family is closed. It cannot be resubmitted with tweaks.
+- The cutoff rolls forward on a schedule, releasing old exam data to development and adding new. Time supplies fresh exam data, and the paper period is the last unseen test.
+
+### 4.5 Paper trading
+
+Two scripts on a schedule matching each strategy's bar size. No model is involved. GitHub Actions schedules can start several minutes late, which is acceptable for hourly and daily bars. 15-minute strategies need a punctual scheduler, chosen in build step 6.
+
+- **Runner.** Loads each deployed strategy at the exact code version that passed the exam, computes targets, nets them across strategies, and places paper orders. Paper endpoints are hard-coded.
+- **Journal.** Pulls fills, re-prices each one with the engine's cost model, and attributes results to each strategy. Broker paper profit is treated as an upper bound and never reported as the result.
+
+A strategy that passes the exam goes to paper automatically. Paper costs nothing, so no approval is needed.
+
+### 4.6 Maintenance: the self-improving loop
+
+Each paper strategy has a predicted range: the spread of outcomes its backtest implies for the time it has been running.
+
+1. **Watch** (script, every day). Compares each strategy's re-priced paper results, costs and trade frequency with its predicted range. Writes `health/<id>.json`.
+2. **Diagnose** (agent, when a strategy leaves its range). Reads the health file, fills and recent market data. Names one cause: implementation fault, higher costs, a regime the strategy was never tested in, or a fading edge. Proposes one action.
+3. **Act.**
+   - *Fix* an implementation fault and restart the paper clock.
+   - *Re-tune* inside the card's declared ranges using recent data. The new version is a counted trial, takes the final exam, and runs in shadow beside the old version. The one that does better on paper stays.
+   - *Reduce weight* or *pause*. A paused strategy keeps running in shadow so evidence keeps building.
+   - *Retire.* Also the outcome for a strategy that keeps needing re-tunes.
+
+A drop inside the predicted range triggers nothing. Bad stretches are normal, and reacting to them is how a healthy strategy gets tuned into an overfit one.
+
+### 4.7 Combined book
+
+All paper-confirmed strategies are combined at equal risk. The book's record is tracked like a strategy. Evidence builds faster across many weakly related strategies than on any one, so the book is the factory's main long-run measure.
+
+## 5. Stages
+
+One item per strategy, in the format of `factories/_shared/CONVENTIONS.md`.
+
+| Stage | What happens | Done by | Moves to |
+|---|---|---|---|
+| `proposed` | Card written, similarity check passed | `idea-scout` agent, engine check | `built`, `killed` |
+| `built` | Strategy code written, unit tests and leak test passed, reviewer confirms code matches card | `build` skill, `reviewer` agent | `optimised`, `killed` |
+| `optimised` | Parameters searched inside declared ranges on development data, stable region chosen, gate passed locally | `optimise` skill, engine | `exam`, `killed` |
+| `exam` | Final exam in CI | GitHub Actions | `paper`, `killed` |
+| `paper` | Runs on paper, watched daily | scripts, `maintain` skill | `confirmed`, `paused`, `killed` |
+| `confirmed` | Ran correctly and stayed in range for long enough, and adds to the combined book | `maintain` skill, engine check | `awaiting_human`, `paused`, `killed` |
+| `awaiting_human` | Winner packet sent (`F-CAP-1`) | `winner-packet` skill | operator's decision |
+| `paused` | Runs in shadow | scripts | `paper`, `killed` |
+
+How long a strategy stays on paper is judged per strategy from how often it trades and how wide its predicted range is. The reasoning goes in the item file. As a guide, hourly strategies need weeks to a few months and daily ones several months.
+
+## 6. What the operator sees
+
+- **Winner packet (`F-CAP-1`).** The card, the trial count and adjusted odds, exam result, paper record re-priced with real costs, what paper did and did not show, contribution to the combined book, and every maintenance action taken. Live trading is not built. Funding an account is the operator's own step.
+- **Approvals.** Creating the paper accounts and storing their keys (`F-ACC-1`), any paid data (`F-ACC-2`), any new market (`F-VENUE-1`), any engine or gate change (`F-ENG-1`).
+- **A short weekly summary.** Funnel counts, trials used per dataset, strategies on paper, the combined book, spend.
+
+Every number in a report is read from a file the engine or a script wrote.
+
+## 7. Agents, skills and schedules
+
+- **Sub-agents:** `idea-scout` (web access, no market data, one output file) and `reviewer` (reads card, code and engine output; can only reject).
+- **Skills:** `ideate`, `build`, `optimise`, `maintain`, `winner-packet`, `weekly-review`.
+- **Scripts:** data snapshots, engine, exam job, paper runner, journal, health watch.
+- **Schedules:** scripts on GitHub Actions. Skills as Claude Code scheduled tasks, each run by hand three times before it is scheduled.
+
+## 8. Hard guardrails
+
+Only these are enforced in code. Everything else is guidance that a run weighs and explains.
+
+| Guardrail | Enforced by |
 |---|---|
-| `hypothesized` | No concrete answer to "who pays you and why". Mechanism quota exceeded (more than 1 card per mechanism category per batch, or the category already holds 30% of all cards) [proposed]. Text similarity to an existing card above the limit. More than 4 free parameters [proposed]. Expected trades per year too few to reach the paper trade minimum in 120 days [proposed] |
-| `implemented` | Unit tests fail after 2 fix attempts. Look-ahead audit fails. Strategy code needs an import outside the allowlist. Code and card disagree on parameters |
-| Backtest | Fewer than 100 trades in the development window [proposed]. Net Sharpe after costs not above buy-and-hold SPY over the same window [proposed, from the academic finding]. Out-of-sample Sharpe below 80% of in-sample Sharpe in walk-forward [playbook]. PBO 0.5 or above [playbook]. PBO 0.3 to 0.5 without walk-forward confirmation [playbook]. Deflated Sharpe ratio 0.5 or below, computed with every trial in the registry [playbook threshold]. Net result negative at 2x assumed costs [proposed]. Daily-return correlation above 0.7 with a strategy that already failed (same cluster, not a new idea) [proposed] |
-| Holdout | Holdout fails (CI reports pass or fail only). One holdout evaluation per cluster, ever. A failed cluster is closed |
-| `paper_trading` | Mean absolute fill divergence 10 bps or more [playbook]. Paper drawdown above the limit in `budget.yaml`. 120 days without reaching 30 trades [proposed]. Second heartbeat failure after a clock restart [proposed] |
-| Family | Trial budget for the family used up with no `validated` member |
+| Paper only | No live keys exist. Paper endpoints are hard-coded in the runner |
+| Agents cannot edit the engine, gate rules, trial log or exam results | Path deny rules, and the exam job uses `main`'s copy |
+| Held-back data is never where agents work | It is fetched only inside the exam job |
+| Every trial is counted | The engine logs before it prints, and the exam fails if trials are missing |
+| No model in the order path | Runner and journal are scripts |
+| Spend caps and kill switch | `budget.yaml`, run wrapper, `STOP` file |
 
-Paper gate to reach `paper_passed`: at least 30 calendar days [playbook] and at least 30 filled trades [proposed; the playbook gives no trade minimum and the research calls 30 days statistically thin], divergence under 10 bps, no heartbeat gap since the last clock restart (a gap restarts the 30 days [playbook]), paper Sharpe not below 50% of walk-forward out-of-sample Sharpe [proposed].
+Known gap: an agent with web access could look up recent prices itself. Deny rules cover the data vendors, and the paper period remains a test nothing can have seen.
 
-Cost assumptions: the research found no venue-specific slippage or fee figures. Default is 10 bps per side [proposed; the same figure one academic paper used], replaced by measured paper costs once a journal exists. Changing the cost model is an engine change (`F-ENG-1`).
+## 9. Trusting the judge
 
-**Factory-level validation budget:** USD 200 of token and API spend, 150 counted trials, 6 holdout evaluations, within 120 days of the first scheduled run. When any of the three is used up, or at day 120, the factory pauses and raises `F-VAL-1` for a keep-or-kill decision. Verified revenue will almost certainly be zero at that point because live capital defaults to zero. The decision is therefore judged on funnel evidence, and "kill the factory" is an acceptable answer.
+Before any strategy is mined, the engine must:
 
-## 7. Telemetry and the definition of a winner
+1. Reproduce a known published result (time-series momentum across markets) to within reason.
+2. Find an edge planted in synthetic data.
+3. Reject pure noise, at the rate the gate claims, when fed hundreds of random strategies.
 
-| Question | Source of truth |
-|---|---|
-| How many ideas were tried | `registry/trials.jsonl` (CI-written, hash-chained) |
-| Did a strategy pass | `results/<trial id>/gate.json` (CI-written) |
-| What happened on paper | Alpaca paper account, read by the journal script |
-| Did live trading make money | Broker statement of the live account, only after `F-CAP-1` |
-| What did it cost | `ledger/spend.jsonl`, GitHub Actions minutes |
+These are the factory's essential tests. They are re-run after every engine change, and earlier survivors are re-examined.
 
-Reported every week: cards written, mechanisms covered, clusters found, trials used against budget, kills by gate, holdout evaluations used, strategies on paper, fill divergence, heartbeat gaps, spend. The agent's own summary is never a metric source.
+## 10. Standards the engine follows
 
-A **candidate** is a strategy at `paper_passed`. A **winner** exists only after live trading: net profit after all costs on the broker statement, over at least 60 trading days, with no auto-pause trigger fired [proposed]. Until then the factory has no winners and reports zero revenue.
+Each part of the judge is taken from published research or established practice, not invented here. Sources and links are in [the research report](design/DISCOVERY_REPORT.md).
 
-## 8. Self-improvement
-
-Two loops, kept separate.
-
-1. **Strategy evolution** (`evolve`). Parameter changes inside pre-declared ranges, at most 10 trials per family, each one logged and each one making the deflated Sharpe bar higher. New rules or new parameters are a new hypothesis, not a variant.
-2. **Factory review** (`weekly-review`). Examines: mechanism distribution and cluster collapse (is the scout producing one idea many times), which gate kills most, look-ahead audit hits by cause, paper versus backtest cost gap, runs that failed or were denied, rejected packets. It may propose changes to skills, agent prompts and the mechanism taxonomy, as PRs, one change per skill per week. It may not propose looser thresholds, a larger trial budget, a different cost model or a new venue except as an escalation (`F-ENG-1`, `F-VENUE-1`).
-
-## 9. Tools and accounts
-
-| Tool | Use | Status |
+| Part | Standard | Source |
 |---|---|---|
-| Claude Code cloud scheduled tasks | All model stages | Already available |
-| GitHub, GitHub Actions | Backtests, runner, journal, branch protection | Connector available. Repository must be created |
-| Slack, Linear connectors | Notifications, escalation issues | Already available |
-| Alpaca paper account and Trading / Market Data API | Paper orders, fills, historical bars | New account needed. Verified 2026-11-16: a paper-only account is free to anyone worldwide, and free Basic data is IEX only at 200 calls a minute. Full SIP data is $99 a month. The depth of free history and available order types are unverified, confirm at build time |
-| Alpaca official MCP server (`alpacahq/alpaca-mcp-server`) | Not attached to any unattended run. Optional for the operator's own inspection with `ALPACA_PAPER_TRADE=true` and read-only `ALPACA_TOOLSETS` | Official (verified 2026-11-16, MIT). Alpaca also offers hosted MCP endpoints with OAuth, which are not used either. Exact read-only toolset names: confirm at build time |
-| Web search: built-in, or Parallel Search or Exa connector | Scout research | Built-in is available. Connectors are one click. Choose one at build time |
-| Backtest engine (in-repo Python or a pinned open-source library) | Backtests | Operator's build-time choice. Verified 2026-11-16: NautilusTrader is free under LGPL-3.0. VectorBT PRO is $25 a month under a personal, non-commercial licence. Maintenance status of each is unverified |
-| QuantConnect and its MCP | Alternative backtest platform | First-party remote MCP, needs a paid agent node (verified 2026-11-16). Researcher seat about $84 a month per a secondary source. Not in the default design |
-| Paid market data (Massive, Databento, Tiingo) | Survivorship-free single-stock data | Prices verified 2026-11-16. Massive (formerly Polygon.io): free Basic with end-of-day data and 2 years of history, Starter $29 a month, official MCP. Databento: $125 of free credits, Standard $199 a month. Tiingo: free Starter, Power $30 a month, commercial use $50 a month. Whether any plan is survivorship-free is unverified. Not used by default (`F-ACC-2`) |
-| Alpaca or IBKR live account | Live trading | Alpaca live accounts are still unverified for Australian residents: no country list is published and Alpaca says to email support. IBKR has an Australian entity that lists its trading APIs (verified 2026-11-16). Escalation only (`F-LEGAL-1`) |
-| Community IBKR MCP servers | None | Rejected: community code between an agent and a margin account. IBKR has had an official hosted MCP since 28 Jul 2026 (verified 2026-11-16). It is not attached to any run either |
+| Is the result luck, given the number of trials | Deflated Sharpe ratio | Bailey and López de Prado (2014) |
+| Counting trials that are really the same idea | Effective number of trials by clustering return correlations | López de Prado (2019) |
+| Is the optimisation overfit | Probability of backtest overfitting by combinatorial cross-validation | Bailey, Borwein, López de Prado and Zhu |
+| How much testing a dataset can bear | Minimum backtest length | Bailey et al. |
+| Evidence bar for a new idea | t-statistic above 3 as a reference point | Harvey, Liu and Zhu (2016) |
+| Held-back data, looked at once | Single-use holdout | Masters; López de Prado's embargo stage |
+| Costs | Fees, half spread, square-root impact, results at raised costs, costs no more than a third of gross return | Venue fee pages; Carver's speed limit; QuantConnect's volume cap |
+| Optimisation | Few parameters, ranges fixed in advance, stable regions over single best points, fit across markets | Carver |
+| Idea quality | A stated reason someone pays for the edge | Carver; AQR factor research |
+| Novelty | Reject returns too correlated with existing strategies | WorldQuant BRAIN |
+| Maintenance | Compare live results with the predicted distribution; refit on past data only; do not tune after bad out-of-sample results | Carver; López de Prado's lifecycle |
+| Combining strategies | Equal risk weights across weakly related strategies | Carver; AQR |
+| Separation of roles | The author of an idea never approves it; every trial logged | López de Prado; Man Group |
 
-## 10. Known failure modes and the design response
+Metrics a strategy is tuned on: net-of-cost Sharpe ratio as the main measure, with drawdown, turnover and cost share reported beside it so that a high Sharpe from taking almost no risk is visible.
 
-| Failure mode (source in research notes) | Design response |
-|---|---|
-| Idea homogeneity: 14 of 20 strategies were one idea | Mechanism taxonomy with quotas, text similarity check before any test, return-correlation clustering after it. Variants of one cluster count against one family budget |
-| Multiple-testing overfit | Agent has no market data, so every test is a CI job and a registry line. Fixed trial budgets. Deflated Sharpe and PBO computed over all logged trials |
-| Silently dropped failed trials | Registry written only by CI, hash-chained, verified weekly and at the capital gate. A break is `F-INT-1` and stops the factory |
-| Rule-gaming: tuning until the gate passes | Gate checker and thresholds are off limits to the agent. Parameter ranges are fixed on the card before the first trial. The capital gate packet shows the whole trial log, not only the survivor |
-| Look-ahead in code | Engine passes the strategy only data up to t-1. Import allowlist. Deterministic look-ahead audit. The playbook's seven-item audit list was not captured in the notes and must be taken from the source at build time |
-| Look-ahead through the model's training memory | Cannot be removed in backtest. The holdout is necessary but not sufficient. Forward paper trading after today's date is the only uncontaminated test, which is why it is mandatory |
-| Short-window results that do not replicate (Sharpe 2.68 replicating at 0.93) | Minimum trade counts, walk-forward over the longest available history, buy-and-hold benchmark, costs at 2x |
-| Fabricated or misreported numbers (plausible, no documented case found) | Every number in a report or packet must be read from a CI-written file. `packet_check` compares them |
-| LLM errors in live decisions (misordered series, arithmetic errors, rule-gaming) | No model in the order path. The runner is a script |
-| Paper fills differ from live fills | Fill divergence gate, measured costs fed back into the cost model by the operator, first live allocation small and capped, slippage auto-pause |
-| Survivorship bias | ETF-only default universe, bias stated in every report. Single stocks need point-in-time data and `F-VENUE-1` |
-| Prompt injection from research pages | Scout has no credentials and one output file. Builder never reads raw pages |
-| Strategy code leaking real data through CI logs | Strategy code runs with no network, its output discarded, and only engine-written files are published. Residual risk stated in `CLAUDE.md` |
+Where research gives no agreed number, such as a pass mark for overfitting probability, the spec does not invent one. The evidence is reported and judged.
+
+## 11. Build order
+
+1. Rewrite `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, skills and agents to match this spec.
+2. Engine, cost model, statistics and the three judge tests.
+3. Data snapshot scripts and the development cutoff.
+4. One strategy taken by hand from card to local gate.
+5. The exam job.
+6. Paper runner and journal (needs `F-ACC-1`).
+7. Health watch and the `maintain` skill.
+8. Idea scout, then schedules.
+
+## 12. Open items
+
+- Whether the operator wants a longer paper period before a winner packet than the engine's own judgement.
+- Cost tables need a fresh read of each venue's fee page at build time.
+- Alpaca's free US data covers one exchange with about 4 to 5% of volume, so volume-based hourly signals on ETFs are unreliable until better data is bought.
+- A paper venue for crypto funding carry that is open to Australians has not been confirmed.
