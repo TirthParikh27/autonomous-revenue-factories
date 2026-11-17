@@ -77,11 +77,11 @@ def main() -> int:
     manifest = {}
     for symbol in args.symbols:
         with cf.ThreadPoolExecutor(8) as pool:
-            parts = [p for p in pool.map(lambda ym: fetch(URL.format(s=symbol, ym=ym)), months(start, end)) if p is not None]
+            parts = [p for p in pool.map(lambda ym: fetch(URL.format(s=symbol, ym=ym)), months(start, end)) if p is not None]  # noqa: B023 (used up inside the loop)
             if args.window == "exam":       # days after the last whole month come from the daily files
                 first = max(p["ts"].max() for p in parts).date() + dt.timedelta(days=1) if parts else start
                 days = [first + dt.timedelta(days=i) for i in range((end - first).days)]
-                parts += [p for p in pool.map(lambda d: fetch(URL_DAY.format(s=symbol, d=d)), days) if p is not None]
+                parts += [p for p in pool.map(lambda d: fetch(URL_DAY.format(s=symbol, d=d)), days) if p is not None]  # noqa: B023 (used up inside the loop)
         df = pd.concat(parts).drop_duplicates("ts").sort_values("ts")
         lo = pd.Timestamp(start, tz="UTC")
         hi = pd.Timestamp(end, tz="UTC") + pd.Timedelta(days=1)

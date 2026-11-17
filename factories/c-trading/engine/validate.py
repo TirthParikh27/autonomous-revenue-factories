@@ -114,7 +114,7 @@ def exam_rates(seeds: int = 40, unseen_days: int = 300) -> list[dict]:
 
             def informed(b: Bars, params: dict) -> pd.DataFrame:
                 w = pd.DataFrame(0.0, index=b.close.index, columns=b.symbols)
-                w["S0"] = np.roll(regime, -1)[: len(w)]
+                w["S0"] = np.roll(regime, -1)[: len(w)]  # noqa: B023 (used up inside the loop)
                 return w
 
             s = _strategy(f"exam-{edge}-{seed}", informed, {"k": 1})

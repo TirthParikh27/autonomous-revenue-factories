@@ -150,6 +150,8 @@ def test_comment_and_layout_edits_are_not_code_changes():
     assert pr_gate.same_python(old, "def pay(x):\n    return (x\n            + 1)\n")
     assert not pr_gate.same_python(old, "def pay(x):\n    return x + 2\n")
     assert not pr_gate.same_python(old, "def pay(x:\n")  # broken code is a change
+    utf8, latin1 = "x = 'é'\n".encode(), "# -*- coding: latin-1 -*-\nx = 'é'\n".encode()
+    assert not pr_gate.same_python(utf8, latin1)  # the coding line changes what the string holds
 
 
 def test_removed_and_skipped_tests_are_named():
@@ -164,6 +166,9 @@ def test_removed_and_skipped_tests_are_named():
         "+it.skip('charges once', () => {})\n"
         "+describe.only('pay', () => {})\n"
         "+    note = 'it.skip( and @pytest.mark.skip in a string are not skips'\n"
+        "+pytestmark = pytest.mark.skip(reason='slow')\n"
+        "+@mark.xfail\n"
+        "+    @unittest.expectedFailure\n"
         "diff --git a/pay.py b/pay.py\n"
         "-def test_helper():\n+@pytest.mark.skip\n"
     )
@@ -173,6 +178,9 @@ def test_removed_and_skipped_tests_are_named():
         "tests/test_pay.py: pytest.xfail('later')",
         "web/pay.test.ts: it.skip('charges once', () => {})",
         "web/pay.test.ts: describe.only('pay', () => {})",
+        "web/pay.test.ts: pytestmark = pytest.mark.skip(reason='slow')",
+        "web/pay.test.ts: @mark.xfail",
+        "web/pay.test.ts: @unittest.expectedFailure",
     ]
 
 
@@ -217,3 +225,76 @@ def test_end_to_end_comment_only_edit_and_removed_test(tmp_path, monkeypatch, ca
     assert pr_gate.main() == 0  # a test file changed, so the rule passes; the reviewer is told what went
     out = capsys.readouterr().out
     assert "::warning::Test removed or skipped. test_pay.py: test_cents removed" in out
+
+
+def test_a_comment_only_edit_to_a_protected_file_is_still_named(tmp_path, monkeypatch, capsys):
+    import subprocess
+
+    def git(*args):
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                       cwd=tmp_path, check=True, capture_output=True)
+
+    (tmp_path / ".github").mkdir()
+    (tmp_path / ".github" / "CODEOWNERS").write_text("/engine/ @op\n")
+    (tmp_path / "engine").mkdir()
+    (tmp_path / "engine" / "gate.py").write_text("# Max loss 2%, do not change.\nLIMIT = 2\n")
+    git("init", "-q", "-b", "main")
+    git("add", "-A")
+    git("commit", "-q", "-m", "base")
+    git("checkout", "-q", "-b", "change")
+    (tmp_path / "engine" / "gate.py").write_text("# Max loss is advisory.\nLIMIT = 2\n")
+    git("add", "-A")
+    git("commit", "-q", "-m", "comment only")
+
+    monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
+    monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])
+    assert pr_gate.main() == 0
+    assert "Protected files changed: engine/gate.py" in capsys.readouterr().out
+
+
+def test_the_committed_code_is_judged_not_the_working_tree(tmp_path, monkeypatch, capsys):
+    """CI replaces the gate on disk with the base copy before it runs. The committed change still counts."""
+    import subprocess
+
+    def git(*args):
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                       cwd=tmp_path, check=True, capture_output=True)
+
+    base = "SUFFIXES = {'.py', '.sql'}\n"
+    (tmp_path / "gate.py").write_text(base)
+    git("init", "-q", "-b", "main")
+    git("add", "-A")
+    git("commit", "-q", "-m", "base")
+    git("checkout", "-q", "-b", "change")
+    (tmp_path / "gate.py").write_text("SUFFIXES = {'.py'}\n")
+    git("add", "-A")
+    git("commit", "-q", "-m", "code change, no test")
+    (tmp_path / "gate.py").write_text(base)  # what CI does with tools/pr_gate.py
+
+    monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
+    monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])
+    assert pr_gate.main() == 1
+    assert "Add a test for: gate.py" in capsys.readouterr().out
+
+
+def test_a_non_ascii_test_path_is_named_plainly(tmp_path, monkeypatch, capsys):
+    import subprocess
+
+    def git(*args):
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                       cwd=tmp_path, check=True, capture_output=True)
+
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests" / "test_caf\u00e9.py").write_text("def test_one():\n    assert True\n")
+    git("init", "-q", "-b", "main")
+    git("add", "-A")
+    git("commit", "-q", "-m", "base")
+    git("checkout", "-q", "-b", "change")
+    (tmp_path / "tests" / "test_caf\u00e9.py").unlink()
+    git("add", "-A")
+    git("commit", "-q", "-m", "drop test")
+
+    monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
+    monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])
+    pr_gate.main()
+    assert "Check: tests/test_caf\u00e9.py: test_one removed" in capsys.readouterr().out

@@ -102,8 +102,11 @@ def judge(changes: list[tuple[str, str]], patterns: list[str]) -> tuple[list[str
     return ([] if has_test else code), protected
 
 
-def same_python(old: str, new: str) -> bool:
-    """True when two versions of a .py file differ only in comments, blank lines or layout."""
+def same_python(old: str | bytes, new: str | bytes) -> bool:
+    """True when two versions of a .py file differ only in comments, blank lines or layout.
+
+    Bytes are parsed as Python reads them, so a changed coding line counts as a change.
+    """
     try:
         return ast.dump(ast.parse(old)) == ast.dump(ast.parse(new))
     except (SyntaxError, ValueError):
@@ -112,8 +115,8 @@ def same_python(old: str, new: str) -> bool:
 
 # A line that starts with a skip: a decorator or a call, not a string that mentions one.
 TEST_SKIP = re.compile(
-    r"@?(pytest\.mark\.(skip|skipif|xfail)\b|pytest\.(skip|xfail)\(|unittest\.skip"
-    r"|(it|test|describe)\.(skip|only)\(|x(it|describe)\()"
+    r"(pytestmark\s*=.*)?@?((pytest\.)?mark\.(skip|skipif|xfail)\b|pytest\.(skip|xfail)\("
+    r"|unittest\.(skip|expectedFailure)|(it|test|describe)\.(skip|only)\(|x(it|describe)\()"
 )
 TEST_DEF = re.compile(r"^\s*(?:async\s+)?def\s+(test_\w+)")
 
@@ -124,6 +127,10 @@ def weakened_tests(diff: str) -> list[str]:
     for line in diff.splitlines():
         if line.startswith("diff --git "):
             path = line.split(" b/", 1)[-1]
+        elif line.startswith("+++ b/"):
+            path = line[6:]
+        elif line.startswith("--- a/"):
+            path = line[6:]
         elif not is_test(path) or line.startswith(("+++", "---")):
             continue
         elif line.startswith("-") and (match := TEST_DEF.match(line[1:])):
@@ -154,19 +161,23 @@ def parse_name_status(raw: str) -> list[tuple[str, str]]:
 
 def git_diff(base: str, *args: str, paths: tuple[str, ...] = ()) -> str:
     return subprocess.run(
-        ["git", "diff", *args, f"{base}...HEAD", "--", *paths],
+        ["git", "-c", "core.quotePath=false", "diff", *args, f"{base}...HEAD", "--", *paths],
         cwd=ROOT, check=True, capture_output=True, text=True, errors="replace",
     ).stdout
 
 
 def comment_only(merge_base: str, status: str, path: str) -> bool:
-    """A modified .py file whose code is the same as on the merge base."""
-    if status != "M" or not path.endswith(".py") or not (ROOT / path).exists():
+    """A modified .py file whose committed code is the same as on the merge base.
+
+    Reads both versions from git, never from the working tree, which CI overwrites with the base gate.
+    """
+    if status != "M" or not path.endswith(".py"):
         return False
-    old = subprocess.run(
-        ["git", "show", f"{merge_base}:{path}"], cwd=ROOT, capture_output=True, text=True, errors="replace",
+    old, new = (
+        subprocess.run(["git", "show", f"{ref}:{path}"], cwd=ROOT, capture_output=True)
+        for ref in (merge_base, "HEAD")
     )
-    return old.returncode == 0 and same_python(old.stdout, (ROOT / path).read_text(errors="replace"))
+    return old.returncode == 0 and new.returncode == 0 and same_python(old.stdout, new.stdout)
 
 
 def coverage_opt_outs(diff: str) -> list[str]:
@@ -195,8 +206,10 @@ def main() -> int:
     merge_base = subprocess.run(
         ["git", "merge-base", args.base, "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True,
     ).stdout.strip()
-    changes = [(status, path) for status, path in changes if not comment_only(merge_base, status, path)]
-    untested, protected = judge(changes, patterns)
+    # A comment-only edit needs no test, but a protected file is still named however small the edit.
+    code_changes = [(status, path) for status, path in changes if not comment_only(merge_base, status, path)]
+    untested, _ = judge(code_changes, patterns)
+    _, protected = judge(changes, patterns)
     opt_outs = coverage_opt_outs(git_diff(
         args.base, "-U0", paths=("*.py", ":(exclude,glob)**/tests/**", ":(exclude,glob)**/test_*.py")
     ))

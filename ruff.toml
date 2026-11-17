@@ -7,7 +7,4 @@ extend-exclude = [
 
 [lint]
 select = ["F", "E9", "B"]
-ignore = [
-    "B023",   # lambdas here run inside the loop that defines them
-    "B905",   # zip() lengths are checked where they matter
-]
+ignore = ["B905"]   # zip() lengths are checked where they matter
