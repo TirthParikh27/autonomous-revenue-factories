@@ -1,6 +1,6 @@
 # Factory G: Marketplace-distributed micro-tools
 
-Status: blueprint for review. Nothing here has been built or run. Date: 16 November 2026.
+Status: folded into Factory A on 17 November 2026 (operator decision). Web products and micro-SaaS are built there. This blueprint is kept for reference and will not be built separately. Date written: 16 November 2026.
 Fits `ARCHITECTURE.md` and `factories/_shared/CONVENTIONS.md`. Shared skills (`escalate`, `ledger`, `run-report`) are referenced, not copied.
 
 ## 1. Purpose and honest evidence

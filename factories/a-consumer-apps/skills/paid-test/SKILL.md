@@ -1,6 +1,6 @@
 ---
 name: paid-test
-description: Stage 7 of Factory A. Use when an item is at `live` to prepare paused install campaigns optimised for trial start, raise the spend approval, and move the app through paid tranche 1 and tranche 2. Kill and winner decisions belong to telemetry-winner-detection.
+description: Stage 7 of Factory A. Use when an item is at `live` to prepare paused campaigns optimised for trial start (installs for an iOS app, site visits for a web product), raise the spend approval, and move the app through paid tranche 1 and tranche 2. Kill and winner decisions belong to telemetry-winner-detection.
 ---
 
 # Paid test
@@ -15,7 +15,7 @@ The demand test showed that people click and commit. This stage finds out whethe
 
 ## Steps
 
-1. Confirm the app's RevenueCat events (trial started, initial purchase) reach the ad platform as conversion events. If the read-back shows no test event received, stop and report. A campaign that cannot see trials cannot be judged.
+1. Confirm the trial-started and first-purchase events reach the ad platform as conversion events: from RevenueCat for an iOS app, from Stripe through the site for a web product. If the read-back shows no test event received, stop and report. A campaign that cannot see trials cannot be judged.
 2. Write three creatives to `ads/<id>/paid/`. Use real screenshots and screen recordings from the shipped build. Remove the "in development" wording. Run `checks/copy_lint`.
 3. Write `ads/<id>/paid/plan.json`: one campaign optimised for trial start, lifetime budget and duration for tranche 1, the tranche 2 budget that follows if tranche 1 passes, and the reference points telemetry will weigh, from `budget.yaml`.
 4. Raise `A-AD-2` for the item. It covers both tranches, up to $600 in total. Move the item to `awaiting_human`.
@@ -37,7 +37,7 @@ The demand test showed that people click and commit. This stage finds out whethe
 
 - Never activate a campaign, raise a budget, or create a third tranche. Scale spend exists only through `A-WIN-1`.
 - Never change the app's price, trial length or paywall during a test.
-- Never count a trial as a payer, or ad-platform-reported purchases as revenue. Payers come from RevenueCat and revenue from the store.
+- Never count a trial as a payer, or ad-platform-reported purchases as revenue. Payers come from RevenueCat and revenue from the store for iOS. For web both come from Stripe.
 - Never use a testimonial, a rating or an invented user in an ad.
 
 ## Finish
