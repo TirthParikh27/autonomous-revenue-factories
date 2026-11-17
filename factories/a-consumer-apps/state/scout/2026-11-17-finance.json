@@ -1,0 +1,158 @@
+{
+  "category": "Finance",
+  "store": "App Store, iOS, US",
+  "date": "2026-11-17",
+  "method": "fetch_reviews.py search and reviews (Apple public search and customer review RSS), reviews rated 3 stars or under, 3 pages per app. Raw files in state/scout/reviews/<app id>.json. No WebFetch, no Reddit, no logins.",
+  "apps_read": [
+    {"id": 1130616675, "name": "Rocket Money - Bills & Budgets", "url": "https://apps.apple.com/us/app/rocket-money-bills-budgets/id1130616675"},
+    {"id": 1459319842, "name": "Monarch: Budget & Track Money", "url": "https://apps.apple.com/us/app/monarch-budget-track-money/id1459319842"},
+    {"id": 635861140, "name": "Expense & Budget App: Spendee", "url": "https://apps.apple.com/us/app/expense-budget-app-spendee/id635861140"},
+    {"id": 942571931, "name": "EveryDollar: Budget Management", "url": "https://apps.apple.com/us/app/everydollar-budget-management/id942571931"},
+    {"id": 1059152023, "name": "Bobby - Track subscriptions", "url": "https://apps.apple.com/us/app/bobby-track-subscriptions/id1059152023"},
+    {"id": 1352782733, "name": "Bills Organizer & Reminder", "url": "https://apps.apple.com/us/app/bills-organizer-reminder/id1352782733"},
+    {"id": 834370671, "name": "Bills Manager", "url": "https://apps.apple.com/us/app/bills-manager/id834370671"},
+    {"id": 1059461492, "name": "Bill Tracker Pro: Budget Saver", "url": "https://apps.apple.com/us/app/bill-tracker-pro-budget-saver/id1059461492"},
+    {"id": 1001257338, "name": "Empower", "url": "https://apps.apple.com/us/app/empower/id1001257338"},
+    {"id": 1447330651, "name": "Copilot: Track & Budget Money", "url": "https://apps.apple.com/us/app/copilot-track-budget-money/id1447330651"},
+    {"id": 6751181747, "name": "Subpilot - Cancel Subscription", "url": "https://apps.apple.com/us/app/subpilot-cancel-subscription/id6751181747"},
+    {"id": 6740202306, "name": "MonoBoost Cancel Subscriptions", "url": "https://apps.apple.com/us/app/monoboost-cancel-subscriptions/id6740202306"}
+  ],
+  "candidates": [
+    {
+      "id": "fin-c1",
+      "unmet_job": "Keep a list of upcoming bills that opens every time, works offline, remembers what has been paid (including part payments) and survives a phone change.",
+      "competing_apps": [
+        {"name": "Bills Organizer & Reminder", "url": "https://apps.apple.com/us/app/bills-organizer-reminder/id1352782733"},
+        {"name": "Bill Tracker Pro: Budget Saver", "url": "https://apps.apple.com/us/app/bill-tracker-pro-budget-saver/id1059461492"},
+        {"name": "Bills Manager", "url": "https://apps.apple.com/us/app/bills-manager/id834370671"},
+        {"name": "Bobby - Track subscriptions", "url": "https://apps.apple.com/us/app/bobby-track-subscriptions/id1059152023"}
+      ],
+      "complaints": [
+        {"quote": "it keeps crashing on me it and won’t open unless I turn my phone off and on", "app": "Bills Organizer & Reminder", "date": "2026-11-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1352782733/sortBy=mostRecent/json"},
+        {"quote": "I just wish you could pay a portion of the bill and it recalculate what is remaining.", "app": "Bills Organizer & Reminder", "date": "2026-11-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1352782733/sortBy=mostRecent/json", "note": "source text reads: I like the app just wish you could pay a portion of the bill and it recalculate what is remaining."},
+        {"quote": "it wouldn’t open if you’re not connected to internet", "app": "Bills Organizer & Reminder", "date": "2026-09-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1352782733/sortBy=mostRecent/json"},
+        {"quote": "Took me a long time to compile my bills onto this app only for it get deleted a month later.", "app": "Bills Organizer & Reminder", "date": "2026-09-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1352782733/sortBy=mostRecent/json"},
+        {"quote": "anytime I go to delete a bill it’ll remove the bill but next time I get into the app that bill I removed is back on my list!", "app": "Bills Organizer & Reminder", "date": "2026-10-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1352782733/sortBy=mostRecent/json"},
+        {"quote": "Now whenever I mark a bill “paid” and I close the app, it doesn’t save when I go back in and shows it wasn’t paid.", "app": "Bill Tracker Pro: Budget Saver", "date": "2025-12-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1059461492/sortBy=mostRecent/json"},
+        {"quote": "I have the paid version and I had a lot of information in the notes section of each bill and now it’s all gone.", "app": "Bill Tracker Pro: Budget Saver", "date": "2026-06-17", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1059461492/sortBy=mostRecent/json"},
+        {"quote": "it decided to move all my repeating bill and income dates to different days.", "app": "Bill Tracker Pro: Budget Saver", "date": "2026-05-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1059461492/sortBy=mostRecent/json"},
+        {"quote": "I had to change phones and my data was completely erased!!!", "app": "Bills Manager", "date": "2026-09-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=834370671/sortBy=mostRecent/json"},
+        {"quote": "the app will not stay open. It keeps force closing.", "app": "Bills Manager", "date": "2026-10-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=834370671/sortBy=mostRecent/json"},
+        {"quote": "No way to mark a bill as “partially paid”", "app": "Bills Manager", "date": "2025-12-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=834370671/sortBy=mostRecent/json"},
+        {"quote": "Notifications no longer work.", "app": "Bobby - Track subscriptions", "date": "2025-12-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1059152023/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found (no keyword tool or public source used)",
+      "trend_signals": "none found",
+      "not_found": "Pay-limit complaints (only 5 bills free) are common on Bills Organizer but were left out as price-only. The three crash and data-loss complaints on Bills Organizer cluster in Sept to Nov 2026 and one cites iOS 27; cause not verified. No evidence on how many users want offline-only versus synced."
+    },
+    {
+      "id": "fin-c2",
+      "unmet_job": "Run a paycheck-based budget where pay dates follow a biweekly or semi-monthly schedule and any past month stays editable.",
+      "competing_apps": [
+        {"name": "EveryDollar: Budget Management", "url": "https://apps.apple.com/us/app/everydollar-budget-management/id942571931"},
+        {"name": "Bills Manager", "url": "https://apps.apple.com/us/app/bills-manager/id834370671"}
+      ],
+      "complaints": [
+        {"quote": "now they made an update that previous months are locked and can’t be edited", "app": "EveryDollar: Budget Management", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=942571931/sortBy=mostRecent/json"},
+        {"quote": "I cannot for the life of me understand why you chose to lock down budgets from anything previous than 2 months.", "app": "EveryDollar: Budget Management", "date": "2026-11-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=942571931/sortBy=mostRecent/json"},
+        {"quote": "It’s my budget and my money. I should be able to sort and adjust anything whenever I want.", "app": "EveryDollar: Budget Management", "date": "2026-11-06", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=942571931/sortBy=mostRecent/json"},
+        {"quote": "Please add a toggle off for closed budgets.", "app": "EveryDollar: Budget Management", "date": "2026-11-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=942571931/sortBy=mostRecent/json"},
+        {"quote": "The app closes the month of the user when it should be the user who decides when to do that.", "app": "EveryDollar: Budget Management", "date": "2026-11-09", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=942571931/sortBy=mostRecent/json"},
+        {"quote": "the ability to put biweekly paychecks on a consistent schedule", "app": "EveryDollar: Budget Management", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=942571931/sortBy=mostRecent/json"},
+        {"quote": "No option to make income or bills be bi-weekly either, which doesn’t help when I get paid biweekly", "app": "EveryDollar: Budget Management", "date": "2026-11-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=942571931/sortBy=mostRecent/json"},
+        {"quote": "no option for entering bills as semi-monthly, only biweekly", "app": "Bills Manager", "date": "2025-07-26", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=834370671/sortBy=mostRecent/json"},
+        {"quote": "My only wish is to add a time interval of ‘every 30 days.’", "app": "Bills Manager", "date": "2026-02-21", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=834370671/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "Month-lock complaints from EveryDollar all fall between 2026-11-04 and 2026-11-10 (a burst after one release); the source does not say whether the feature will change. Not a long-run trend.",
+      "not_found": "Evidence is thin on breadth: the lock-out complaints concern one app and one release; the schedule complaints are 2 on EveryDollar and 2 on Bills Manager (one from 2025). Other zero-based apps (Goodbudget, YNAB) were not searched."
+    },
+    {
+      "id": "fin-c3",
+      "unmet_job": "Find every recurring subscription a person pays for, including ones billed through Apple or a card and ones added without linking a bank, and show how to cancel each one.",
+      "competing_apps": [
+        {"name": "Subpilot - Cancel Subscription", "url": "https://apps.apple.com/us/app/subpilot-cancel-subscription/id6751181747"},
+        {"name": "MonoBoost Cancel Subscriptions", "url": "https://apps.apple.com/us/app/monoboost-cancel-subscriptions/id6740202306"},
+        {"name": "Rocket Money - Bills & Budgets", "url": "https://apps.apple.com/us/app/rocket-money-bills-budgets/id1130616675"},
+        {"name": "Bobby - Track subscriptions", "url": "https://apps.apple.com/us/app/bobby-track-subscriptions/id1059152023"}
+      ],
+      "complaints": [
+        {"quote": "Lies still had to go into each subscription and cancel on my own", "app": "Subpilot - Cancel Subscription", "date": "2026-11-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6751181747/sortBy=mostRecent/json"},
+        {"quote": "SubPilot didn’t find any of them!", "app": "Subpilot - Cancel Subscription", "date": "2026-10-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=6751181747/sortBy=mostRecent/json"},
+        {"quote": "Would not help cancel some subscriptions and says to do it manually.", "app": "Subpilot - Cancel Subscription", "date": "2026-10-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=6751181747/sortBy=mostRecent/json"},
+        {"quote": "Will not let you add visa or apple accounts.", "app": "MonoBoost Cancel Subscriptions", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6740202306/sortBy=mostRecent/json"},
+        {"quote": "Unable to find my bank. No option to manually add my bank.", "app": "MonoBoost Cancel Subscriptions", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6740202306/sortBy=mostRecent/json"},
+        {"quote": "This app is not covering all my subscriptions", "app": "MonoBoost Cancel Subscriptions", "date": "2026-10-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6740202306/sortBy=mostRecent/json"},
+        {"quote": "I still can’t find where you cancel subscriptions", "app": "Rocket Money - Bills & Budgets", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1130616675/sortBy=mostRecent/json"},
+        {"quote": "those apps are still charging me or it says that they can’t cancel certain apps", "app": "Rocket Money - Bills & Budgets", "date": "2026-11-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1130616675/sortBy=mostRecent/json"},
+        {"quote": "I wanted to cancel the ESPN account and Rocket Money (RM) canceled both.", "app": "Rocket Money - Bills & Budgets", "date": "2026-11-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1130616675/sortBy=mostRecent/json"},
+        {"quote": "it will not pull from your email address or auto aggregate!", "app": "Bobby - Track subscriptions", "date": "2025-07-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1059152023/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "none found",
+      "not_found": "Most reviews for Subpilot and MonoBoost are about being charged extra or refund refusal; those were not counted here as they are price and billing complaints. Subpilot reviews show some users did get a cancellation done (one 2026-11-04 review), so the gap is partial. Cancelling for a user may need a service operation, which this scout did not assess. Space is crowded (at least 8 other subscription trackers returned by search)."
+    },
+    {
+      "id": "fin-c4",
+      "unmet_job": "Track spending and net worth without handing over bank logins or having data shared with third parties, with account deletion that works and an option to turn AI off.",
+      "competing_apps": [
+        {"name": "Monarch: Budget & Track Money", "url": "https://apps.apple.com/us/app/monarch-budget-track-money/id1459319842"},
+        {"name": "Copilot: Track & Budget Money", "url": "https://apps.apple.com/us/app/copilot-track-budget-money/id1447330651"},
+        {"name": "Rocket Money - Bills & Budgets", "url": "https://apps.apple.com/us/app/rocket-money-bills-budgets/id1130616675"},
+        {"name": "MonoBoost Cancel Subscriptions", "url": "https://apps.apple.com/us/app/monoboost-cancel-subscriptions/id6740202306"},
+        {"name": "Bills Manager", "url": "https://apps.apple.com/us/app/bills-manager/id834370671"}
+      ],
+      "complaints": [
+        {"quote": "They sell everything from your demographics, to what you buy, to your financial data.", "app": "Monarch: Budget & Track Money", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1459319842/sortBy=mostRecent/json"},
+        {"quote": "Monarch has, is, and will sell your data to 3rd parties even if you are a paying customer.", "app": "Monarch: Budget & Track Money", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1459319842/sortBy=mostRecent/json"},
+        {"quote": "Can’t delete account.", "app": "Monarch: Budget & Track Money", "date": "2026-11-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1459319842/sortBy=mostRecent/json"},
+        {"quote": "The delete account button just spins.", "app": "Rocket Money - Bills & Budgets", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1130616675/sortBy=mostRecent/json"},
+        {"quote": "Please give us a way to turn it off.", "app": "Copilot: Track & Budget Money", "date": "2026-10-23", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1447330651/sortBy=mostRecent/json"},
+        {"quote": "AI does not need to know about our money.", "app": "Copilot: Track & Budget Money", "date": "2026-10-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1447330651/sortBy=mostRecent/json"},
+        {"quote": "it said copilot had accessed my account details 32 times in the last month alone.", "app": "Copilot: Track & Budget Money", "date": "2026-10-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1447330651/sortBy=mostRecent/json"},
+        {"quote": "This went directly for my bank log in and password.", "app": "MonoBoost Cancel Subscriptions", "date": "2026-09-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6740202306/sortBy=mostRecent/json"},
+        {"quote": "while you scrape every bit of my digital fingerprint and sell it to 3rd parties", "app": "Bills Manager", "date": "2026-05-01", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=834370671/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "Monarch data-sale complaints cluster 2026-11-10 to 2026-11-14 and Copilot AI complaints 2026-10-23 to 2026-11-04; short bursts, not a verified trend.",
+      "not_found": "These are reviewer claims about data practices. The scout did not read either privacy policy and does not verify them. Without bank linking the job would rely on manual entry or statement import; no review asks for that in those words, though one Spendee review (2026-05-29) says the user needs it to track spending from bank info directly, which points the other way. Evidence of demand for a private tracker versus the convenience of linking is mixed."
+    },
+    {
+      "id": "fin-c5",
+      "unmet_job": "Tell the user when a linked account has stopped syncing or has created duplicate or wrongly signed transactions, and repair the gap.",
+      "competing_apps": [
+        {"name": "Monarch: Budget & Track Money", "url": "https://apps.apple.com/us/app/monarch-budget-track-money/id1459319842"},
+        {"name": "Copilot: Track & Budget Money", "url": "https://apps.apple.com/us/app/copilot-track-budget-money/id1447330651"},
+        {"name": "Empower", "url": "https://apps.apple.com/us/app/empower/id1001257338"},
+        {"name": "Expense & Budget App: Spendee", "url": "https://apps.apple.com/us/app/expense-budget-app-spendee/id635861140"},
+        {"name": "Bill Tracker Pro: Budget Saver", "url": "https://apps.apple.com/us/app/bill-tracker-pro-budget-saver/id1059461492"}
+      ],
+      "complaints": [
+        {"quote": "There's essentially no UI for telling you that your accounts haven't been synced due to a problem, leading me to miss all spending on a few accounts for nearly a year.", "app": "Monarch: Budget & Track Money", "date": "2026-10-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1459319842/sortBy=mostRecent/json"},
+        {"quote": "I’ve had other connections fail and then duplicate transactions when I re linked them.", "app": "Monarch: Budget & Track Money", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1459319842/sortBy=mostRecent/json"},
+        {"quote": "it will unreliably import withdrawals and record them as deposits.", "app": "Monarch: Budget & Track Money", "date": "2026-10-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1459319842/sortBy=mostRecent/json"},
+        {"quote": "my credit card and bank connections keep getting unauthorized. No notice in the app that it happened", "app": "Copilot: Track & Budget Money", "date": "2026-10-25", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1447330651/sortBy=mostRecent/json"},
+        {"quote": "when you reverify accounts it adds a new account and eliminates the history.", "app": "Copilot: Track & Budget Money", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1447330651/sortBy=mostRecent/json"},
+        {"quote": "the connection to Schwab accounts (and probably others) via plaid has been down for months!!", "app": "Copilot: Track & Budget Money", "date": "2026-11-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1447330651/sortBy=mostRecent/json"},
+        {"quote": "recurring account connection issues that affected my ability to rely on the app.", "app": "Empower", "date": "2026-10-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1001257338/sortBy=mostRecent/json"},
+        {"quote": "Transactions from bofa with the same amount are merging and the app shows only one transaction.", "app": "Expense & Budget App: Spendee", "date": "2026-02-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=635861140/sortBy=mostRecent/json"},
+        {"quote": "It has started to count my balances on credit cards as income instead of expenses", "app": "Expense & Budget App: Spendee", "date": "2026-03-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=635861140/sortBy=mostRecent/json"},
+        {"quote": "kept giving me duplicate transactions.", "app": "Bill Tracker Pro: Budget Saver", "date": "2026-10-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1059461492/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "none found",
+      "not_found": "Reading of effort: reviews do not say whether the fault is the aggregator or the app, so it is unknown whether a new small app could do better. The job likely needs a bank-data aggregator contract, which this scout did not check; it may not suit one small app. A user network or licensed content is not required."
+    }
+  ],
+  "excluded": [],
+  "excluded_note": "No candidate or app fell on data/excluded_categories.yaml. state/scout/rejected.jsonl has no Finance entries. Candidates avoid the Productivity, Business, Education and Health items listed there.",
+  "price_only_not_candidates": "Complaints that were only about price, free-tier limits (for example 5 bills free), trial billing or refunds were seen in large numbers at Rocket Money, Bills Organizer, Bobby, Spendee, Subpilot, MonoBoost, Bill Tracker Pro and Monarch. They were not made into candidates.",
+  "other_themes_seen_not_candidates": "Portfolio and brokerage tracking accuracy (Empower and Copilot, about 4 complaints, 2 apps, not read further); iPhone Duo layout support (Monarch, Copilot, many 2026-10 and 2026-11 reviews, a platform support issue, not a job); Spendee 6 redesign lag (Aug to Sep 2026, one app).",
+  "could_not_find_or_open": [
+    "No keyword volume or difficulty source was used (none given and no public one tried).",
+    "No trend data source was used beyond review dates.",
+    "Apps with fewer than about 100 ratings, and the small apps returned by searches (Fleur, Spending Tracker, Buddy, WorthTracker, NerdWallet), were not read; Fleur and Spending Tracker returned only 10 low-rated reviews each and were saved but not analysed.",
+    "Review feeds return only the most recent pages; the Bobby and Bills Manager reviews reach back to 2022 to 2025, so older items in those apps are marked by date."
+  ],
+  "injection_suspected": []
+}

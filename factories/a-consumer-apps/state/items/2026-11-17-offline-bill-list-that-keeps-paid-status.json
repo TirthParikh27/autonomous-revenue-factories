@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-offline-bill-list-that-keeps-paid-status",
+  "stage": "discovered",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Upcoming-bills list that opens offline, remembers paid and part-paid status, and survives a phone change.",
+  "category": "Finance",
+  "evidence": [
+    {"claim": "12 dated complaints (2025-12 to 2026-11) about crashes, lost or reverted paid status, data erased on phone change, no part-payment, across 4 apps (Bills Organizer, Bill Tracker Pro, Bills Manager, Bobby)", "source": "state/scout/2026-11-17-finance.json (fin-c1; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 12, "apps_with_complaints": 4, "keyword_popularity": null, "keyword_source": "none configured", "note": "data-loss and part-payment are capability gaps, not price. Cause of the Sept-Nov crash cluster unverified (one review cites iOS 27). Crowded with budget apps, so the spec must name the differentiator."},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept: 12 complaints, 4 apps, recent, capability-based"}],
+  "blocked_by": null,
+  "next_check": null
+}

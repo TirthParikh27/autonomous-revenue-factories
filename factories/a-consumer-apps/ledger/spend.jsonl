@@ -5,3 +5,4 @@
 {"at": "2026-11-17T07:35:15.779926+00:00", "category": "tokens", "id": "s-000005", "item": null, "run": "20261117T073515Z-spec-differentiation-73d01f", "source": "total_cost_usd from run output", "usd": 0.159054, "vendor": "anthropic"}
 {"at": "2026-11-17T07:36:15.744003+00:00", "category": "tokens", "id": "s-000006", "item": null, "run": "20261117T073615Z-synthetic-screen-95523b", "source": "total_cost_usd from run output", "usd": 0.400456, "vendor": "anthropic"}
 {"at": "2026-11-17T07:37:40.029099+00:00", "category": "tokens", "id": "s-000007", "item": null, "run": "20261117T073740Z-spec-differentiation-c1e9cc", "source": "total_cost_usd from run output", "usd": 1.196881, "vendor": "anthropic"}
+{"at": "2026-11-17T07:45:22.220892+00:00", "category": "tokens", "id": "s-000008", "item": null, "run": "20261117T074522Z-gap-mining-c52cc5", "source": "total_cost_usd from run output", "usd": 1.69921, "vendor": "anthropic"}

@@ -1,0 +1,161 @@
+{
+  "category": "Lifestyle",
+  "platform": "iOS App Store, US",
+  "scouted_on": "2026-11-17",
+  "method": "Apple public search (fetch_reviews.py search) and public customer-review RSS (fetch_reviews.py reviews, rating <= 3, most recent, 3 pages). Raw review text saved under state/scout/reviews/<app id>.json. No WebFetch, no Reddit, no logins. Quotes are verbatim substrings of the saved review text.",
+  "apps_read": [
+    "Day One (1044867788)", "Daylio (1194023242)", "Journal by Apple (6447391597)", "Stoic (1312926037)", "DailyBean (1553223828)",
+    "TimeTree (952578473)", "Cupla (1557764033)",
+    "ElephantTrax (1502900545)", "SnapFind (6740042892)", "Under My Roof (1524335878)",
+    "Whering (1519461680)", "Pureple (628106373)",
+    "Chorsee (1611068600)", "Chores & Allowance Bot (629797415)",
+    "Planty (1603599822)"
+  ],
+  "candidates": [
+    {
+      "id": "lifestyle-j1",
+      "unmet_job": "Keep a private journal or mood log that stays on the device, with no AI features, no forced account and an app lock.",
+      "competing_apps": [
+        {"name": "Day One", "url": "https://apps.apple.com/us/app/day-one-daily-journal-diary/id1044867788"},
+        {"name": "Daylio Journal - Mood Tracker", "url": "https://apps.apple.com/us/app/daylio-journal-mood-tracker/id1194023242"},
+        {"name": "stoic. journal & mental health", "url": "https://apps.apple.com/us/app/stoic-journal-mental-health/id1312926037"},
+        {"name": "DailyBean - simplest journal", "url": "https://apps.apple.com/us/app/dailybean-simplest-journal/id1553223828"}
+      ],
+      "complaints": [
+        {"app": "Day One", "date": "2026-09-08", "rating": 1, "quote": "I noticed the little star thing that indicates an AI feature. AI. In a journaling app.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1044867788/sortBy=mostRecent/json"},
+        {"app": "Day One", "date": "2026-09-01", "rating": 1, "quote": "Ai is pushy pushy.. I am done", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1044867788/sortBy=mostRecent/json"},
+        {"app": "Day One", "date": "2026-05-29", "rating": 1, "quote": "there’s no way to turn it off. It’s always sitting there, waiting for you to accidentally hit it.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1044867788/sortBy=mostRecent/json"},
+        {"app": "Day One", "date": "2026-06-19", "rating": 1, "quote": "I don’t care about AI and I don’t want to be constantly pestered to ‘upgrade’ to the Gold plan.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1044867788/sortBy=mostRecent/json"},
+        {"app": "Daylio", "date": "2026-11-06", "rating": 1, "quote": "So having AI prompt me questions based off of my habits is very scary. How much of my data is being shared?", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1194023242/sortBy=mostRecent/json"},
+        {"app": "Stoic", "date": "2026-10-02", "rating": 1, "quote": "The AI features made me uncomfortable … you’re sharing your private thoughts with an AI bot. No thank you!", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1312926037/sortBy=mostRecent/json"},
+        {"app": "Stoic", "date": "2026-11-11", "rating": 2, "quote": "I could find no way to lock or password protect the Stoic app.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1312926037/sortBy=mostRecent/json"},
+        {"app": "DailyBean", "date": "2026-11-14", "rating": 1, "quote": "There is absolutely no point in moving the app off of device storage and into the cloud other than data harvesting", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1553223828/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "none sourced",
+      "not_found": "No keyword volume or difficulty source available. Did not read reviews for 4-5 star users of these apps, so the size of the no-AI group against the AI-liking group is unknown (some Day One reviewers in the same window praise the AI chat).",
+      "notes": "Shares an app type with lifestyle-j2 (journal). Reported as a fact for the caller; no judgement made."
+    },
+    {
+      "id": "lifestyle-j2",
+      "unmet_job": "Keep journal or mood-log entries from disappearing, with automatic backup the user controls and a way to restore after a device change.",
+      "competing_apps": [
+        {"name": "Journal (Apple)", "url": "https://apps.apple.com/us/app/journal/id6447391597"},
+        {"name": "Day One", "url": "https://apps.apple.com/us/app/day-one-daily-journal-diary/id1044867788"},
+        {"name": "Daylio Journal - Mood Tracker", "url": "https://apps.apple.com/us/app/daylio-journal-mood-tracker/id1194023242"},
+        {"name": "stoic. journal & mental health", "url": "https://apps.apple.com/us/app/stoic-journal-mental-health/id1312926037"}
+      ],
+      "complaints": [
+        {"app": "Journal (Apple)", "date": "2026-11-06", "rating": 1, "quote": "I was journaling for probably over a year and a half to two years and two all of my journal entries disappeared.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=6447391597/sortBy=mostRecent/json"},
+        {"app": "Journal (Apple)", "date": "2026-11-14", "rating": 3, "quote": "my phone failed and I have a new one but seemingly have lost all of my journaling", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6447391597/sortBy=mostRecent/json"},
+        {"app": "Day One", "date": "2026-07-19", "rating": 1, "quote": "The app deleted years of journaling with an update.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1044867788/sortBy=mostRecent/json"},
+        {"app": "Day One", "date": "2026-08-18", "rating": 1, "quote": "I had the misfortune of losing 2 whole months of daily journal entry.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1044867788/sortBy=mostRecent/json"},
+        {"app": "Day One", "date": "2026-10-14", "rating": 1, "quote": "This app stopped syncing back in January, 10 months ago.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1044867788/sortBy=mostRecent/json"},
+        {"app": "Daylio", "date": "2026-08-06", "rating": 1, "quote": "I closed my app out once and everything is GONE.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1194023242/sortBy=mostRecent/json"},
+        {"app": "Daylio", "date": "2026-09-05", "rating": 3, "quote": "A lot of my entries will just disappear with this app.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1194023242/sortBy=mostRecent/json"},
+        {"app": "Stoic", "date": "2026-07-14", "rating": 3, "quote": "my entries will not save, or will only partially save.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1312926037/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "none sourced",
+      "not_found": "No keyword data. Cannot tell from reviews whether loss comes from sync, updates or user error; some reports are single sentences.",
+      "notes": "Shares an app type with lifestyle-j1 (journal). Reported as a fact for the caller."
+    },
+    {
+      "id": "lifestyle-cal1",
+      "unmet_job": "Share a calendar between two people so it stays identical on both phones, handles time zones, and stays in two-way sync with Apple Calendar and Reminders or exports out.",
+      "competing_apps": [
+        {"name": "TimeTree: Shared Calendar", "url": "https://apps.apple.com/us/app/timetree-shared-calendar/id952578473"},
+        {"name": "Cupla: Couples Shared Calendar", "url": "https://apps.apple.com/us/app/cupla-couples-shared-calendar/id1557764033"}
+      ],
+      "complaints": [
+        {"app": "TimeTree", "date": "2026-11-04", "rating": 1, "quote": "The person I share my calendar with suddenly sees a completely blank calendar, even though all the appointments are still visible on my end.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=952578473/sortBy=mostRecent/json"},
+        {"app": "TimeTree", "date": "2026-11-04", "rating": 1, "quote": "when the two people sharing a calendar are in different time zones—for example, when one person is in another country—the app does not properly synchronize appointment times between them.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=952578473/sortBy=mostRecent/json"},
+        {"app": "TimeTree", "date": "2026-09-08", "rating": 1, "quote": "This calendar app constantly unsyncs itself and my wife and I have to manually update almost daily to ensure our calendars match.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=952578473/sortBy=mostRecent/json"},
+        {"app": "TimeTree", "date": "2026-07-22", "rating": 1, "quote": "My entire calendar was randomly wiped out one day!", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=952578473/sortBy=mostRecent/json"},
+        {"app": "TimeTree", "date": "2026-07-06", "rating": 1, "quote": "Why can’t I export this calendar to something like Google Calendar??", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=952578473/sortBy=mostRecent/json"},
+        {"app": "TimeTree", "date": "2026-10-05", "rating": 3, "quote": "TimeTree can’t be exported to Google Calendar despite having seamless importing.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=952578473/sortBy=mostRecent/json"},
+        {"app": "Cupla", "date": "2026-11-07", "rating": 1, "quote": "this app won’t move or delete old events to match iPhone or iPad.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1557764033/sortBy=mostRecent/json"},
+        {"app": "Cupla", "date": "2026-09-16", "rating": 3, "quote": "especially true two-way editing with Apple Calendar and Apple Reminders so events and shared tasks can be managed from either app.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1557764033/sortBy=mostRecent/json"},
+        {"app": "Cupla", "date": "2026-06-14", "rating": 1, "quote": "she appeared to be connected, but she could not access the calendar.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1557764033/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "none sourced",
+      "not_found": "Only two apps read. Howbout, Teamup and Google Calendar appeared in search but their reviews were not read. A shared calendar needs a second user and a backend, which the caller prefers to avoid; this is noted as a fact, not a judgement.",
+      "notes": "Price and ad complaints on these apps were present and are excluded from this candidate."
+    },
+    {
+      "id": "lifestyle-inv1",
+      "unmet_job": "Catalogue what is in labelled storage boxes using photos and QR codes with data kept on the device, camera-roll photo import, and full export.",
+      "competing_apps": [
+        {"name": "ElephantTrax: Home Inventory", "url": "https://apps.apple.com/us/app/elephanttrax-home-inventory/id1502900545"},
+        {"name": "SnapFind: Home Inventory", "url": "https://apps.apple.com/us/app/snapfind-home-inventory/id6740042892"},
+        {"name": "Under My Roof Home Inventory +", "url": "https://apps.apple.com/us/app/under-my-roof-home-inventory/id1524335878"}
+      ],
+      "complaints": [
+        {"app": "SnapFind", "date": "2026-01-19", "rating": 1, "quote": "App kept asking me to logout and log back in. I followed the instructions and lost ALL my data.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6740042892/sortBy=mostRecent/json"},
+        {"app": "SnapFind", "date": "2026-01-19", "rating": 1, "quote": "Use a more reliable app vendor who stores your information locally and doesn’t force you to use their cloud storage or pay exorbitant fees.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6740042892/sortBy=mostRecent/json"},
+        {"app": "SnapFind", "date": "2026-01-30", "rating": 2, "quote": "other than downloading a CSV that doesn’t even display the amount of each item I have or the pics I took (only a web link)", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6740042892/sortBy=mostRecent/json"},
+        {"app": "Under My Roof", "date": "2025-06-21", "rating": 3, "quote": "There needs to be an option in preferences giving users the ability to automatically save backups in a specific location", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1524335878/sortBy=mostRecent/json"},
+        {"app": "Under My Roof", "date": "2025-08-02", "rating": 1, "quote": "The ability to import from a CSV file seems corrupted, with the option sometimes being there and sometimes not.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1524335878/sortBy=mostRecent/json"},
+        {"app": "ElephantTrax", "date": "2024-12-24", "rating": 1, "quote": "Opened the app and weirdly it asked for a log in. I logged and nothing was there. Nothing recorded.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1502900545/sortBy=mostRecent/json"},
+        {"app": "ElephantTrax", "date": "2024-12-16", "rating": 1, "quote": "There’s an option in the app to upload images from my cellphone camera roll, but it doesn’t work.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1502900545/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "none sourced",
+      "not_found": "Only three 2026 complaints with the specific job. ElephantTrax reviews are mostly 2021 to 2024. ElephantTrax and SnapFind sell physical labels or have QR tie-ins; the unmet job here is the app side only. SmartLabels (1555535491) returned 1 review and was not used.",
+      "notes": "Many other reviews on these apps are about subscription price and the 10-item free limit; excluded."
+    },
+    {
+      "id": "lifestyle-wd1",
+      "unmet_job": "Build a digital closet from photos quickly and get outfit suggestions whose pieces actually go together.",
+      "competing_apps": [
+        {"name": "Whering: Your Digital Closet", "url": "https://apps.apple.com/us/app/whering-your-digital-closet/id1519461680"},
+        {"name": "Pureple: AI Outfit Planner", "url": "https://apps.apple.com/us/app/pureple-ai-outfit-planner/id628106373"}
+      ],
+      "complaints": [
+        {"app": "Whering", "date": "2026-10-19", "rating": 2, "quote": "No logic to the outfits put together. They seem to just grab random tops and bottoms and throw them together.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1519461680/sortBy=mostRecent/json"},
+        {"app": "Whering", "date": "2026-08-25", "rating": 1, "quote": "it is not able to suggest any outfits no matter how much you upload", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1519461680/sortBy=mostRecent/json"},
+        {"app": "Whering", "date": "2026-05-10", "rating": 1, "quote": "Does not create outfits even after hours of me putting in clothes items", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1519461680/sortBy=mostRecent/json"},
+        {"app": "Whering", "date": "2026-07-29", "rating": 2, "quote": "you can only upload 15 items at a time it take a while", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1519461680/sortBy=mostRecent/json"},
+        {"app": "Whering", "date": "2026-10-18", "rating": 3, "quote": "I’d like to carousel my wardrobe based off tags (work etc.) and location.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1519461680/sortBy=mostRecent/json"},
+        {"app": "Pureple", "date": "2025-08-31", "rating": 2, "quote": "The AI that supposedly creates an outfit for you doesn’t even work properly, it just adds randomized items from the collection you added.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=628106373/sortBy=mostRecent/json"},
+        {"app": "Pureple", "date": "2024-07-07", "rating": 3, "quote": "it takes sooooo long to add the pictures.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=628106373/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "none sourced",
+      "not_found": "Evidence is thin on Pureple for 2026 (one 2026 review in the read window, about AI). Dressly, Cladwell, Acloset, Style DNA appeared in search but were not read. Outfit quality depends on a model or rules; not assessed.",
+      "notes": "Evidence is thin."
+    },
+    {
+      "id": "lifestyle-chore1",
+      "unmet_job": "Assign household chores among children fairly, let a parent edit assignments by hand, and support two households.",
+      "competing_apps": [
+        {"name": "Chorsee: Chores Tracker", "url": "https://apps.apple.com/us/app/chorsee-chores-tracker/id1611068600"},
+        {"name": "Chores & Allowance Bot", "url": "https://apps.apple.com/us/app/chores-allowance-bot/id629797415"}
+      ],
+      "complaints": [
+        {"app": "Chorsee", "date": "2026-08-26", "rating": 2, "quote": "The chores were assigned and I can’t make adjustments to balance among my children’s profiles.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1611068600/sortBy=mostRecent/json"},
+        {"app": "Chorsee", "date": "2026-08-21", "rating": 1, "quote": "Started off good but now assigns two sets of chores to one kids and leave another without any to do", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1611068600/sortBy=mostRecent/json"},
+        {"app": "Chorsee", "date": "2026-07-28", "rating": 2, "quote": "Now the chores between 5 kids are always uneven, which defeats the purpose of the app.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1611068600/sortBy=mostRecent/json"},
+        {"app": "Chorsee", "date": "2026-10-31", "rating": 2, "quote": "My parents are divorced and I can’t use two house holds", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1611068600/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none found",
+      "trend_signals": "none sourced",
+      "not_found": "All four complaints are about one app. Chores & Allowance Bot reviews read (26) had no matching complaint about uneven assignment. Many Chorsee reviews are one-word or written by children and were not used.",
+      "notes": "Evidence is very thin: one app."
+    }
+  ],
+  "dropped_topics": [
+    {"topic": "plant identification and care (Planty read; PictureThis fetched but not read)", "reason": "Planty complaints are mostly billing and cancellation. Mis-identification complaints exist (e.g. 2026-09-02, 2026-02-28 on https://itunes.apple.com/us/rss/customerreviews/page=1/id=1603599822/sortBy=mostRecent/json) but are few and depend on model accuracy. Not written up as a candidate."},
+    {"topic": "price and ad complaints on every app read", "reason": "Price-only or paywall-only; not used as candidates per caller instruction."}
+  ],
+  "excluded": [],
+  "excluded_note": "Nothing in the Lifestyle apps read fell on data/excluded_categories.yaml. Astrology, horoscope and dating apps were not searched. state/scout/rejected.jsonl has no Lifestyle entries; its Productivity, Business, Education and Health and Fitness rows do not match any candidate here.",
+  "could_not_find_or_open": [
+    "No keyword volume or difficulty data source was used. No trend data sourced.",
+    "No WebFetch pages were opened; all evidence is from Apple's public review RSS (most recent 3 pages, rating <= 3).",
+    "PlantIn (1527399597) returned 0 low-rated reviews; SmartLabels (1555535491) returned 1; Pet Care Tracker (1551003273) returned 9 and was not read; Howbout and other shared calendar apps not read.",
+    "Review RSS covers only recent reviews, so complaint counts are not totals."
+  ],
+  "injection_suspected": []
+}

@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-private-spend-tracking-without-bank-login",
+  "stage": "discovered",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Track spending without handing over bank logins or sharing data with third parties, with working account deletion and no AI features.",
+  "category": "Finance",
+  "evidence": [
+    {"claim": "9 dated complaints (2026-05 to 2026-11) about data selling, bank-login requests, account deletion not working and unwanted AI, across 5 apps (Monarch, Copilot, Rocket Money, MonoBoost, Bills Manager)", "source": "state/scout/2026-11-17-finance.json (fin-c4; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 9, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured", "note": "marginal. Complaints are reviewer claims about data practices, not verified against privacy policies. Demand is mixed: a Spendee reviewer wants bank linking. Without linking, the job relies on manual entry or statement import; the spec must show that is acceptable. Avoid any claim about competitors' practices."},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept, marginal: 9 complaints, 5 apps, claims unverified"}],
+  "blocked_by": null,
+  "next_check": null
+}

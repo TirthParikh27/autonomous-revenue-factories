@@ -1,0 +1,18 @@
+{
+  "id": "2026-11-17-private-journal-that-never-loses-entries",
+  "stage": "discovered",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Journal or mood log that stays on the device with no AI and an app lock, and keeps entries safe with user-controlled backup and restore after a device change.",
+  "category": "Lifestyle",
+  "evidence": [
+    {"claim": "8 dated complaints (2026-07 to 2026-11) about entries disappearing, sync stopping and no restore after a phone change, across 4 apps (Journal by Apple, Day One, Daylio, Stoic)", "source": "state/scout/2026-11-17-lifestyle.json (lifestyle-j2; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"},
+    {"claim": "8 dated complaints (2026-05 to 2026-11) about forced or unwanted AI, no app lock, and cloud storage in a journal, across 4 apps (Day One, Daylio, Stoic, DailyBean)", "source": "state/scout/2026-11-17-lifestyle.json (lifestyle-j1; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 16, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured", "note": "merged from scout candidates j1 and j2 (same core job: journal). Journaling is crowded (Day One, Apple Journal, Daylio). Some Day One users praise the AI, so the no-AI group size is unknown. Cause of data loss (sync, update, user error) unverified. Avoid mental-health claims."},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept: 16 complaints across two clusters, 5 apps; j1 and j2 merged"}],
+  "blocked_by": null,
+  "next_check": null
+}
