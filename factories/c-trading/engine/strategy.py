@@ -72,7 +72,9 @@ def lint(source: str) -> list[str]:
             problems.append(f"line {line}: use of '{node.id}' is not allowed")
         elif isinstance(node, ast.Attribute) and _bad_attr(node.attr):
             problems.append(f"line {line}: use of '.{node.attr}' is not allowed")
-        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and _bad_attr(node.value):
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and len(node.value) > 1 and node.value.isidentifier() and (
+                node.value in BANNED_ATTRS or node.value in BANNED_NAMES or node.value.startswith(("__", "read_"))
+                or (node.value.startswith("to_") and node.value not in ALLOWED_TO and hasattr(pd.DataFrame, node.value))):
             problems.append(f"line {line}: the text '{node.value}' names a call that is not allowed")   # .agg("to_csv")
         elif isinstance(node, (ast.Match, ast.Global, ast.Nonlocal)):
             problems.append(f"line {line}: this statement is not allowed in a strategy")

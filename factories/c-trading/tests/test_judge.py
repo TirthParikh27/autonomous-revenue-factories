@@ -183,7 +183,8 @@ def test_lint_blocks_files_network_and_clock():
                 "bars._private", "s.agg('to_csv', path_or_buf='x')", "(x for x in ()).gi_frame.f_builtins", "a.dump('x')", "match np:\n    case object(random=r):\n        pass"):
         assert strat.lint(bad), bad
     assert strat.lint("w = bars.close.rolling(5).mean().to_numpy()\nd = pd.to_datetime(x)\n"
-                      "from lib import indicators\nfrom lib.indicators import ema\nfrom numpy import sqrt\n") == []
+                      "from lib import indicators\nfrom lib.indicators import ema\nfrom numpy import sqrt\n"
+                      "n = '_'.join(cols)\nk = c + '_ret'\nv = params['f_fast']\nt = 'to_buy'\n") == []
 
 
 def test_code_hash_covers_universe_and_band(tmp_path):

@@ -51,7 +51,7 @@ jobs:
               elif (stage in ("paper", "confirmed", "paused", "awaiting_human") and sat) or stage == "watch":
                   paper.append(p.stem)
           import subprocess
-          print("sha=" + subprocess.run(["git", "-C", "state-branch", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip())
+          print("sha=" + subprocess.run(["git", "-C", "state-branch", "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip())
           print("exam=" + " ".join(exam))
           print("all=" + " ".join(exam + paper))
           PY
@@ -98,7 +98,7 @@ jobs:
       sha: ${{ steps.find.outputs.sha }}
   record:
     needs: judge
-    if: always() && needs.judge.outputs.ran == 'true'
+    if: always() && needs.judge.outputs.ran == 'true' && needs.judge.outputs.sha != ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
