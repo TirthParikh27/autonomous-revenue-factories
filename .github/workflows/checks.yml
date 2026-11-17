@@ -28,11 +28,24 @@ jobs:
       - name: Changed lines are covered by tests
         if: github.event_name == 'pull_request'
         run: diff-cover coverage.xml --compare-branch "$BASE" --fail-under 80
-      # Runs the base branch's copy of the gate, so a pull request cannot change the check that judges it.
-      # Last, because it replaces the file in the checkout. -I keeps a module the pull request adds
-      # under tools/ from being imported in place of the standard library.
+  # The base branch's copy of the gate, in its own job, so no code from the pull request runs before it:
+  # not its tests, not its requirements. -I keeps a module the pull request adds under tools/ from being
+  # imported in place of the standard library.
+  gate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      BASE: origin/${{ github.base_ref }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      - run: pip install coverage==7.17.3
       - name: Code changes come with tests
-        if: always() && github.event_name == 'pull_request'
         run: |
           git show "$BASE:tools/pr_gate.py" > tools/pr_gate.py
           python -I tools/pr_gate.py --base "$BASE"

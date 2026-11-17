@@ -1,9 +1,15 @@
 """The pull request gate: code needs a test, protected files wait for the operator."""
+import subprocess
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pr_gate  # noqa: E402
+
+
+def git(cwd, *args):
+    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=cwd, check=True, capture_output=True)
+
 
 PATTERNS = pr_gate.protected_patterns(
     "# comment\n\n/factories/*/budget.yaml  @op\n/.github/  @op\n/REVIEW.md @op\n"
@@ -83,21 +89,15 @@ def test_protected_files_are_named_even_when_deleted():
 
 
 def test_end_to_end_in_a_real_repository(tmp_path, monkeypatch, capsys):
-    import subprocess
-
-    def git(*args):
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
-                       cwd=tmp_path, check=True, capture_output=True)
-
     (tmp_path / ".github").mkdir()
     (tmp_path / ".github" / "CODEOWNERS").write_text("/factories/*/budget.yaml @op\n")
     (tmp_path / "factories" / "x\u00e9" / ".claude").mkdir(parents=True)
     (tmp_path / "factories" / "x\u00e9" / ".claude" / "settings.json").write_text(
         '{"permissions": {"deny": ["Edit(data/**)"]}}')
-    git("init", "-q", "-b", "main")
-    git("add", "-A")
-    git("commit", "-q", "-m", "base")
-    git("checkout", "-q", "-b", "change")
+    git(tmp_path, "init", "-q", "-b", "main")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "base")
+    git(tmp_path, "checkout", "-q", "-b", "change")
     (tmp_path / "factories" / "x").mkdir()
     (tmp_path / "factories" / "x" / "budget.yaml").write_text("cap: 1\n")
     # The change edits a deny-listed file and deletes the deny list. The base's deny list still applies.
@@ -110,8 +110,8 @@ def test_end_to_end_in_a_real_repository(tmp_path, monkeypatch, capsys):
     # The change also deletes the list that protects what it edits. The base's list still applies.
     (tmp_path / ".github" / "CODEOWNERS").unlink()
     (tmp_path / "na\u00efve.py").write_text("def f():  # pragma: no cover\n    return 1\n")
-    git("add", "-A")
-    git("commit", "-q", "-m", "code only")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "code only")
 
     monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
     monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])
@@ -125,8 +125,8 @@ def test_end_to_end_in_a_real_repository(tmp_path, monkeypatch, capsys):
 
     (tmp_path / "test_run.py").write_text("def test_run():\n    assert True\n")
     (tmp_path / "na\u00efve.py").write_text("def f():\n    return 1\n")
-    git("add", "-A")
-    git("commit", "-q", "-m", "with test")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "with test")
     assert pr_gate.main() == 0
 
 
@@ -196,21 +196,15 @@ def test_a_deleted_test_file_is_named():
 
 
 def test_end_to_end_comment_only_edit_and_removed_test(tmp_path, monkeypatch, capsys):
-    import subprocess
-
-    def git(*args):
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
-                       cwd=tmp_path, check=True, capture_output=True)
-
     (tmp_path / "pay.py").write_text("def pay(x):\n    return x + 1\n")
     (tmp_path / "test_pay.py").write_text("def test_pay():\n    assert True\n\n\ndef test_cents():\n    assert True\n")
-    git("init", "-q", "-b", "main")
-    git("add", "-A")
-    git("commit", "-q", "-m", "base")
-    git("checkout", "-q", "-b", "change")
+    git(tmp_path, "init", "-q", "-b", "main")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "base")
+    git(tmp_path, "checkout", "-q", "-b", "change")
     (tmp_path / "pay.py").write_text("# Adds one.\ndef pay(x):\n    return x + 1  # why\n")
-    git("add", "-A")
-    git("commit", "-q", "-m", "comments only")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "comments only")
 
     monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
     monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])
@@ -220,31 +214,25 @@ def test_end_to_end_comment_only_edit_and_removed_test(tmp_path, monkeypatch, ca
 
     (tmp_path / "pay.py").write_text("def pay(x):\n    return x + 2\n")
     (tmp_path / "test_pay.py").write_text("def test_pay():\n    assert True\n")
-    git("add", "-A")
-    git("commit", "-q", "-m", "real change, one test gone")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "real change, one test gone")
     assert pr_gate.main() == 0  # a test file changed, so the rule passes; the reviewer is told what went
     out = capsys.readouterr().out
     assert "::warning::Test removed or skipped. test_pay.py: test_cents removed" in out
 
 
 def test_a_comment_only_edit_to_a_protected_file_is_still_named(tmp_path, monkeypatch, capsys):
-    import subprocess
-
-    def git(*args):
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
-                       cwd=tmp_path, check=True, capture_output=True)
-
     (tmp_path / ".github").mkdir()
     (tmp_path / ".github" / "CODEOWNERS").write_text("/engine/ @op\n")
     (tmp_path / "engine").mkdir()
     (tmp_path / "engine" / "gate.py").write_text("# Max loss 2%, do not change.\nLIMIT = 2\n")
-    git("init", "-q", "-b", "main")
-    git("add", "-A")
-    git("commit", "-q", "-m", "base")
-    git("checkout", "-q", "-b", "change")
+    git(tmp_path, "init", "-q", "-b", "main")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "base")
+    git(tmp_path, "checkout", "-q", "-b", "change")
     (tmp_path / "engine" / "gate.py").write_text("# Max loss is advisory.\nLIMIT = 2\n")
-    git("add", "-A")
-    git("commit", "-q", "-m", "comment only")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "comment only")
 
     monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
     monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])
@@ -254,21 +242,15 @@ def test_a_comment_only_edit_to_a_protected_file_is_still_named(tmp_path, monkey
 
 def test_the_committed_code_is_judged_not_the_working_tree(tmp_path, monkeypatch, capsys):
     """CI replaces the gate on disk with the base copy before it runs. The committed change still counts."""
-    import subprocess
-
-    def git(*args):
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
-                       cwd=tmp_path, check=True, capture_output=True)
-
     base = "SUFFIXES = {'.py', '.sql'}\n"
     (tmp_path / "gate.py").write_text(base)
-    git("init", "-q", "-b", "main")
-    git("add", "-A")
-    git("commit", "-q", "-m", "base")
-    git("checkout", "-q", "-b", "change")
+    git(tmp_path, "init", "-q", "-b", "main")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "base")
+    git(tmp_path, "checkout", "-q", "-b", "change")
     (tmp_path / "gate.py").write_text("SUFFIXES = {'.py'}\n")
-    git("add", "-A")
-    git("commit", "-q", "-m", "code change, no test")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "code change, no test")
     (tmp_path / "gate.py").write_text(base)  # what CI does with tools/pr_gate.py
 
     monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
@@ -278,21 +260,15 @@ def test_the_committed_code_is_judged_not_the_working_tree(tmp_path, monkeypatch
 
 
 def test_a_non_ascii_test_path_is_named_plainly(tmp_path, monkeypatch, capsys):
-    import subprocess
-
-    def git(*args):
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
-                       cwd=tmp_path, check=True, capture_output=True)
-
     (tmp_path / "tests").mkdir()
     (tmp_path / "tests" / "test_caf\u00e9.py").write_text("def test_one():\n    assert True\n")
-    git("init", "-q", "-b", "main")
-    git("add", "-A")
-    git("commit", "-q", "-m", "base")
-    git("checkout", "-q", "-b", "change")
+    git(tmp_path, "init", "-q", "-b", "main")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "base")
+    git(tmp_path, "checkout", "-q", "-b", "change")
     (tmp_path / "tests" / "test_caf\u00e9.py").unlink()
-    git("add", "-A")
-    git("commit", "-q", "-m", "drop test")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "drop test")
 
     monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
     monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])
@@ -314,22 +290,16 @@ def test_a_very_deep_expression_counts_as_a_change():
 
 
 def test_gitattributes_cannot_hide_a_diff(tmp_path, monkeypatch, capsys):
-    import subprocess
-
-    def git(*args):
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
-                       cwd=tmp_path, check=True, capture_output=True)
-
     (tmp_path / "test_pay.py").write_text("def test_one():\n    assert True\n\n\ndef test_two():\n    assert True\n")
-    git("init", "-q", "-b", "main")
-    git("add", "-A")
-    git("commit", "-q", "-m", "base")
-    git("checkout", "-q", "-b", "change")
+    git(tmp_path, "init", "-q", "-b", "main")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "base")
+    git(tmp_path, "checkout", "-q", "-b", "change")
     (tmp_path / ".gitattributes").write_text("*.py -diff\n")
     (tmp_path / "test_pay.py").write_text("def test_one():\n    assert True\n")
     (tmp_path / "pay.py").write_text("def pay():  # pragma: no cover\n    return 1\n")
-    git("add", "-A")
-    git("commit", "-q", "-m", "hide it")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "hide it")
 
     monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
     monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])

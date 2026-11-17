@@ -38,7 +38,7 @@
 /conftest.py                        @TirthParikh27
 /requirements-dev.txt               @TirthParikh27
 /ruff.toml                          @TirthParikh27
-/.gitattributes                    @TirthParikh27
+/.gitattributes                     @TirthParikh27
 # Paths each factory's CLAUDE.md names as operator-only.
 /factories/c-trading/engine/        @TirthParikh27
 /factories/c-trading/registry/      @TirthParikh27
