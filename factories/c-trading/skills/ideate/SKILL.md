@@ -22,7 +22,7 @@ You are a fresh session with no memory. Read `CLAUDE.md` and `budget.yaml` first
 3. Delegate the reading to the `idea-scout` agent. Give it the gap you want filled, the list of existing and killed ideas in one line each, the datasets available, and an output path `state/scout/<date>-<slug>.json`. You do not read raw web pages yourself.
 4. Judge each candidate the scout returns. Keep one when:
    - it names who pays and why, with a source that is more than a backtest;
-   - it can be tested honestly on bar data that exists in `engine/config.yaml`, long only, at the costs listed there;
+   - it can be tested honestly on bar data that exists in `engine/config.yaml`, at the costs listed there. A card that shorts or borrows says so, and its expected edge must survive that market's margin fee and borrowing interest;
    - it is a different mechanism from every existing and killed card, not a variant of one;
    - its expected trading frequency leaves room for costs on its timeframe.
    - its rules do not re-implement what the engine already does. The engine fills at the next bar's open and charges fees and slippage. It also ignores weight changes smaller than a no-trade band per symbol, which a card may set to its own fixed value (`rebalance_band` in `params.yaml`, declared on the card, not swept).

@@ -1,6 +1,6 @@
 # Engine configuration. Only the operator changes this file (F-ENG-1).
 
-engine_version: 1
+engine_version: 2
 
 # Development data ends here. Later bars are the held-back window and exist
 # only inside the final exam job.
@@ -19,14 +19,60 @@ universe:
   crypto: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, AVAXUSDT]
 
 costs:
-  # Charged on every change in position, per side, as a fraction of traded value.
+  # One block per market, set from the venue an Australian resident can use (all pages read 17 Nov 2026).
+  # A strategy cannot change any of these.
+  #   fee, slippage        charged on every change in position, per side, as a fraction of traded value
+  #   financing_per_year   charged on every open position, long or short, borrowed or not
+  #   margin               the terms that apply to the whole strategy if it ever holds a short position or
+  #                        more than 1.0 of gross exposure. Without this block neither is allowed
+  #     max_gross_exposure      longs plus shorts, as a multiple of equity
+  #     borrow_cash_per_year    interest on cash borrowed to hold more in longs than the account's equity
+  #     borrow_asset_per_year   interest on assets borrowed to short
+  #     maintenance_margin      the account is closed out when equity falls below this share of gross positions
+
   crypto:
-    fee: 0.0025        # Alpaca crypto taker fee, lowest volume tier (alpaca.markets/support/crypto-maker-taker-gmt-faq, read 17 Nov 2026)
-    slippage: 0.0005   # assumed half spread plus slippage; replace with measured paper costs
-    financing_per_day: 0.0   # spot, long only
-    allow_short: false
+    # Long only, no borrowing: Binance Australia spot, 0.10% maker and taker at the regular tier
+    # (binance.com/en/fee/schedule). Binance offers no margin or derivatives to Australian retail clients.
+    fee: 0.0010
+    slippage: 0.0005   # assumed half spread plus slippage; replace with measured costs
+    financing_per_year: 0.0
+    margin:
+      # Kraken Pro spot margin, the venue that lets Australian retail clients short and borrow
+      # (support.kraken.com/au/articles/margin-trading-restrictions-au; shorts and crypto-quoted longs are unrestricted).
+      fee: 0.0040                    # 0.38% taker at $10K+ of 30-day volume or $20K of assets, plus the 0.02% margin
+                                     # opening fee (kraken.com/pro/fees). Below that tier the taker fee is 0.60 to 0.80%
+      max_gross_exposure: 3.0        # Kraken offers 2x to 10x by pair; 3x is used as the cap for every coin
+      borrow_cash_per_year: 0.44     # rollover 0.02% per 4 hours (published range 0.02 to 0.04%; Bitcoin 0.01 to 0.02%)
+      borrow_asset_per_year: 0.44
+      maintenance_margin: 0.16       # Kraken may liquidate below a margin level of 80% and always does at 40%.
+                                     # At 5x leverage, 80% of used margin is 16% of the position
+
+  etf:
+    # Alpaca: no commission on US ETFs; regulatory fees on sells are under 0.01% and are inside slippage.
+    fee: 0.0
+    slippage: 0.0003   # assumed half spread plus slippage on liquid ETFs
+    financing_per_year: 0.0
+    margin:
+      # docs.alpaca.markets/us/docs/margin-and-short-selling
+      max_gross_exposure: 2.0        # Regulation T overnight limit. 4x intraday is not modelled
+      borrow_cash_per_year: 0.065    # Alpaca's margin rate
+      borrow_asset_per_year: 0.0     # $0 borrow fee on easy-to-borrow shares, the only ones Alpaca lets you short
+      maintenance_margin: 0.30       # 30% of market value, long or short
+
+  fx:
+    # OANDA Australia, spread-only pricing (oanda.com/au-en/trading/our-pricing). Every position is a
+    # leveraged CFD, so the margin terms always apply.
+    fee: 0.0
+    slippage: 0.0001   # half of a spread of about 1.5 pips, the measured average on eight major pairs, plus slippage
+    financing_per_year: 0.01   # OANDA's admin fee, charged on longs and shorts (oanda.com/au-en/trading/financing-costs).
+                               # The interest-rate difference between the two currencies, which OANDA also
+                               # pays or charges, is NOT modelled: carry ideas cannot be tested yet
+    margin:
+      max_gross_exposure: 20.0       # ASIC retail limit: 30:1 on major pairs, 20:1 on the rest
+      borrow_cash_per_year: 0.0
+      borrow_asset_per_year: 0.0
+      maintenance_margin: 0.025      # closed out at 50% of the margin needed to open (5% at 20:1)
 
 execution:
-  max_gross_exposure: 1.0   # no leverage
   rebalance_band: 0.02      # default: ignore target changes smaller than this, so drift does not pay costs.
                             # A strategy may set its own with `rebalance_band` in params.yaml

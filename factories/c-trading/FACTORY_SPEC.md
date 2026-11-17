@@ -22,7 +22,8 @@ Three findings from the research shape everything below:
 ## 2. Scope
 
 - **Timeframe:** 15-minute, hourly and daily bars, holding periods from under an hour to a few weeks. All three data sources provide 15-minute history. The shorter the bar, the larger the share of return that costs take, so a 15-minute strategy has to clear the same cost tests with far less room.
-- **Markets:** spot crypto now. US ETFs and FX once the operator creates the Alpaca and OANDA accounts their data needs.
+- **Markets:** crypto, US ETFs and FX. The engine has cost and margin terms for all three. Crypto data is in place. ETF and FX data need the operator's free Alpaca paper and OANDA demo keys.
+- **Shorts and leverage:** allowed where the venue an Australian resident would use offers them, on that venue's terms: crypto up to 3x on Kraken spot margin, ETFs up to 2x on Alpaca, FX up to 20x on OANDA Australia. A strategy that uses either pays the margin venue's fee and borrowing interest throughout and is closed out if the account would have been liquidated.
 - **Data:** Alpaca bars (US, from 2016), OANDA candles (FX, from 2005), Binance public archive (crypto). Pulled by scripts into fixed snapshots.
 - **Strategy families:** any that bar data can test honestly. Trend, momentum, mean reversion, carry, breakout, seasonality, cross-market signals, and combinations.
 - **Out of scope:** real money; anything faster than 15-minute bars or dependent on speed (arbitrage across venues, market making); single stocks until survivorship-free data is bought; crypto derivatives until a paper venue open to Australians is confirmed; prediction markets. Adding any of these is escalation `F-VENUE-1`.
@@ -62,7 +63,7 @@ The engine trades a target at the next bar's open, so a strategy cannot trade on
 
 | Part | Built on | Notes |
 |---|---|---|
-| Backtester | vectorbt (pinned) | A wrapper fixes next-bar fills, fees, slippage, no leverage, and a rebalance band so drift does not pay costs. Checked against a hand-written reference in tests |
+| Backtester | Own (numba) | Next-bar fills, fees, slippage, borrowing interest, liquidation, and a rebalance band so drift does not pay costs. Open-source vectorbt has no leverage or borrowing cost, so it was replaced. The two agree to 0.06% over five years on an hourly strategy. Checked against a hand-written reference in tests |
 | Indicators | TA-Lib | `lib/indicators.py`. Protected like the engine. A strategy that needs something else writes it inside its own file, where its code hash covers it |
 | Parameter search | Optuna | Searches only inside the card's declared ranges. Every run is a counted trial |
 | Cost model | Own | One table per market in `engine/config.yaml`, sourced from venue fee pages. Every result is also produced at raised costs |
@@ -234,7 +235,9 @@ Where research gives no agreed number, such as a pass mark for overfitting proba
 ## 12. Open items
 
 - Whether the operator wants a longer paper period before a winner packet than the engine's own judgement.
-- The crypto fee is Alpaca's published taker fee (0.25% a side). Slippage is an assumption until a broker paper account measures it.
+- Fees follow the venues an Australian resident can use, read on 17 November 2026: Binance Australia spot (0.10%) for long-only crypto, Kraken Pro margin (0.38% plus 0.02% to open, about 44% a year on borrowed amounts) for crypto that shorts or borrows, Alpaca for ETFs, OANDA Australia for FX. Kraken's fee assumes $10K of monthly volume or $20K of assets. Below that it is 0.60 to 0.80%. Slippage is an assumption everywhere.
+- FX financing charges OANDA's 1% admin fee but not the interest-rate difference between the two currencies, so carry ideas on FX cannot be tested until swap rates are part of the data.
+- Liquidation is checked against each bar's high and low for the whole account. Real venues liquidate position by position and add a fee, so a near miss in the backtest is not safe.
 - The trial log is committed on `main` under `state/` for now. It moves to the `factory-state` branch when the run wrapper is wired up.
 - Alpaca's free US data covers one exchange with about 4 to 5% of volume, so volume-based hourly signals on ETFs are unreliable until better data is bought.
 - A paper venue for crypto funding carry that is open to Australians has not been confirmed.

@@ -37,7 +37,8 @@ def _dir(name: str):
 def record(s: strat.Strategy, dev_bars: Bars, all_bars: Bars, started: str) -> tuple[dict, dict]:
     """The paper record from `started` (the first day the exam did not see), and its health."""
     cutoff = dev_bars.close.index[-1].normalize()
-    full = backtest.run(strat.compute(s, all_bars, s.chosen), all_bars, s.dataset, band=s.band).daily
+    run = backtest.run(strat.compute(s, all_bars, s.chosen), all_bars, s.dataset, band=s.band)
+    full = run.daily
     bench = backtest.buy_and_hold(all_bars, s.dataset).daily
     seen = full.index <= cutoff
     dev_alpha, beta = stats.market_adjusted(full[seen].to_numpy(), bench[seen].to_numpy())
@@ -54,6 +55,7 @@ def record(s: strat.Strategy, dev_bars: Bars, all_bars: Bars, started: str) -> t
         "market_adjusted_result": round(float(alpha.sum()), 4) if n else 0.0,
         "max_drawdown": round(stats.max_drawdown(r), 4) if n else 0.0,
         "sharpe": round(stats.annual_sharpe(r, ppy), 2) if n >= MIN_DAYS else None,
+        "liquidated": run.liquidated,
         "development_daily_volatility": round(float(full[seen].std(ddof=1)), 6),
         "note": "Forward test with the engine's own fills and costs. A paper result is not profit.",
         "daily": [[str(d.date()), round(float(x), 6), round(float(y), 6), round(float(a), 6)]
@@ -65,7 +67,7 @@ def record(s: strat.Strategy, dev_bars: Bars, all_bars: Bars, started: str) -> t
     z = norm.ppf(1 - GATE["health_range_tail"])
     low, high = n * mu - z * sd * np.sqrt(n), n * mu + z * sd * np.sqrt(n)
     total = float(alpha.sum()) if n else 0.0
-    status = "too_early" if n < MIN_DAYS else "below_range" if total < low else "above_range" if total > high else "in_range"
+    status = "below_range" if run.liquidated else "too_early" if n < MIN_DAYS else "below_range" if total < low else "above_range" if total > high else "in_range"
     health = {
         "strategy": s.id, "days": n, "status": status,
         "market_adjusted_result": round(total, 4),

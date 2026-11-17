@@ -54,13 +54,80 @@ def test_backtest_matches_an_independent_reference():
     assert backtest.run(wiggly, bars, DATASET, band=0.0).orders > result.orders        # a strategy may set its own band
 
 
-def test_backtest_refuses_leverage_and_shorts():
-    bars = make_bars(200)
-    ok = pd.DataFrame(0.2, index=bars.close.index, columns=bars.symbols)
+def flat_bars(n=50, m=1):
+    idx = pd.date_range("2022-01-01", periods=n, freq="1h", tz="UTC")
+    one = pd.DataFrame(100.0, index=idx, columns=[f"S{j}" for j in range(m)])
+    return Bars(one.copy(), one.copy(), one.copy(), one.copy(), one.copy())
+
+
+def test_shorts_and_leverage_follow_the_market_terms(monkeypatch):
+    costs = CONFIG["costs"]["crypto"]
+    margin = costs["margin"]
+    bars = make_bars()
+    fast, slow = bars.close.rolling(20).mean(), bars.close.rolling(100).mean()
+    long_short = ((fast > slow) * 0.6 - (fast < slow) * 0.6).astype(float)
+
+    # With borrowing free, a long-short book at the margin fee matches the independent loop.
+    free = margin | {"borrow_cash_per_year": 0.0, "borrow_asset_per_year": 0.0, "maintenance_margin": 0.0}
+    monkeypatch.setitem(costs, "margin", free)
+    result = backtest.run(long_short, bars, DATASET)
+    ref = reference_equity(bars, long_short, margin["fee"], costs["slippage"])
+    assert result.margin and np.allclose(np.cumprod(1 + result.returns.to_numpy()), ref, rtol=1e-3)
+    monkeypatch.setitem(costs, "margin", margin)
+    assert backtest.run(long_short, bars, DATASET).returns.sum() < result.returns.sum()      # borrowing costs money
+
+    # Long only inside the account's equity keeps the plain terms. One short moves the whole strategy to margin terms.
+    plain = (fast > slow).astype(float) * 0.3
+    assert not backtest.run(plain, bars, DATASET).margin
+    assert backtest.terms("crypto", plain - 0.01)["fee"] == margin["fee"]
+
+    # Limits: gross exposure above the venue's cap, and any margin use where the venue offers none.
     with pytest.raises(ValueError, match="gross exposure"):
-        backtest.run(ok * 3, bars, DATASET)
-    with pytest.raises(ValueError, match="short"):
-        backtest.run(-ok, bars, DATASET)
+        backtest.run(plain * 0 + margin["max_gross_exposure"], bars, DATASET)
+    monkeypatch.delitem(costs, "margin")
+    with pytest.raises(ValueError, match="not available"):
+        backtest.run(-plain, bars, DATASET)
+
+
+def test_borrowing_cost_and_liquidation_by_hand():
+    costs = CONFIG["costs"]["crypto"]
+    margin, slip = costs["margin"], costs["slippage"]
+    per_bar = 1 / CONFIG["datasets"][DATASET]["bars_per_year"]
+
+    # Flat prices, 2x long: pays to get in, then interest each bar on the borrowed half.
+    bars = flat_bars()
+    w = pd.DataFrame(2.0, index=bars.close.index, columns=bars.symbols)
+    equity = np.cumprod(1 + backtest.run(w, bars, DATASET).returns.to_numpy())
+    entry = 1 - 2 * (slip + margin["fee"] * (1 + slip))
+    assert equity[1] == pytest.approx(entry - margin["borrow_cash_per_year"] * per_bar * (2 - entry), rel=1e-6)
+    assert equity[11] - equity[10] == pytest.approx(-margin["borrow_cash_per_year"] * per_bar * (2 - equity[10]), rel=1e-3)
+
+    # A 1x short gains when the price falls, and pays interest on the borrowed coins.
+    bars = flat_bars()
+    for f in (bars.open, bars.high, bars.low, bars.close):
+        f.iloc[10:] = 90.0
+    short = backtest.run(-w / 2, bars, DATASET)
+    assert not short.liquidated
+    assert np.prod(1 + short.returns.to_numpy()) == pytest.approx(1.1, abs=0.01)
+
+    # 3x long, and the price touches -40% inside one bar: the venue closes the account. It does not recover.
+    bars = flat_bars()
+    bars.low.iloc[20] = 60.0
+    wiped = backtest.run(w * 1.5, bars, DATASET)
+    assert wiped.liquidated and np.prod(1 + wiped.returns.to_numpy()) < 0.01
+    assert (wiped.returns.iloc[21:] == 0).all()
+    # The same spike upward does the same to a 2x short.
+    bars = flat_bars()
+    bars.high.iloc[20] = 150.0
+    assert backtest.run(-w, bars, DATASET).liquidated
+
+
+def test_every_market_has_usable_terms():
+    w = pd.DataFrame({"A": [0.5, -0.5]})
+    for market, costs in CONFIG["costs"].items():
+        t = backtest.terms(market, w)
+        assert t["margin"] and t["max_gross_exposure"] >= 1 and 0 <= t["maintenance_margin"] < 1 / t["max_gross_exposure"]
+        assert not backtest.terms(market, w.abs())["margin"] or market == "fx"
 
 
 def _strategy(fn):

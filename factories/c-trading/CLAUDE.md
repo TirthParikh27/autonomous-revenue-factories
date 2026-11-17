@@ -53,13 +53,15 @@ Weigh these and say in the run report what you relied on.
 - **Costs decide short timeframes.** On 15-minute bars, fees and slippage take most of a typical edge. Look at turnover and cost share before anything else.
 - **Different is valuable.** Trials whose returns move together count as one idea. A new strategy that behaves unlike everything in the trial log adds more to the combined book than a better version of an existing one.
 - **Long-only in a rising market is not skill.** The gate judges returns after removing market exposure. Expect long-only crypto and equity ideas to lose most of their apparent Sharpe there.
+- **Leverage does not create an edge.** It multiplies return and risk together, so the Sharpe ratio the gate judges does not improve, and borrowing costs lower it. Use leverage when a card needs it to express the idea (a long-short book, a low-volatility position scaled up), never to rescue a weak result. Shorting costs more than it looks: on crypto the margin venue charges four times the plain fee and about 44% a year on borrowed coins.
 - **Report what you cannot explain as unexplained.** Do not invent a market story after the fact.
 - **State the known biases** in every result: the universe was chosen with hindsight, slippage is assumed until paper fills are measured, and your training data may include the test period.
 
 ## Coding standards
 
 - A strategy is `strategies/<id>/` with `card.md`, `params.yaml` and `strategy.py`. See `strategies/crypto-trend-1h/` for the shape.
-- `strategy.py` has one function, `weights(bars, params)`, returning the target weight of every symbol at every bar from data up to and including that bar. The engine trades it at the next bar's open. Long only, weights summing to at most 1.
+- `strategy.py` has one function, `weights(bars, params)`, returning the target weight of every symbol at every bar from data up to and including that bar. The engine trades it at the next bar's open.
+- A weight is a share of the account's equity. Negative weights are short positions, and weights whose absolute values sum to more than 1 are leverage. Both are allowed up to the limit for the market in `engine/config.yaml`. A strategy that ever does either trades under that market's margin terms for its whole life: the margin venue's fee, interest on everything borrowed, and liquidation if the account falls below the venue's requirement. A liquidated strategy fails the gate.
 - It may import only `numpy`, `pandas`, `math` and `lib.indicators`. No files, network, clock or randomness. The engine's lint refuses anything else.
 - Every number that changes behaviour is a parameter in `params.yaml` with a declared range. No constants hidden in code.
 - The engine ignores weight changes smaller than a no-trade band per symbol (2% by default), so drift does not pay fees. A strategy whose card needs a different band sets `rebalance_band` in `params.yaml`, fixed before the first trial.
@@ -72,7 +74,7 @@ All numbers are in `budget.yaml`. Read it each run.
 
 - Paid data or a paid platform is `F-ACC-2`. The paid budget is zero.
 - The per-run trial ceiling in `budget.yaml` is a spend guard, not a target.
-- A new market, shorting, leverage, derivatives, single stocks or anything faster than 15-minute bars is `F-VENUE-1`. Do not write cards for them first.
+- A new market, derivatives, single stocks, more leverage than `engine/config.yaml` allows, or anything faster than 15-minute bars is `F-VENUE-1`. Do not write cards for them first.
 - Prediction markets are out of scope permanently. Never propose reaching any venue by VPN.
 - Do not write anything that reads as a recommendation to another person to buy, sell or hold, and never propose managing anyone else's money or selling signals.
 

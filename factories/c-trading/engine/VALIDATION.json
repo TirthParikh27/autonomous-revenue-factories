@@ -1,20 +1,20 @@
 {
-  "engine_version": 1,
+  "engine_version": 2,
   "noise": {
     "random_strategies": 200,
     "gated": 25,
     "passed": 0,
-    "best_raw_sharpe": 1.3317,
-    "best_deflated_sharpe": 0.0002,
-    "distinct_ideas_counted": 51
+    "best_raw_sharpe": 1.387,
+    "best_deflated_sharpe": 0.0492,
+    "distinct_ideas_counted": 50
   },
   "planted": [
     {
       "planted_annual_sharpe_before_costs": 0.5,
       "years": 5,
       "pass": false,
-      "deflated_sharpe": 0.4859,
-      "measured_sharpe_after_costs": 0.14,
+      "deflated_sharpe": 0.5419,
+      "measured_sharpe_after_costs": 0.2,
       "failed": [
         "deflated_sharpe",
         "positive_at_stressed_costs",
@@ -25,8 +25,8 @@
       "planted_annual_sharpe_before_costs": 1.0,
       "years": 5,
       "pass": false,
-      "deflated_sharpe": 0.78,
-      "measured_sharpe_after_costs": 0.63,
+      "deflated_sharpe": 0.821,
+      "measured_sharpe_after_costs": 0.69,
       "failed": [
         "deflated_sharpe",
         "beats_buy_and_hold"
@@ -36,16 +36,16 @@
       "planted_annual_sharpe_before_costs": 2.0,
       "years": 5,
       "pass": true,
-      "deflated_sharpe": 0.9819,
-      "measured_sharpe_after_costs": 1.6,
+      "deflated_sharpe": 0.988,
+      "measured_sharpe_after_costs": 1.66,
       "failed": []
     },
     {
       "planted_annual_sharpe_before_costs": 3.0,
       "years": 5,
       "pass": true,
-      "deflated_sharpe": 0.9998,
-      "measured_sharpe_after_costs": 2.56,
+      "deflated_sharpe": 0.9999,
+      "measured_sharpe_after_costs": 2.62,
       "failed": []
     }
   ],

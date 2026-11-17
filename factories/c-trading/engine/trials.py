@@ -70,6 +70,8 @@ def evaluate(s: strat.Strategy, params: dict, bars: Bars | None = None) -> tuple
         "turnover_per_year": round(result.turnover_per_year, 2),
         "cost_per_year": round(result.cost_per_year, 4),
         "exposure": round(result.exposure, 3),
+        "margin": result.margin,
+        "liquidated": result.liquidated,
     }
     folder = state_dir() / "trials" / s.dataset
     folder.mkdir(parents=True, exist_ok=True)

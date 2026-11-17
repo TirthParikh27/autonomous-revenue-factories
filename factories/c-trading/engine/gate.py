@@ -59,6 +59,8 @@ def evaluate(strategy: str | strat.Strategy, bars: Bars | None = None) -> dict:
             "market_adjusted_return_per_year": round(float(stressed_alpha.mean() * ppy), 4),
             "cost_multiplier": GATE["cost_stress_multiplier"],
         },
+        "never_liquidated": {"pass": not (result.liquidated or stressed.liquidated),
+                             "uses_shorts_or_borrowing": result.margin},
         "beats_buy_and_hold": {"pass": bool(sr > bench_sr), "sharpe": round(sr, 2), "benchmark_sharpe": round(bench_sr, 2)},
     }
 

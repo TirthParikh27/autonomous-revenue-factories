@@ -49,7 +49,8 @@ def holdout(s: strat.Strategy, dev_bars: Bars, all_bars: Bars) -> dict[str, bool
     range, and judges only the bars after the development window ends."""
     cutoff = dev_bars.close.index[-1].normalize()
     leaks = strat.leak_test(s, all_bars, s.chosen)
-    full = backtest.run(strat.compute(s, all_bars, s.chosen), all_bars, s.dataset, band=s.band).daily
+    run = backtest.run(strat.compute(s, all_bars, s.chosen), all_bars, s.dataset, band=s.band)
+    full = run.daily
     bench = backtest.buy_and_hold(all_bars, s.dataset).daily
     seen, unseen = full.index <= cutoff, full.index > cutoff
     if unseen.sum() < 60:
@@ -66,6 +67,7 @@ def holdout(s: strat.Strategy, dev_bars: Bars, all_bars: Bars) -> dict[str, bool
     return {
         "leak_test_on_unseen_data": not leaks,
         "positive_after_costs_on_unseen_data": bool(alpha.mean() > 0),
+        "never_liquidated": not run.liquidated,
         "inside_predicted_range": bool(stats.sharpe(alpha) >= floor),
     }
 
