@@ -36,7 +36,7 @@ Seven factories are blueprinted. The build order is the portfolio ranking in `RE
 | 4 | `factories/d-directories` | Programmatic SEO and directories, local and transactional intent only | One data-rich site, small verified dataset, indexing canary before scale. Slow to read, and sites fail together |
 | 5 | `factories/e-outbound` | B2B demo-first outbound | Drafts only. Automated sending stays off until you have legal advice on the Australian Spam Act |
 | 6 | `factories/b-ecommerce` | E-commerce, digital products first | No ad spend without approval. Physical dropshipping is out of scope |
-| 7 | `factories/c-trading` | Strategy research, backtest and paper trading | Paper only, a research harness with no revenue expectation. More strategies tested means more false positives, so portfolio logic does not apply |
+| 7 | `factories/c-trading` | Strategy mining, optimisation, paper trading and maintenance | Paper only, a research harness with no revenue expectation. More strategies tested means more false positives, so every trial is counted and the pass bar rises with the count |
 
 ### 2.1 Portfolio economics of the first factory
 

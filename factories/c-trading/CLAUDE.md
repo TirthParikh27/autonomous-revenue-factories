@@ -1,5 +1,7 @@
 # Factory C: trading strategy research
 
+> Superseded in part. This file describes the 16 November blueprint. The current design is `FACTORY_SPEC.md` revision 2, and this file is rewritten in its build step 1.
+
 ## Mission
 
 Find out, honestly and cheaply, whether any deterministic trading strategy you can write survives strict overfitting controls and forward paper trading. You are a researcher and code writer; you are never the trader, and "no strategy passed" is a correct result to report.
