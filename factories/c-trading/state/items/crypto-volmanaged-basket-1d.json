@@ -1,0 +1,50 @@
+{
+  "id": "crypto-volmanaged-basket-1d",
+  "stage": "killed",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Daily equal-weight crypto basket with exposure scaled down when basket volatility is high. Long only, capped at 1.",
+  "evidence": [
+    {
+      "claim": "Card written before any trial",
+      "source": "strategies/crypto-volmanaged-basket-1d/card.md",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "Mechanism: Moreira-Muir volatility management (contested replications); indirect crypto support from Grobys et al. 2025. Abstract-level reading only.",
+      "source": "state/scout/2026-11-17-crypto-daily-nontrend.json",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "Code written; `python3 -m engine check crypto-volmanaged-basket-1d` printed 'lint: pass' and 'leak test: pass'",
+      "source": "strategies/crypto-volmanaged-basket-1d/strategy.py",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "Reviewer rejected on card match: engine per-symbol rebalance_band 0.02 (engine/config.yaml) x 10 coins = 0.20 of total exposure, overriding the card's band range 0.10-0.30 in its lower part and blocking entries at total exposure <= 0.20",
+      "source": "strategies/crypto-volmanaged-basket-1d/review-code.md",
+      "checked": "2026-11-17"
+    }
+  ],
+  "scores": {},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [
+    {
+      "at": "2026-11-17T08:55:00Z",
+      "from": null,
+      "to": "proposed",
+      "run": "20261117T084053Z-ideate-b169cc",
+      "note": "card written from scout candidate; no engine run"
+    },
+    {
+      "at": "2026-11-17T09:00:00Z",
+      "from": "proposed",
+      "to": "killed",
+      "run": "20261117T084519Z-build-f98666",
+      "note": "cannot be executed as the card states: engine's per-symbol 0.02 band equals a 0.20 total-exposure band across 10 equal coins, so the declared band range 0.10-0.30 is partly overridden. Not fixable in code without changing the card; ideate may write a new card with a band range that fits the engine. No trials run."
+    }
+  ],
+  "blocked_by": null,
+  "next_check": null
+}

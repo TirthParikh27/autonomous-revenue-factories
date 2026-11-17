@@ -5,7 +5,7 @@ description: Stage 2 of Factory A. Use when items sit at `discovered` to rank a 
 
 # Synthetic screen
 
-A free, same-day filter that decides which ideas are worth $30 of real traffic. Read `CLAUDE.md` and `budget.yaml` first.
+A free, same-day filter that decides which ideas are worth real ad money. Read `CLAUDE.md` and `budget.yaml` first.
 
 ## What the evidence says, and what this skill does about it
 

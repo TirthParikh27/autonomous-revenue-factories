@@ -1,6 +1,6 @@
 ---
 name: demand-test
-description: Stage 4 of Factory A. Use when items sit at `specced` to prepare a batch of landing pages with a visible price and paused ad campaigns, raise one approval packet for the batch, and move items through tranche 1 (ad click test) and tranche 2 (fake door with price). Measurement and kill decisions belong to telemetry-winner-detection.
+description: Stage 4 of Factory A. Use when items sit at `specced` to prepare a batch of landing pages with a visible price, demo video ads and paused ad campaigns, raise one approval packet for the batch, and move items through tranche 1 (ad click test) and tranche 2 (fake door with price). Measurement and kill decisions belong to telemetry-winner-detection.
 ---
 
 # Demand test
@@ -9,32 +9,53 @@ No app is built until an idea passes both tranches with real paid traffic. You p
 
 ## Why real traffic
 
-Strangers who see an ad owe the idea nothing. What they click and whether they leave an email after seeing a price is behaviour. A synthetic panel, a survey or the `synthetic-screen` score is an opinion. Only behaviour passes an idea here.
+Strangers who see an ad owe the idea nothing. What they click and how far they go after seeing a price is behaviour. Nobody pays for an app they have not used, so the page takes no money. It asks for a series of small commitments instead, each costing the visitor a little more effort: tap the price, choose a plan, leave an email, answer one question. Someone who does all four wanted it. A synthetic panel, a survey or the `synthetic-screen` score is an opinion. Only behaviour passes an idea here.
 
 ## Inputs
 
-- Items at `specced`, up to `ads.max_ideas_per_batch` and the free slots under `pipeline.max_concurrent_demand_tests`.
+- Items at `specced`, up to `ads.max_ideas_per_batch` and the free slots under `pipeline.max_concurrent_demand_tests`. Also items at `awaiting_human` whose `A-IDEA-1` packet has been decided (step C). Those without the operator's go get the evidence page (steps A to C). Those with it get a page and ads (step 1 onward).
 - `state/specs/<id>.md`, including the proposed price.
 - `data/privacy_notice.md` if it exists (operator-approved text). If it does not, write a draft privacy page, mark it DRAFT, and ask for approval of the text in the `PII-1` packet. Pages are written per idea; there is no template.
 - Competitor prices come from the scout file and the spec. Do not fetch competitor pages.
 - The `ads` and `demand_test` sections of `budget.yaml`.
 
+## Steps: the operator's go on each idea
+
+No page or ad is made for an idea until the operator has looked at its evidence and said yes. Ads take real effort and use the operator's voice allowance, so they are made only for ideas he believes in.
+
+A. For items at `specced` without `idea_approved: true`, write `demand/batches/<batch>/ideas.html`: one page the operator opens from disk. Per idea: the job in a sentence, who has it, the strongest sourced complaints, the competitors with their prices and the signs they earn, free substitutes found, the proposed price, and the idea critic's verdict with its strongest objection, quoted in full from `state/critic/<id>.md`. Put the weaknesses beside the strengths. This page is for deciding, not selling.
+B. Raise one `A-IDEA-1` packet listing the ideas, with `ideas.html` linked first. Move the items to `awaiting_human`. Stop here for those items.
+C. When the packet is in `approved/`, each idea still listed in it returns to `specced` with `idea_approved: true`. An idea the operator removed from the list before approving is `killed` with the reason "operator passed".
+
 ## Steps: preparing a batch
+
+Only for items at `specced` whose id is listed in an `A-IDEA-1` packet under `escalations/approved/`. Read the packet itself; do not trust the flag alone. The `A-AD-1` packet names that `A-IDEA-1` file.
+
+Work through the ideas one at a time and finish each completely (page, ads, checks, review) before starting the next. A run that ends with four finished ideas is better than one with fifteen half-made. A later run picks up the rest and adds them to the same batch before the packet is raised.
 
 1. Preparing a batch costs tokens only, so prepare it even when the ads cap is 0 or accounts do not exist yet. Note what is missing: if `monthly_caps_usd.ads` does not cover the batch's tranche 1 budget, raise `BUD-1` with the amount needed. Do not stop.
 2. If this is the factory's first early-access list and no `PII-1` packet is in `escalations/approved/`, raise it. Do not stop. No page is deployed and no email is collected until it is approved.
-3. For each idea, create `demand/<id>/site/`: one static page that states the job and the differentiation in the brand's voice, the words "in development", the proposed price on a "Get early access at $X a month" button, and a privacy link. Clicking the button fires `price_click` and opens a form that says the app is not available yet and nothing is charged today, with one email field and a consent line. Submitting fires `committed_signup`. No payment is taken at any point.
-4. For each idea, write three ad creatives to `demand/<id>/ads/` (image or short motion from designed mock-ups labelled as concept, primary text, headline) and `demand/<id>/claims.yaml`.
-5. Check each idea: the site builds, all three events fire, the price matches the spec, the "in development" and "nothing is charged today" lines and the privacy link are present, and no creative shows a mock-up as a shipping app. Run `checks/copy_lint --pre-build --has-price` on the page and ads. Drop ideas you cannot get right.
-6. Write `demand/batches/<batch>/plan.json`: per idea, the page path, the three creatives, the tranche 1 lifetime budget and duration from `budget.yaml`, the audience (broad, one country, the platform's own targeting), and the tracking parameters.
-7. Raise one `A-AD-1` packet for the whole batch, listing the files to review. The operator commits them and opens the pull request. Move the items to `awaiting_human`.
+3. For each idea, create `demand/sites/<id>/`: one static page, written for this idea, that states the job and the differentiation in the brand's voice with the idea's character, shows the product's screens as designed mock-ups marked "Concept", says "in development", and links to the privacy page. The funnel on the page:
+   - A "Get early access at $X a month" button. Tapping it fires `price_click` and shows the plans.
+   - Two plans (monthly at the spec's price and a yearly one at a discount). Choosing one fires `plan_selected` with the plan, and opens the form.
+   - The form says the app is not available yet and nothing is charged today. One email field and a consent line. Submitting fires `committed_signup`.
+   - After sign-up, one optional question about the visitor's situation (for example which competitor they use now). Answering fires `question_answered`.
+   No payment or card detail is taken at any point. Only `demand/sites/` is ever deployed, so nothing else (ads, plans, previews, screenshots) goes in it. The page reads its settings from `window.LAUNCH`, loaded from `/config.js`, and works with every setting empty. It sends each event with `navigator.sendBeacon(LAUNCH.eventEndpoint, JSON.stringify({api_key: LAUNCH.eventKey, event: "<name>", distinct_id: "<a random id kept for the visit>", properties: {idea, plan, utm_campaign, utm_content}}))`, which is the shape PostHog's capture endpoint takes, and posts the sign-up as JSON to `LAUNCH.signupEndpoint` with `LAUNCH.signupKey`. Mark each element of the funnel `data-walk="1"`, `"2"` and so on in the order a visitor uses them, so the page check can walk it.
+4. If `demand/sites/config.js` does not exist, write it with empty values: `window.LAUNCH = { pixelId: "", signupEndpoint: "", signupKey: "", eventEndpoint: "", eventKey: "" };`. It is the one place the operator fills in account details, once, for every page.
+5. For each idea, make the ads in `demand/<id>/ads/` by following `skills/ad-creative/SKILL.md`: the character, three scripts, three demo videos, one still, and `ads.json`. Write `demand/<id>/claims.yaml`.
+6. Check each page by using it. Run `node page_check.js demand/sites/<id> demand/<id>/check`. It walks the funnel on a phone-sized screen with fake settings and prints the events that fired and the screenshots it saved. Its exit code is final: it fails if a step cannot be used, no sign-up or event is sent, a script fails or the page scrolls sideways. Also confirm that all five events appear in order. Read the screenshots, then give them to the `creative-reviewer` agent with the ad frames. Fix what it reports, once.
+7. Run `checks/copy_lint --pre-build --has-price` on the page, and `checks/copy_lint --pre-build` on the scripts, `ads.json` and each ad's `index.html`, so the words on screen are checked too. Drop ideas you cannot get right, and say why.
+   Optional panel check: if tools whose names start with `mcp__pickfu__` are available, the operator has connected PickFu. For ideas you are unsure of, poll a small panel of the target audience on the three hooks, one poll per idea at most, within `panel.max_usd_per_poll` in `budget.yaml`, and record the cost with the shared `ledger` skill inside the `paid_api` cap. A panel is opinion: it can pick the hook to lead with and it can kill an idea people plainly do not care about, but it never passes one. If the tools are not there, skip this.
+8. Write `demand/batches/<batch>/plan.json`: per idea, the page path, the three video ads, the tranche 1 lifetime budget and duration from `budget.yaml`, the audience (broad, one country, the platform's own targeting), and the tracking parameters.
+9. Write `demand/batches/<batch>/preview.html`: one page the operator opens to see the whole batch. Per idea: the job in a sentence, the price, the critic's verdict from `state/critic/<id>.md`, the three videos playing inline, the still, the page screenshots, and the reviewer's verdict. Use relative paths so it opens from disk.
+10. Raise one `A-AD-1` packet for the whole batch. It links `preview.html` first, then lists the files. The operator commits them and opens the pull request. Move the items to `awaiting_human`.
 
 ## Steps: after approval
 
-8. Go past this point only when the `A-AD-1` packet and `PII-1` are in `approved/`, and the ads cap covers the batch. Otherwise stop here and report what is waiting. When the pull request is merged, CI deploys the pages. Fetch each public URL and confirm it returns the page.
-9. Run `python3 publish.py ads demand/batches/<batch>/plan.json --packet A-AD-1`. It creates one paused campaign per idea and reads each back. Until ad credentials exist it runs dry and writes `readback.json` without contacting Meta.
-10. The operator activates the batch in Ads Manager and writes `demand_test.activated` into the batch file. When that date is present, move the items to `demand_t1`.
-11. Tranche 2: when telemetry moves an item to `demand_t2`, create the tranche 2 campaign for it with `publish.py ads`, paused, using the best-performing creative. It is covered by the same `A-AD-1` packet, which states both tranche budgets. The operator activates. A top-up, where telemetry calls one, is created the same way.
+11. Go past this point only when the `A-AD-1` packet and `PII-1` are in `approved/`, and the ads cap covers the batch. Otherwise stop here and report what is waiting. When the pull request is merged, CI deploys the pages. Fetch each public URL and confirm it returns the page. Ask the operator in the packet to open one page once and confirm a `page_view` shows up in PostHog before activating, because the fake check cannot prove the real endpoint accepts events.
+12. Run `python3 publish.py ads demand/batches/<batch>/plan.json --packet A-AD-1`. It creates one paused campaign per idea and reads each back. Until ad credentials exist it runs dry and writes `readback.json` without contacting Meta.
+13. The operator activates the batch in Ads Manager and writes `demand_test.activated` into the batch file. When that date is present, move the items to `demand_t1`.
+14. Tranche 2: when telemetry moves an item to `demand_t2`, create the tranche 2 campaign for it with `publish.py ads`, paused, using the best-performing creative. It is covered by the same `A-AD-1` packet, which states both tranche budgets. The operator activates. A top-up, where telemetry calls one, is created the same way.
 
 ## Hard checks
 
@@ -43,14 +64,14 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 
 ## Outputs
 
-- `demand/<id>/site/`, `demand/<id>/ads/`, `demand/<id>/claims.yaml`, `demand/batches/<batch>/plan.json`.
-- One `A-AD-1` packet per batch.
+- `demand/sites/<id>/`, `demand/sites/config.js`, `demand/<id>/ads/`, `demand/<id>/check/`, `demand/<id>/claims.yaml`, `demand/batches/<batch>/plan.json` and `preview.html`.
+- `demand/batches/<batch>/ideas.html` and one `A-IDEA-1` packet, then one `A-AD-1` packet per batch.
 - Items at `awaiting_human`, then `demand_t1`, `demand_t2`.
 
 ## Stop conditions
 
 - Ads cap or account spending limit not set: `BUD-1`. This stops the steps after approval, not the preparation.
-- Meta, Cloudflare or any other account does not exist yet: `ACC-1`. Same: prepare the batch, stop before step 8.
+- Meta, Cloudflare or any other account does not exist yet: `ACC-1`. Same: prepare the batch, stop before step 11.
 - An ad is rejected by the platform: record the reason, do not resubmit a reworded copy more than once, and raise `GEN-1` if two ideas in one batch are rejected.
 - The packet expires: the items are parked.
 
@@ -61,8 +82,10 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 - Never say or imply that the app is available now, show download counts or ratings, or use a testimonial.
 - Never read, export or email the early-access list. Telemetry reads counts only.
 - Never extend a tranche or move an item between tranches yourself. Telemetry makes those calls.
+- Never make a page or an ad for an idea the operator has not approved in `A-IDEA-1`.
+- Never put an ad or page in a batch that you have not looked at as images.
 - Never start app code for the item.
 
 ## Finish
 
-End by calling the shared `run-report` skill. Include both check outputs, the batch total, and the read-back status of every campaign.
+End by calling the shared `run-report` skill. Include both check outputs, the page check output and the reviewer's verdict per idea, the batch total, and the read-back status of every campaign.

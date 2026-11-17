@@ -1,0 +1,6 @@
+dataset: crypto-1h
+ranges:
+  fast: {low: 12, high: 120, step: 6}
+  slow: {low: 168, high: 1000, step: 8}
+  vol_window: {low: 72, high: 720, step: 24}
+chosen: {fast: 78, slow: 328, vol_window: 336}

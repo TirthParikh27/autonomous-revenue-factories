@@ -1,0 +1,266 @@
+{
+  "scout_date": "2026-11-17",
+  "gap": {
+    "description": "Long-only spot crypto strategies on DAILY bars (dataset crypto-1d, zero trials so far) whose mechanism is not time-series trend following or moving-average crossover, and that trade rarely because costs are 0.25% fee per side plus 0.05% slippage per side (about 0.6% per round trip).",
+    "universe": ["BTC", "ETH", "SOL", "BNB", "XRP", "ADA", "DOGE", "LTC", "LINK", "AVAX"],
+    "quote": "USDT",
+    "data_window": "2021-01-01 to 2025-12-31, OHLCV only",
+    "constraints": "long-only, no leverage, no shorting, no derivatives or funding data, no on-chain, no order book, no sentiment"
+  },
+  "method_notes": [
+    "WebFetch was refused by the proxy for every URL tried (riksbank.se, cerge-ei.cz, aminer.org, core.ac.uk, ideas.repec.org, osuva.uwasa.fi). All evidence below comes from search-result summaries of abstracts, repository listings and secondary citations. No full text was read. Treat every detail as abstract-level and check it against the paper before writing a card.",
+    "No prices, returns or market moves for any instrument were looked up or recorded.",
+    "Backtest figures that appeared in search summaries are recorded only as 'claimed' and are not evidence that an idea works.",
+    "The universe is 10 large coins. Most of the cross-sectional crypto literature uses hundreds to thousands of coins, and several papers find that effects reverse sign or vanish among the largest, most liquid coins. A 10-coin cross-section gives very little breadth, so expect cross-sectional signals to be noisy.",
+    "Parameter ranges below are the horizons and ranges the sources used or that the mechanism implies. They are not recommended values, and nothing here ranks the candidates by expected profit."
+  ],
+  "candidates": [
+    {
+      "id": "crypto-volmanaged-basket-1d",
+      "name": "Volatility-managed equal-weight basket (Moreira-Muir style exposure scaling)",
+      "idea": "Hold an equal-weight basket of the 10 coins, and set total exposure inversely to the basket's recent realised volatility, capped at 100% because leverage is not allowed. The bet is that high-volatility periods do not pay proportionally higher returns, so cutting exposure when volatility is high raises return per unit of risk. Exposure moves only in discrete steps or outside a no-trade band to keep turnover low.",
+      "mechanism": "Volatility clusters and is forecastable, while expected returns do not rise one-for-one with it. If that holds, the risk-return trade-off is worse in high-volatility states and timing exposure by volatility gives an alpha relative to the unmanaged basket.",
+      "who_pays_and_why": {
+        "argument": "In the equity literature the counterparty is unclear. Moreira and Muir argue that investors who do not cut risk when volatility spikes (for example buy-and-hold or constrained holders) bear risk that is poorly compensated. In crypto the plausible but unproven story is forced deleveraging: high-volatility episodes coincide with margin liquidations and panic selling, and the holders who sell into these episodes, or who stay exposed through them, take the worse risk-return trade. No crypto-specific paper found here establishes who pays. Treat the counterparty as weakly argued.",
+        "sources": [
+          "https://link.springer.com/article/10.1007/s11408-025-00474-9",
+          "https://www.man.com/insights/crypto-too-hot-to-handle"
+        ]
+      },
+      "evidence": [
+        {
+          "source": "Moreira and Muir, 'Volatility-Managed Portfolios', Journal of Finance (2017), SSRN 2659431, as cited in search summary of the Springer crypto paper",
+          "url": "https://link.springer.com/article/10.1007/s11408-025-00474-9",
+          "date": "2017 (original); cited 2025",
+          "market_period": "US equity factors (original paper). Not crypto.",
+          "replication": "Contested. Cederburg et al. (2020) are cited as finding that volatility management often reduced real-time performance across 103 equity portfolios. Liu et al. (2019) are cited as arguing look-ahead bias. An SSRN replication surfaced in search found the Sharpe gains for the US market factor did not hold up.",
+          "post_publication_decay": "Reported as weak or absent in out-of-sample equity replications (per the summaries above)."
+        },
+        {
+          "source": "Grobys et al., volatility-managed cryptocurrency momentum, Financial Markets and Portfolio Management (Swiss Society), 2025",
+          "url": "https://link.springer.com/article/10.1007/s11408-025-00474-9",
+          "date": "2025",
+          "market_period": "Large-cap cryptocurrencies. Exact period not seen in summary.",
+          "finding_summary": "Volatility scaling reduces crash severity of cryptocurrency momentum portfolios and is claimed to raise average returns. It does not significantly change tail risk. This applies scaling to a momentum long-short portfolio, not to a long-only basket, so it is indirect evidence for this candidate.",
+          "replication": "None found."
+        },
+        {
+          "source": "Man Group, 'Crypto: too hot to handle?' (practitioner research note)",
+          "url": "https://www.man.com/insights/crypto-too-hot-to-handle",
+          "date": "Covers data to December 2024",
+          "market_period": "Crypto, September 2012 to December 2024",
+          "claimed": "Claimed: volatility scaling to a 30% ex-ante target improves Sharpe ratio by about 0.4 regardless of estimator half-life, and lowers vol-of-vol and expected shortfall. Costs included: not stated in summary. Practitioner note, not peer-reviewed. Not evidence.",
+          "replication": "None found."
+        },
+        {
+          "source": "Yue Zhang PhD thesis, University of Southampton, chapter on realised-volatility timing in cryptocurrency markets",
+          "url": "https://eprints.soton.ac.uk/501921/1/Final_Thesis_Yue_Zhang.pdf",
+          "date": "Not seen",
+          "market_period": "Crypto; details not seen (only table of contents and abstract-level description surfaced)",
+          "replication": "Unknown. Should be read before a card is written."
+        }
+      ],
+      "rules_in_words": "Each day, compute the realised volatility of the equal-weight basket's daily returns over a trailing window. Target exposure = min(1, volatility target / realised volatility). The rest is held as cash (USDT). Split exposure equally across the 10 coins. Change holdings only when target exposure moves outside a band around current exposure, so most days do not trade.",
+      "parameters": [
+        {"name": "vol_lookback_days", "range": "20 to 90", "basis": "Moreira-Muir used about one month of daily data. Man Group reports results were insensitive to the estimator half-life."},
+        {"name": "vol_target_annual", "range": "Somewhere within the range of the basket's own long-run realised volatility (to be read from dev data by the engine, not looked up). Man Group used 30% for its crypto example.", "basis": "Man Group note"},
+        {"name": "rebalance_band", "range": "0.10 to 0.30 of exposure", "basis": "Not from a source. Needed only to control turnover given 0.6% round-trip cost."}
+      ],
+      "horizons_used_by_sources": "Daily volatility estimates and monthly rebalancing (Moreira-Muir); exponentially weighted estimates with various half-lives (Man Group).",
+      "market_and_bar": "crypto-1d, all 10 coins as one basket",
+      "expected_turnover": "Low to moderate. A no-trade band means trades cluster around volatility regime changes. Expect a few to a few dozen exposure changes per year, each touching all 10 coins. Cost share should be measured by the engine before any sweep.",
+      "main_risk_of_being_market_exposure": "High. This is long-only market beta with a time-varying multiplier capped at 1. Average exposure below 1 means its raw Sharpe will look like the market's. Any skill has to show up as alpha after regressing on the market, which is exactly what Moreira-Muir measure, and which equity replications dispute. If 2021-2025 happened to have high-volatility drawdowns, the filter may look good for regime-specific reasons. Volatility timing on crypto during 2021-2022 overlaps the killed trend idea's bull/bear period.",
+      "known_weaknesses": [
+        "Equity replications (Cederburg et al. 2020, SSRN replication) found gains fragile out of sample and in real time.",
+        "Leverage cap means it can only de-risk, never re-risk above 1, so it captures only half of the original mechanism.",
+        "Exposure falls after volatility spikes, which often comes after a crash, so it may sell near lows and re-enter late (whipsaw).",
+        "Likely correlated with trend filters, because volatility rises in down-moves. That would make it overlap with the killed trend idea in returns, even though the rule is different."
+      ],
+      "difference_from_tried_ideas": {
+        "crypto-trend-1h": "No price-direction or moving-average signal. Exposure depends only on recent volatility magnitude, not on whether prices rose or fell. Runs on daily bars with a no-trade band, not hourly. Weights are equal across coins and scaled in total, rather than inverse-vol per coin. Returns may still be correlated with trend because volatility and drawdowns coincide, so the engine's correlation check against the killed family matters."
+      }
+    },
+    {
+      "id": "crypto-xs-relstrength-1d",
+      "name": "Cross-sectional relative-strength rotation among large coins (weekly rebalanced)",
+      "idea": "Once a week, rank the 10 coins by their return over the past few weeks and hold the top few equally weighted. It is a relative bet: it always holds the strongest coins relative to the others, whether or not the market is rising.",
+      "mechanism": "Cross-sectional momentum: coins that outperformed peers over the past one to four weeks keep outperforming for a short time, then reverse after about a month. Liu, Tsyvinski and Wu find momentum concentrated in larger coins. Zaremba et al. find the largest, most tradeable coins show daily momentum rather than reversal.",
+      "who_pays_and_why": {
+        "argument": "Underreaction and slow diffusion of investor attention. Liu, Tsyvinski and Wu (and their related work on attention) argue that information is incorporated slowly across coins, so investors who are late to rotate between coins buy recent winners from early movers and hold recent laggards. This is a behavioural story. Its persistence depends on retail attention dynamics, which may change.",
+        "sources": [
+          "https://www.nber.org/papers/w25882.pdf",
+          "https://econpapers.repec.org/RePEc:bla:jfinan:v:77:y:2022:i:2:p:1133-1177",
+          "https://alphaarchitect.com/factors-investing-in-cryptocurrency/"
+        ]
+      },
+      "evidence": [
+        {
+          "source": "Liu, Tsyvinski and Wu, 'Common Risk Factors in Cryptocurrency', Journal of Finance 77(2), 1133-1177",
+          "url": "https://econpapers.repec.org/RePEc:bla:jfinan:v:77:y:2022:i:2:p:1133-1177",
+          "url_working_paper": "https://www.nber.org/papers/w25882.pdf",
+          "date": "2022 (NBER WP May 2019)",
+          "market_period": "Up to about 1,700 coins, 2014 to 2018, weekly returns",
+          "finding_summary": "Market, size and momentum factors explain most of the cross-section. Momentum is significant among larger coins and not among small coins. Momentum loadings are described as more transient than size loadings.",
+          "replication": "Mixed. CXO Advisory commentary flags data-snooping in choosing the 3-week momentum horizon (https://www.cxoadvisory.com/?p=32592)."
+        },
+        {
+          "source": "Dobrynskaya, 'Cryptocurrency Momentum and Reversal', Journal of Alternative Investments 26(1), 65-76",
+          "url": "https://publications.hse.ru/en/articles/811744977",
+          "url_working_paper": "https://wp.hse.ru/data/2022/02/24/1749596434/86FE2022.pdf",
+          "date": "2023",
+          "market_period": "2,000 largest coins, 2014 to 2020",
+          "finding_summary": "Positive momentum at horizons up to 2 to 4 weeks, reversal beyond about one month. Partly independent replication of the short-horizon momentum result. The HSE working paper version is also cited as finding no significant momentum premium in some specifications, in line with Grobys and Sapkota.",
+          "replication": "Partial."
+        },
+        {
+          "source": "Zaremba, Bilgin, Long, Mercik and Szczygielski, 'Up or down? Short-term reversal, momentum, and liquidity effects in cryptocurrency markets', International Review of Financial Analysis 78",
+          "url": "https://ideas.repec.org/a/eee/finana/v78y2021ics1057521921002349.html",
+          "date": "2021",
+          "market_period": "Daily data on more than 3,600 coins",
+          "finding_summary": "Daily reversal across the broad cross-section, attributed to illiquidity. The largest, most tradeable coins show daily momentum instead. Supports momentum (not reversal) in a large-coin universe like this one, though at a daily horizon too costly to trade here.",
+          "replication": "Consistent with the Cong et al. EFMA 2022 paper (momentum in largest-cap group, reversal elsewhere): https://www.efmaefm.org/0EFMAMEETINGS/EFMA%20ANNUAL%20MEETINGS/2022-Rome/papers/EFMA%202022_stage-3032_question-Full%20Paper_id-231.pdf"
+        },
+        {
+          "source": "Grobys and Sapkota, 'Cryptocurrencies and momentum', Economics Letters 180, 6-10",
+          "url": "https://econpapers.repec.org/RePEc:eee:ecolet:v:180:y:2019:i:c:p:6-10",
+          "date": "2019",
+          "market_period": "143 coins, 2014 to 2018, monthly-type horizons",
+          "finding_summary": "Contrary evidence. Cited as finding momentum returns negative and statistically insignificant at the horizons studied (longer, monthly-style lookbacks).",
+          "replication": "n/a, this is the counter-evidence."
+        },
+        {
+          "source": "Grobys et al. 2025 (volatility-managed crypto momentum)",
+          "url": "https://link.springer.com/article/10.1007/s11408-025-00474-9",
+          "date": "2025",
+          "finding_summary": "Concludes there is no consensus on crypto momentum profits and that crypto momentum is subject to severe crashes."
+        }
+      ],
+      "rules_in_words": "Every N days (weekly in the sources), compute each coin's total return over the lookback window, skipping nothing. Hold the top K coins equally weighted, fully invested. Coins that stay in the top K are not traded. Optionally, a coin is only replaced when it falls clearly out of the top group (rank buffer), to reduce turnover.",
+      "parameters": [
+        {"name": "lookback_days", "range": "7 to 28", "basis": "LTW 1-4 week momentum (3 weeks in their factor); Dobrynskaya momentum up to 2-4 weeks, reversal beyond about 1 month."},
+        {"name": "top_k", "range": "2 to 4 of 10", "basis": "Not from a source; the universe has only 10 coins."},
+        {"name": "rebalance_days", "range": "7 to 14", "basis": "Weekly portfolio formation in LTW and Dobrynskaya. Longer than 1 day because of 0.6% round-trip cost."}
+      ],
+      "horizons_used_by_sources": "Lookbacks of 1 to 4 weeks, weekly holding periods; reversal beyond about 1 month.",
+      "market_and_bar": "crypto-1d, 10-coin cross-section",
+      "expected_turnover": "Moderate to high for this cost level. With weekly rebalancing, some fraction of the top K changes most weeks. Turnover and cost share must be checked by the engine before anything else; at 0.6% per round trip, replacing one of three holdings every week is a material drag.",
+      "main_risk_of_being_market_exposure": "Very high. Long-only and fully invested, so beta to the basket is close to 1, and probably above 1 because recent winners tend to be the higher-beta coins in rallies. The literature's evidence is for long-short winner-minus-loser spreads; a long-only top-K portfolio keeps only the long leg plus full market beta. Its alpha after market adjustment is what the gate will test, and much of the apparent return will be market exposure.",
+      "known_weaknesses": [
+        "Evidence is mixed: Grobys and Sapkota (2019) and parts of Dobrynskaya's working paper find no significant momentum.",
+        "Momentum crashes in crypto are reported as severe (Grobys et al. 2025).",
+        "Horizon choice (3 weeks) flagged as data-snooped in commentary.",
+        "Only 10 coins: rankings are noisy and dominated by a few coins' idiosyncratic events.",
+        "Samples in the papers end 2018 to 2020; post-publication decay over 2021-2025 is not reported in what was read."
+      ],
+      "difference_from_tried_ideas": {
+        "crypto-trend-1h": "Ranks coins against each other rather than asking whether each coin's price is above its own average. It is always fully invested in some coins and never goes to cash, so it does not time the market. Daily bars with weekly rebalancing instead of hourly EMA crossovers. Caveat: in a universe where all coins move together, the top-ranked coins are often the ones in the strongest time-series trend, so returns may correlate with the killed trend family. The engine's correlation check should decide whether this counts as a different idea."
+      }
+    },
+    {
+      "id": "crypto-lowrisk-tilt-1d",
+      "name": "Low-risk / anti-lottery tilt among large coins",
+      "idea": "Periodically hold the coins with the lowest recent volatility (or, as a variant, the lowest maximum single-day return over the past month) and avoid the most lottery-like coins. The bet is that speculative demand for high-volatility, high-upside coins overprices them, so calmer coins earn more per unit of risk.",
+      "mechanism": "Low-risk anomaly and lottery preference: investors who are leverage-constrained or who like lottery-like payoffs overpay for high-volatility, high-skew assets, so those assets have lower future risk-adjusted returns.",
+      "who_pays_and_why": {
+        "argument": "Retail investors with lottery preferences, and leverage-constrained investors who reach for risk by buying volatile assets instead of levering safer ones. In crypto, Grobys and Junttila argue lottery-like demand helps price coins. The argument is borrowed from equities (Ang et al. 2006 on idiosyncratic volatility; Bali, Cakici and Whitelaw on MAX), and the crypto evidence on its sign is contradictory (see evidence).",
+        "sources": [
+          "https://jyx.jyu.fi/jyx/Record/jyx_123456789_74624",
+          "https://www.uwasa.fi/en/newshub/news/new-study-detects-lottery-behavior-cryptocurrency-markets",
+          "https://sydney.edu.au/news-opinion/news/2023/11/01/huge-crypto-study-finds-high-risk-doesnt-equal-reward.html"
+        ]
+      },
+      "evidence": [
+        {
+          "source": "Leong et al., 'The pricing of jump and diffusive risks in the cross-section of cryptocurrency returns', Journal of Empirical Finance (2023), via University of Sydney news release",
+          "url": "https://sydney.edu.au/news-opinion/news/2023/11/01/huge-crypto-study-finds-high-risk-doesnt-equal-reward.html",
+          "url_alt": "https://phys.org/news/2023-11-crypto-high-doesnt-equal-reward.html",
+          "date": "2023",
+          "market_period": "More than 4,000 coins, 2015 to 2022",
+          "finding_summary": "Neither jump nor diffusive risk positively predicts future returns; least-risky coins outperformed most-risky.",
+          "claimed": "Claimed annualised averages: about -9% for highest idiosyncratic-risk coins, about 81% for lowest. Costs: not stated in summary. Universe dominated by small coins. Not evidence.",
+          "replication": "Contradicted by other papers, see below."
+        },
+        {
+          "source": "Grobys and Junttila, 'Speculation and lottery-like demand in cryptocurrency markets', Journal of International Financial Markets, Institutions and Money 71",
+          "url": "https://jyx.jyu.fi/jyx/Record/jyx_123456789_74624",
+          "url_alt": "https://ideas.repec.org/a/eee/intfin/v71y2021ics1042443121000081.html",
+          "date": "2021",
+          "market_period": "20 coins excluding Bitcoin, January 2016 to December 2019",
+          "finding_summary": "Lottery-like (high MAX) coins underperform low-MAX coins. Small large-coin universe similar in size to this factory's.",
+          "claimed": "Claimed: low-minus-high MAX quintile spread above 1.5% per week (per secondary citation). Costs not stated. Not evidence.",
+          "replication": "Contradicted on sign, see below."
+        },
+        {
+          "source": "Ozdamar, Akdeniz and Sensoy, 'Lottery-like preferences and the MAX effect in the cryptocurrency market', Financial Innovation 7",
+          "url": "https://repository.bilkent.edu.tr/items/78167f5c-d3e2-4f07-b4bc-5e8a3ed0b2c0",
+          "date": "2021",
+          "finding_summary": "Opposite sign: positive relation between prior-month maximum daily return and next-week return, robust to size, momentum, reversal, liquidity, volatility controls.",
+          "replication": "Agrees with Li, Urquhart, Wang and Zhang (2021, IRFA), 'MAX momentum in cryptocurrency markets': https://research.birmingham.ac.uk/en/publications/max-momentum-in-cryptocurrency-markets/"
+        },
+        {
+          "source": "Zhang and Li (2020), Research in International Business and Finance; Bouri, Kristoufek, Ahmad and Shahzad (2024), Annals of Operations Research",
+          "url": "https://ideas.repec.org/a/eee/riibaf/v54y2020ics0275531920301926.html",
+          "date": "2020 and 2024",
+          "finding_summary": "Opposite sign: idiosyncratic volatility positively related to expected crypto returns.",
+          "replication": "Two papers agreeing on a positive sign."
+        }
+      ],
+      "rules_in_words": "Every N days, compute each coin's realised volatility (or its maximum daily return) over a trailing window. Hold the K coins with the lowest value, equally weighted. Do not trade coins that remain in the selection.",
+      "parameters": [
+        {"name": "risk_lookback_days", "range": "21 to 90", "basis": "MAX papers use the prior month of daily returns; volatility papers use one to three months."},
+        {"name": "bottom_k", "range": "2 to 5 of 10", "basis": "Not from a source; 10-coin universe."},
+        {"name": "rebalance_days", "range": "7 to 30", "basis": "Weekly formation in MAX papers; monthly is common in low-volatility literature and suits the cost level."}
+      ],
+      "horizons_used_by_sources": "One-month risk window, weekly to monthly holding.",
+      "market_and_bar": "crypto-1d, 10-coin cross-section",
+      "expected_turnover": "Low. Volatility ranks among large coins are persistent, so the selected set changes slowly; monthly rebalancing implies few trades per year. The MAX variant would turn over faster than the volatility variant.",
+      "main_risk_of_being_market_exposure": "Moderate to high. Long-only and fully invested, but tilted toward the lowest-beta coins (in this universe probably BTC and other majors most of the time), so beta to the equal-weight basket is likely below 1. If the gate's market adjustment uses the basket, a low-beta portfolio can show positive alpha simply because the basket's high-beta coins did poorly in this specific window; that would be a 2021-2025 sample effect, not a mechanism. The selection may also collapse to 'hold BTC', a single-asset bet in disguise.",
+      "known_weaknesses": [
+        "The sign of the effect is disputed: two papers find low-risk/low-MAX outperforms, at least three find the opposite.",
+        "Evidence comes mostly from very broad universes full of small coins; whether it holds among 10 large coins is untested in what was read.",
+        "With 10 coins the low-risk set may be nearly constant, making the strategy close to a fixed basket.",
+        "Lottery demand in crypto may be regime-dependent (strongest in speculative bull phases)."
+      ],
+      "difference_from_tried_ideas": {
+        "crypto-trend-1h": "Selection uses risk (volatility or maximum daily return), not price direction or moving averages. It does not go to cash, so it does not time the market. The killed idea used inverse-volatility weights as a sizing rule on top of a trend signal; here low volatility is the signal itself, chosen for a different reason (mispricing of lottery-like coins). Daily bars, weekly to monthly rebalance."
+      }
+    }
+  ],
+  "dropped": [
+    {
+      "idea": "Cross-sectional short-term reversal / liquidity provision (buy recent losers among the 10 coins)",
+      "reason": "Sources locate the reversal premium in illiquid, low-activity pairs (Bianchi, Babiak and Dickerson, Riksbank WP 413 / J. Banking and Finance: https://www.riksbank.se/globalassets/media/rapporter/working-papers/2022/no.-413-trading-volume-and-liquidity-provision-in-cryptocurreny-markets.pdf ; https://eprints.lancs.ac.uk/id/eprint/172093) and find momentum, not reversal, among the largest coins (Zaremba et al. 2021: https://ideas.repec.org/a/eee/finana/v78y2021ics1057521921002349.html ; Cong et al. EFMA 2022). The effect is daily-horizon, so 0.6% round-trip cost would also dominate. Claimed gross Sharpe up to 2.96 for a volume-conditioned reversal (Bianchi and Dickerson, via CXO: https://www.cxoadvisory.com/technical-trading/predicting-crypto-asset-returns-with-past-returns-volume/) is gross of costs, flagged by the authors as likely inflated by data snooping, and not evidence."
+    },
+    {
+      "idea": "Longer-horizon reversal (buy 1-3 month losers)",
+      "reason": "Only Dobrynskaya (https://publications.hse.ru/en/articles/811744977) reports reversal beyond about one month, in a 2,000-coin universe; not found replicated among large coins. Too thin to card on its own; the engine could see it as the mirror of the relative-strength candidate."
+    },
+    {
+      "idea": "Day-of-week / weekend / Monday effect",
+      "reason": "Caporale and Plastun (https://bura.brunel.ac.uk/handle/2438/17208) find a Monday effect for Bitcoin only, 2013-2017, with trading results not significantly different from random. Baur et al. (Finance Research Letters 31, https://ideas.repec.org/a/eee/finlet/v31y2019icp78-92.html) report no consistent or persistent calendar patterns. Weekly entry and exit means about 52 round trips a year, roughly 30% a year in costs at 0.6% per round trip. Weak evidence and cost-prohibitive."
+    },
+    {
+      "idea": "Abnormal-volume (disagreement) reaction: avoid or underweight coins with volume shocks",
+      "reason": "The study found (https://biz.uiowa.edu/faculty/jgarfinkel/pubs/crypto_divop.pdf) ties the negative abnormal-volume return relation to binding short-sale constraints and reports that it disappears once margin trading is enabled. All 10 coins in this universe had margin and perpetual markets throughout 2021-2025, so the paper's own mechanism predicts no effect here. Bianchi and Dickerson report that volume alone has little predictive power."
+    },
+    {
+      "idea": "Intraday overnight / session effects (e.g. Quantpedia 'Bitcoin overnight sessions')",
+      "reason": "Needs intraday session timing and frequent round trips; not a daily-bar, low-turnover idea, and the source is a practitioner blog with backtest claims only (https://quantpedia.com/how-to-profitably-trade-bitcoins-overnight-sessions/)."
+    },
+    {
+      "idea": "Funding-rate, basis or liquidation-driven signals",
+      "reason": "Out of scope: needs derivatives data, which the factory does not have and may not use."
+    },
+    {
+      "idea": "Betting-against-beta long-short in crypto",
+      "reason": "Out of scope as published: requires shorting high-beta coins and levering low-beta coins. Only the long-only low-risk tilt is carried forward, as candidate crypto-lowrisk-tilt-1d."
+    }
+  ],
+  "injection_suspected": [],
+  "sources_not_used_as_evidence": [
+    {"url": "https://medium.com/coinmonks/whats-vol-got-to-do-with-it-886b57c2d762", "reason": "Informal blog backtest, short sample, no method beyond a backtest."},
+    {"url": "https://www.quantconnect.com/terminal/cache/embedded_backtest_1a5386536b8d7e168269cecd4fd904d7.html", "reason": "Backtest output page only."},
+    {"url": "https://research.grayscale.com/reports/the-trend-is-your-friend-managing-bitcoins-volatility-with-momentum-signals", "reason": "Trend-following; outside the gap."},
+    {"url": "https://thesis.eur.nl/pub/72796/Thesis_532108ap_Low_vol.pdf", "reason": "Bachelor/master thesis; lead only, not a source."}
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "strategy": "crypto-lowrisk-tilt-1d",
+  "trial": "t000041",
+  "dataset": "crypto-1d",
+  "params": {
+    "risk_lookback": 27,
+    "bottom_k": 3,
+    "rebalance": 25
+  },
+  "engine_version": 1,
+  "code_hash": "9244f09909000c33",
+  "pass": false,
+  "checks": {
+    "leak_test": {
+      "pass": true,
+      "detail": "past decisions unchanged when the future is removed"
+    },
+    "deflated_sharpe": {
+      "pass": false,
+      "value": 0.22,
+      "min": 0.95,
+      "measured_on": "returns after removing market exposure",
+      "measured_over": "the average of the 40 logged trials that behave like this one",
+      "market_adjusted_sharpe": -0.1,
+      "this_variant_market_adjusted_sharpe": 0.23,
+      "market_beta": 0.53,
+      "trials_logged": 41,
+      "distinct_ideas": 2,
+      "sharpe_to_beat_by_luck": 0.25
+    },
+    "positive_at_stressed_costs": {
+      "pass": true,
+      "market_adjusted_return_per_year": 0.0727,
+      "cost_multiplier": 2.0
+    },
+    "beats_buy_and_hold": {
+      "pass": false,
+      "sharpe": 0.9,
+      "benchmark_sharpe": 1.03
+    }
+  },
+  "evidence": {
+    "sweep_overfitting_probability": 0.59,
+    "sweep_trials": 41,
+    "sweep_sharpe_quartiles": [
+      0.36,
+      0.53,
+      0.73,
+      0.91,
+      1.14
+    ],
+    "subperiod_sharpes": [
+      2.01,
+      -1.38,
+      1.81,
+      1.33,
+      0.41
+    ],
+    "max_drawdown": -0.8068,
+    "total_return": 5.7399,
+    "orders": 151,
+    "turnover_per_year": 10.18,
+    "cost_per_year": 0.0305,
+    "exposure": 0.985,
+    "closest_other_strategy": null,
+    "known_biases": "universe chosen with hindsight; cost model is assumed, not measured"
+  }
+}

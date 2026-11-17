@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 coverage.xml
 .coverage
+# Factory C market data snapshots (rebuilt by data/fetch_binance.py; the manifest pins them)
+factories/c-trading/data/*/*/*.csv.gz
+node_modules/
+.hyperframes/
