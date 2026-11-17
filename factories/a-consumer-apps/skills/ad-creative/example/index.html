@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --ink: #1d1b2f;
+        --accent: #ff6b3d;
+        --good: #17a673;
+        --bad: #e5484d;
+        --font: "Inter", "Helvetica Neue", Arial, sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; font-family: var(--font); color: var(--ink); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden;
+        background: radial-gradient(900px 700px at 15% 12%, #ffe3cf 0%, rgba(255,227,207,0) 70%),
+                    radial-gradient(900px 800px at 90% 40%, #e6defc 0%, rgba(230,222,252,0) 70%),
+                    radial-gradient(1000px 700px at 40% 100%, #d9f3e6 0%, rgba(217,243,230,0) 70%), #fbf8f3; }
+      .clip { position: absolute; inset: 0; }
+
+      /* captions: what the voice says, readable with the sound off */
+      .cap { position: absolute; left: 70px; right: 70px; top: 262px; height: 190px; display: flex; align-items: flex-end;
+        font-size: 68px; line-height: 1.08; font-weight: 800; letter-spacing: -0.03em; }
+      .cap em { font-style: normal; color: var(--accent); }
+      #concept { position: absolute; right: 70px; top: 1432px; padding: 12px 24px; border-radius: 30px; background: rgba(255,255,255,0.92);
+        font-size: 28px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.7; z-index: 30; }
+
+      /* stage and camera: the phone is drawn at full size and the camera moves over it */
+      #stage { position: absolute; left: 0; top: 470px; width: 1080px; height: 1450px; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 70px); mask-image: linear-gradient(to bottom, transparent 0, #000 70px); }
+      #cam { position: absolute; left: 0; top: 0; width: 700px; height: 1420px; transform-origin: 0 0; }
+      #phone { position: absolute; inset: 0; border-radius: 96px; background: #14131f; padding: 22px; box-shadow: 0 50px 110px rgba(29, 27, 47, 0.25); }
+      #screen { position: relative; width: 100%; height: 100%; border-radius: 76px; background: #fff; overflow: hidden; }
+      .island { position: absolute; left: 50%; top: 22px; width: 190px; height: 52px; margin-left: -95px; border-radius: 30px; background: #14131f; z-index: 9; }
+      .ui { position: absolute; inset: 0; padding: 120px 44px 0; }
+      .ui h3 { font-size: 32px; font-weight: 700; opacity: 0.5; }
+      .ui .title { font-size: 52px; font-weight: 800; margin-top: 8px; letter-spacing: -0.02em; }
+      .timer { margin-top: 50px; font-size: 150px; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+      .wave { margin-top: 26px; height: 150px; display: flex; align-items: center; gap: 10px; }
+      .wave i { display: block; width: 14px; border-radius: 8px; background: var(--accent); }
+      .wave.grey i { background: #c9c6d6; }
+      .pill { display: inline-flex; align-items: center; gap: 14px; margin-top: 34px; padding: 18px 28px; border-radius: 40px; font-size: 36px; font-weight: 700; }
+      .pill.good { background: #dcf5ea; color: var(--good); }
+      .pill.soft { background: #f1eef8; color: var(--ink); }
+      .dot { width: 22px; height: 22px; border-radius: 50%; background: currentColor; }
+      .bar { margin-top: 24px; height: 22px; border-radius: 12px; background: #eeeaf5; overflow: hidden; }
+      .bar b { display: block; height: 100%; width: 100%; background: var(--good); transform-origin: left center; }
+      .recbtn { position: absolute; left: 50%; bottom: 150px; width: 190px; height: 190px; margin-left: -95px; border-radius: 50%; border: 10px solid #1d1b2f; display: flex; align-items: center; justify-content: center; }
+      .recbtn b { display: block; width: 130px; height: 130px; border-radius: 50%; background: var(--bad); }
+      .hint { position: absolute; left: 0; right: 0; bottom: 84px; text-align: center; font-size: 30px; font-weight: 700; opacity: 0.5; }
+      .call { position: absolute; left: 26px; right: 26px; top: 92px; padding: 30px 34px; border-radius: 44px; background: #1d1b2f; color: #fff; font-size: 38px; font-weight: 700; z-index: 8; display: flex; justify-content: space-between; align-items: center; }
+      .call span { font-size: 28px; opacity: 0.7; font-weight: 600; display: block; }
+      .call u { text-decoration: none; width: 84px; height: 84px; border-radius: 50%; background: var(--good); display: block; }
+      .dim { position: absolute; inset: 0; background: rgba(20, 19, 31, 0.88); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; }
+      .dim .big { font-size: 64px; font-weight: 800; line-height: 1.1; }
+      .dim .small { font-size: 36px; opacity: 0.75; margin-top: 20px; font-weight: 600; }
+      .row { margin-top: 24px; padding: 30px; border-radius: 34px; background: #f6f3fb; }
+      .row .t { font-size: 38px; font-weight: 800; }
+      .row .m { font-size: 30px; opacity: 0.6; font-weight: 600; margin-top: 6px; }
+      .row .x { font-size: 28px; line-height: 1.35; margin-top: 14px; opacity: 0.8; }
+      .row .tag { display: inline-block; margin-top: 16px; padding: 8px 18px; border-radius: 20px; background: #dcf5ea; color: var(--good); font-size: 26px; font-weight: 800; }
+
+      /* the finger: a soft dot that presses and ripples */
+      #tap { position: absolute; left: 0; top: 0; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%; background: rgba(29,27,47,0.28); border: 5px solid rgba(255,255,255,0.9); z-index: 40; }
+      #ring { position: absolute; left: 0; top: 0; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%; border: 6px solid var(--accent); z-index: 39; }
+
+      /* character: Pip, a little keeper that holds on to what it hears */
+      #pip { position: absolute; left: 34px; top: 1262px; width: 236px; height: 236px; z-index: 20; }
+
+      .end { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 80px; }
+      .end .name { font-size: 124px; font-weight: 800; letter-spacing: -0.04em; margin-top: 30px; }
+      .end .line { font-size: 54px; font-weight: 600; opacity: 0.8; margin-top: 18px; line-height: 1.2; }
+      .end .cta { margin-top: 64px; padding: 36px 70px; border-radius: 60px; background: var(--ink); color: #fff; font-size: 52px; font-weight: 800; }
+      .end .fine { margin-top: 40px; font-size: 32px; opacity: 0.6; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="23.6" data-width="1080" data-height="1920">
+      <!-- voice: one clip per line, each placed where its scene starts -->
+      <audio id="vo1" class="clip" data-start="0.3" data-duration="3.349" data-track-index="10" data-volume="1" src="audio/vo-1.mp3"></audio>
+      <audio id="vo2" class="clip" data-start="4.2" data-duration="3.413" data-track-index="10" data-volume="1" src="audio/vo-2.mp3"></audio>
+      <audio id="vo3" class="clip" data-start="8.0" data-duration="3.541" data-track-index="10" data-volume="1" src="audio/vo-3.mp3"></audio>
+      <audio id="vo4" class="clip" data-start="12.4" data-duration="2.816" data-track-index="10" data-volume="1" src="audio/vo-4.mp3"></audio>
+      <audio id="vo5" class="clip" data-start="16.4" data-duration="2.24" data-track-index="10" data-volume="1" src="audio/vo-5.mp3"></audio>
+      <audio id="vo6" class="clip" data-start="19.5" data-duration="3.733" data-track-index="10" data-volume="1" src="audio/vo-6.mp3"></audio>
+
+      <!-- captions -->
+      <div id="c1" class="clip" data-start="0" data-duration="4" data-track-index="2"><div class="cap"><span>Minute 55 of the lecture.<br /><em>Your recording just stopped.</em></span></div></div>
+      <div id="c2" class="clip" data-start="4" data-duration="3.8" data-track-index="2"><div class="cap"><span>LectureSafe is being built so that <em>never costs you the lecture.</em></span></div></div>
+      <div id="c3" class="clip" data-start="7.8" data-duration="4.4" data-track-index="2"><div class="cap"><span>Tap record. Every second is <em>saved as you go.</em></span></div></div>
+      <div id="c4" class="clip" data-start="12.2" data-duration="4" data-track-index="2"><div class="cap"><span>A call cuts in?<br /><em>It picks up where it stopped.</em></span></div></div>
+      <div id="c5" class="clip" data-start="16.2" data-duration="3" data-track-index="2"><div class="cap"><span>The whole lecture is there <em>when you need it.</em></span></div></div>
+
+      <!-- the product -->
+      <div id="product" class="clip" data-start="0" data-duration="19.2" data-track-index="1">
+        <div id="stage">
+          <div id="cam">
+            <div id="phone">
+              <div id="screen">
+                <div class="island"></div>
+
+                <div id="ui-fail" class="ui">
+                  <h3>Voice recorder</h3>
+                  <div class="title">Biology 201</div>
+                  <div class="timer" id="t1">54:51</div>
+                  <div class="wave grey" id="w1"></div>
+                  <div id="fail" class="dim"><div class="big">Recording failed</div><div class="small">0 minutes saved</div></div>
+                </div>
+
+                <div id="ui-home" class="ui">
+                  <h3>LectureSafe</h3>
+                  <div class="title">Biology 201</div>
+                  <div class="timer" id="t0">00:00</div>
+                  <div class="pill soft"><span class="dot" style="color: var(--good)"></span><span>41 GB free · ready</span></div>
+                  <div class="recbtn" id="recbtn"><b id="recdot"></b></div>
+                  <div class="hint">Tap to record</div>
+                </div>
+
+                <div id="ui-rec" class="ui">
+                  <h3>LectureSafe · recording</h3>
+                  <div class="title">Biology 201</div>
+                  <div class="timer" id="t2">00:00</div>
+                  <div class="wave" id="w2"></div>
+                  <div class="pill good" id="savedpill"><span class="dot"></span><span id="saved">Saved 00:00</span></div>
+                  <div class="bar"><b id="barfill"></b></div>
+                  <div id="call" class="call"><div>Mum<span>Incoming call</span></div><u></u></div>
+                  <div id="recover" class="dim"><div class="big" id="rectext">Recording interrupted</div><div class="small" id="recsmall">Bringing it back…</div></div>
+                </div>
+
+                <div id="ui-lib" class="ui">
+                  <h3>LectureSafe</h3>
+                  <div class="title">Your lectures</div>
+                  <div class="row" id="row1"><div class="t">Biology 201</div><div class="m">Today · 55 min</div><div class="x">“…so the mitochondria is where the cell turns glucose into usable energy…”</div><div class="tag">Complete · nothing lost</div></div>
+                  <div class="row"><div class="t">Statistics 110</div><div class="m">Mon · 1 h 20 min</div></div>
+                  <div class="row"><div class="t">Organic Chem</div><div class="m">Fri · 48 min</div></div>
+                </div>
+
+                <div id="ring"></div>
+                <div id="tap"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- character -->
+      <div id="pipclip" class="clip" data-start="0" data-duration="19.2" data-track-index="3">
+        <svg id="pip" viewBox="0 0 330 330">
+          <ellipse cx="165" cy="312" rx="96" ry="12" fill="rgba(29,27,47,0.10)" />
+          <rect x="34" y="60" width="262" height="230" rx="96" fill="#ff8f6b" />
+          <g id="eyes">
+            <rect id="eyeL" x="112" y="128" width="26" height="62" rx="13" fill="#1d1b2f" />
+            <rect id="eyeR" x="192" y="128" width="26" height="62" rx="13" fill="#1d1b2f" />
+          </g>
+          <path id="smile" d="M134 226 Q165 252 196 226" fill="none" stroke="#1d1b2f" stroke-width="9" stroke-linecap="round" />
+          <path id="frown" d="M138 240 Q165 222 192 240" fill="none" stroke="#1d1b2f" stroke-width="9" stroke-linecap="round" />
+          <ellipse cx="96" cy="206" rx="20" ry="12" fill="#ff6b3d" opacity="0.55" />
+          <ellipse cx="234" cy="206" rx="20" ry="12" fill="#ff6b3d" opacity="0.55" />
+        </svg>
+        <div id="concept">Concept</div>
+      </div>
+
+      <!-- end card -->
+      <div id="end" class="clip end" data-start="19.2" data-duration="4.4" data-track-index="4">
+        <svg width="250" height="250" viewBox="0 0 330 330">
+          <rect x="34" y="60" width="262" height="230" rx="96" fill="#ff8f6b" />
+          <rect x="112" y="128" width="26" height="62" rx="13" fill="#1d1b2f" /><rect x="192" y="128" width="26" height="62" rx="13" fill="#1d1b2f" />
+          <path d="M134 226 Q165 252 196 226" fill="none" stroke="#1d1b2f" stroke-width="9" stroke-linecap="round" />
+        </svg>
+        <div class="name">LectureSafe</div>
+        <div class="line">Record the whole lecture.<br />Never lose it.</div>
+        <div class="cta">Join early access</div>
+        <div class="fine">In development · nothing is charged today</div>
+      </div>
+    </div>
+
+    <script>
+      // Waveform bars with fixed heights (nothing random).
+      const heights = [38, 82, 54, 120, 70, 140, 96, 60, 128, 46, 104, 76, 132, 58, 90, 116, 44, 100, 68, 124, 52, 88];
+      for (const id of ["w1", "w2"]) {
+        const el = document.getElementById(id);
+        heights.forEach((h) => { const i = document.createElement("i"); i.style.height = h + "px"; el.appendChild(i); });
+      }
+      const fmt = (n) => String(Math.floor(n / 60)).padStart(2, "0") + ":" + String(n % 60).padStart(2, "0");
+      const $ = (id) => document.getElementById(id);
+
+      // Camera: put a point of the phone (in its own pixels) at the middle of the stage at a given zoom.
+      const WIDE = { scale: 0.72, x: 288, y: 30 };
+      const look = (px, py, scale) => ({ scale, x: 540 - px * scale, y: 530 - py * scale });
+      const ease = "power3.inOut";
+
+      const tl = gsap.timeline({ paused: true });
+      gsap.set("#cam", WIDE);
+      gsap.set(["#ui-home", "#ui-rec", "#ui-lib", "#fail", "#recover", "#call", "#tap", "#ring", "#smile"], { autoAlpha: 0 });
+      gsap.set("#pip", { transformOrigin: "50% 90%" });
+      const capIn = (id, at) => tl.fromTo(id + " .cap span", { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: "power3.out" }, at);
+      const tapAt = (x, y, at) => {
+        tl.set(["#tap", "#ring"], { x, y }, at - 0.45);
+        tl.fromTo("#tap", { autoAlpha: 0, scale: 1.5 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at - 0.45);
+        tl.to("#tap", { scale: 0.78, duration: 0.1, ease: "power2.in" }, at - 0.1);
+        tl.fromTo("#ring", { autoAlpha: 0.9, scale: 0.8 }, { autoAlpha: 0, scale: 2.4, duration: 0.5, ease: "power2.out", immediateRender: false }, at);
+        tl.to("#tap", { scale: 1, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, at + 0.08);
+      };
+      const mood = (happy, at) => {
+        tl.to("#smile", { autoAlpha: happy ? 1 : 0, duration: 0.15 }, at);
+        tl.to("#frown", { autoAlpha: happy ? 0 : 1, duration: 0.15 }, at);
+      };
+      const blink = (at) => tl.to("#eyes", { scaleY: 0.15, transformOrigin: "50% 48%", duration: 0.08, yoyo: true, repeat: 1 }, at);
+
+      // Scene 1 (0 to 4): the failure the viewer has lived
+      capIn("#c1", 0.1);
+      tl.from("#cam", { y: 700, duration: 0.8, ease: "power3.out" }, 0);
+      tl.from("#pip", { y: 300, autoAlpha: 0, duration: 0.6, ease: "power3.out" }, 0.2);
+      tl.to("#w1 i", { scaleY: 0.35, duration: 0.25, stagger: { each: 0.03, repeat: 5, yoyo: true }, ease: "sine.inOut" }, 0.2);
+      const c1 = { v: 3291 };
+      tl.to(c1, { v: 3297, duration: 2.0, ease: "none", onUpdate: () => { $("t1").textContent = fmt(Math.floor(c1.v)); } }, 0.2);
+      tl.to("#cam", { ...look(350, 560, 0.95), duration: 1.6, ease }, 0.9);
+      tl.to("#fail", { autoAlpha: 1, duration: 0.12 }, 2.3);
+      tl.to("#pip", { rotation: -9, duration: 0.09, yoyo: true, repeat: 3 }, 2.35);
+      tl.to("#eyes", { scaleY: 1.25, transformOrigin: "50% 48%", duration: 0.15 }, 2.35);
+      tl.to("#cam", { ...WIDE, duration: 0.9, ease }, 3.1);
+
+      // Scene 2 (4 to 7.8): the product arrives, calm and ready
+      capIn("#c2", 4.05);
+      tl.to("#ui-fail", { autoAlpha: 0, duration: 0.3 }, 4.0);
+      tl.to("#ui-home", { autoAlpha: 1, duration: 0.3 }, 4.0);
+      tl.to("#eyes", { scaleY: 1, duration: 0.2 }, 4.0);
+      mood(true, 4.1);
+      tl.to("#pip", { y: -36, duration: 0.24, yoyo: true, repeat: 1, ease: "power2.out" }, 4.15);
+      tl.from("#ui-home .pill", { y: 30, autoAlpha: 0, duration: 0.4, ease: "power3.out" }, 4.5);
+      tl.from("#recbtn", { scale: 0.6, autoAlpha: 0, duration: 0.5, ease: "back.out(1.6)" }, 4.8);
+      blink(6.0);
+      tl.to("#cam", { ...look(350, 1060, 1.05), duration: 1.4, ease }, 6.3);
+
+      // Scene 3 (7.8 to 12.2): tap record, watch it being saved
+      capIn("#c3", 7.85);
+      tapAt(328, 1131, 8.5);
+      tl.to("#recdot", { scale: 0.5, borderRadius: "28px", duration: 0.2 }, 8.5);
+      tl.to("#ui-home", { autoAlpha: 0, duration: 0.25 }, 8.85);
+      tl.to("#ui-rec", { autoAlpha: 1, duration: 0.25 }, 8.85);
+      tl.to("#cam", { ...look(350, 600, 1.0), duration: 1.1, ease }, 8.9);
+      tl.to("#w2 i", { scaleY: 0.35, duration: 0.25, stagger: { each: 0.03, repeat: 9, yoyo: true }, ease: "sine.inOut" }, 8.9);
+      const c2 = { v: 0 };
+      tl.to(c2, { v: 3, duration: 3.0, ease: "none", onUpdate: () => {
+        const s = Math.floor(c2.v); $("t2").textContent = fmt(s); $("saved").textContent = "Saved " + fmt(s);
+      } }, 9.0);
+      tl.fromTo("#barfill", { scaleX: 0.02 }, { scaleX: 0.12, duration: 3.0, ease: "none" }, 9.0);
+      tl.fromTo("#savedpill", { scale: 1 }, { scale: 1.08, duration: 0.18, yoyo: true, repeat: 1, immediateRender: false }, 10.0);
+      tl.fromTo("#savedpill", { scale: 1 }, { scale: 1.08, duration: 0.18, yoyo: true, repeat: 1, immediateRender: false }, 11.0);
+      blink(10.6);
+
+      // Scene 4 (12.2 to 16.2): minute 55, a call cuts in, and it comes back
+      capIn("#c4", 12.25);
+      tl.call(() => { $("t2").textContent = "54:51"; $("saved").textContent = "Saved 54:51"; }, null, 12.2);
+      tl.set("#barfill", { scaleX: 0.92 }, 12.2);
+      tl.to("#cam", { ...look(350, 480, 0.9), duration: 0.9, ease }, 12.2);
+      tl.fromTo("#call", { y: -220, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: "power3.out" }, 12.7);
+      mood(false, 12.8);
+      tl.to("#recover", { autoAlpha: 1, duration: 0.2 }, 13.3);
+      tl.to("#call", { y: -220, autoAlpha: 0, duration: 0.3 }, 13.8);
+      tl.call(() => { $("rectext").textContent = "Recovered 54:58"; $("recsmall").textContent = "Nothing lost"; }, null, 14.3);
+      tl.fromTo("#rectext", { scale: 0.85 }, { scale: 1, duration: 0.4, ease: "power3.out" }, 14.3);
+      tl.to("#recover", { backgroundColor: "rgba(23,166,115,0.95)", duration: 0.25 }, 14.3);
+      mood(true, 14.35);
+      tl.to("#pip", { y: -44, duration: 0.24, yoyo: true, repeat: 1, ease: "power2.out" }, 14.4);
+      tl.to("#cam", { ...WIDE, duration: 0.9, ease }, 15.3);
+
+      // Scene 5 (16.2 to 19.2): the lecture is there
+      capIn("#c5", 16.25);
+      tl.to("#ui-rec", { autoAlpha: 0, duration: 0.25 }, 16.2);
+      tl.to("#ui-lib", { autoAlpha: 1, duration: 0.25 }, 16.2);
+      tl.from("#ui-lib .row", { y: 80, autoAlpha: 0, duration: 0.45, stagger: 0.12, ease: "power3.out" }, 16.3);
+      tl.to("#cam", { ...look(350, 480, 1.05), duration: 1.3, ease }, 17.0);
+      tl.fromTo("#row1 .tag", { scale: 0.7, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.4, ease: "back.out(2)" }, 17.6);
+      blink(18.2);
+
+      // End card (19.2 to 23.6)
+      tl.from("#end > *", { y: 50, autoAlpha: 0, duration: 0.45, stagger: 0.1, ease: "power3.out" }, 19.25);
+      tl.fromTo("#end .cta", { scale: 1 }, { scale: 1.05, duration: 0.5, yoyo: true, repeat: 3, ease: "sine.inOut" }, 21.2);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

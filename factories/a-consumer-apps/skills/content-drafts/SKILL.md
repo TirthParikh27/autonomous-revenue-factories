@@ -5,7 +5,7 @@ description: Stage 8 of Factory A. Use weekly for each app at `winner`, to rende
 
 # Content drafts
 
-Runs on the operator's Mac, because the HeyGen CLI and HyperFrames skills are installed there (verified 2026-11-16). It is the only stage in this factory that runs locally. Read `CLAUDE.md` and `budget.yaml` first. You produce drafts. The operator picks audio and publishes from a warmed account.
+Runs on the operator's Mac, because the HeyGen CLI and login are there (verified 2026-11-16). Demo videos follow `skills/ad-creative/SKILL.md`, with the app's character and real screens from the shipped build. Read `CLAUDE.md` and `budget.yaml` first. You produce drafts. The operator picks audio and publishes from a warmed account.
 
 ## Inputs
 
@@ -38,7 +38,7 @@ Generative video and realistic AI people or scenes are disabled in `budget.yaml`
 
 ## Tools
 
-Simulator recording from CI artefacts, HeyGen CLI and HyperFrames skills as installed locally (verified 2026-11-16; run HyperFrames with `npx hyperframes`), ffmpeg, ElevenLabs API, `publish.py drafts`, Read, Write, Bash.
+Simulator recording from CI artefacts, HeyGen CLI and HyperFrames skills as installed locally (verified 2026-11-16; run HyperFrames with `npx -y hyperframes@0.9.59`), ffmpeg, ElevenLabs API, `publish.py drafts`, Read, Write, Bash.
 
 ## Hard check
 
