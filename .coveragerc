@@ -1,0 +1,11 @@
+[run]
+source = .
+omit =
+    */tests/*
+    */conftest.py
+    # Factories with their own requirements run their own test job (see REVIEW.md).
+    factories/c-trading/*
+
+[report]
+# Count code files that no test imports, so a new untested file shows as uncovered.
+include_namespace_packages = true

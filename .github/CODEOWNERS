@@ -1,12 +1,16 @@
-# Files that set the factory's rules and limits. Only the operator approves changes to them.
+# Files that guard money, accounts, keys, publishing and the review rules.
+# A pull request that changes any of them waits for the operator to merge (REVIEW.md).
+# tools/pr_gate.py reads this list.
 /factories/*/budget.yaml            @TirthParikh27
-/factories/*/CLAUDE.md              @TirthParikh27
 /factories/*/ESCALATION.md          @TirthParikh27
 /factories/*/checks/                @TirthParikh27
 /factories/*/publish.py             @TirthParikh27
-/factories/*/fetch_reviews.py       @TirthParikh27
 /factories/*/.claude/               @TirthParikh27
 /factories/*/escalations/approved/  @TirthParikh27
 /factories/*/escalations/rejected/  @TirthParikh27
 /tools/                             @TirthParikh27
 /.github/                           @TirthParikh27
+/REVIEW.md                          @TirthParikh27
+/CLAUDE.md                          @TirthParikh27
+/.claude/                           @TirthParikh27
+/.coveragerc                        @TirthParikh27

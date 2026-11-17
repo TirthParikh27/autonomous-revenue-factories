@@ -8,10 +8,21 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      BASE: origin/${{ github.base_ref }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install -r requirements-dev.txt
-      - run: python -m pytest -q
+      - run: python -m pytest -q --cov --cov-report=xml
+      # The two pull request rules in REVIEW.md, "What CI enforces".
+      - name: Code changes come with tests
+        if: github.event_name == 'pull_request'
+        run: python tools/pr_gate.py --base "$BASE"
+      - name: Changed lines are covered by tests
+        if: github.event_name == 'pull_request'
+        run: diff-cover coverage.xml --compare-branch "$BASE" --fail-under 80
