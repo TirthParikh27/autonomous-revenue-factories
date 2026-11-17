@@ -50,6 +50,8 @@ jobs:
                   exam.append(p.stem)
               elif (stage in ("paper", "confirmed", "paused", "awaiting_human") and sat) or stage == "watch":
                   paper.append(p.stem)
+          import subprocess
+          print("sha=" + subprocess.run(["git", "-C", "state-branch", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip())
           print("exam=" + " ".join(exam))
           print("all=" + " ".join(exam + paper))
           PY
@@ -93,6 +95,7 @@ jobs:
           retention-days: 3
     outputs:
       ran: ${{ steps.find.outputs.all != '' }}
+      sha: ${{ steps.find.outputs.sha }}
   record:
     needs: judge
     if: always() && needs.judge.outputs.ran == 'true'
@@ -100,9 +103,12 @@ jobs:
     permissions:
       contents: write
     steps:
+      # Start from the exact state the judge read, so that anything pushed to factory-state while it ran
+      # is kept by the rebase below and not overwritten by the judge's older copy.
       - uses: actions/checkout@v4
         with:
-          ref: factory-state
+          ref: ${{ needs.judge.outputs.sha }}
+          fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
           name: judge-results
@@ -116,5 +122,5 @@ jobs:
           done
           git diff --cached --quiet && exit 0
           git commit -q -m "Exam and paper results"
-          git pull -q --rebase
-          git push -q
+          git pull -q --rebase origin factory-state
+          git push -q origin HEAD:factory-state

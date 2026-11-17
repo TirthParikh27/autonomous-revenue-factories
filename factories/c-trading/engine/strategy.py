@@ -29,7 +29,7 @@ BANNED_NAMES = {"open", "exec", "eval", "compile", "__import__", "globals", "loc
 # numpy and pandas can themselves reach files, the network, the clock and the shell. These attribute
 # names are refused wherever they appear. This is a lint, not a sandbox: the reviewer agent reads the
 # code as well, and the judge's job runs strategy code with read-only access to the repository.
-BANNED_ATTRS = {"talib", "core", "lib", "compat", "util", "api", "errors", "plotting", "tseries", "arrays", "builtins", "pickle",
+BANNED_ATTRS = {"gi_frame", "cr_frame", "ag_frame", "tb_frame", "dump", "dumps", "talib", "core", "lib", "compat", "util", "api", "errors", "plotting", "tseries", "arrays", "builtins", "pickle",
                 "fromregex", "open_memmap", "format", "io", "os", "sys", "system", "popen", "subprocess", "now", "today", "utcnow", "random", "eval", "query",
                 "load", "save", "savez", "savez_compressed", "savetxt", "loadtxt", "genfromtxt", "fromfile", "tofile",
                 "memmap", "DataSource", "ctypeslib", "f2py", "testing", "HDFStore", "ExcelWriter", "ExcelFile", "pipe"}
@@ -50,7 +50,7 @@ class Strategy:
 
 
 def _bad_attr(a: str) -> bool:
-    return (a.startswith("_") or a in BANNED_ATTRS or a.startswith("read_")
+    return (a.startswith("_") or a.startswith("f_") or a in BANNED_ATTRS or a.startswith("read_")
             or (a.startswith("to_") and a not in ALLOWED_TO))
 
 
@@ -72,6 +72,8 @@ def lint(source: str) -> list[str]:
             problems.append(f"line {line}: use of '{node.id}' is not allowed")
         elif isinstance(node, ast.Attribute) and _bad_attr(node.attr):
             problems.append(f"line {line}: use of '.{node.attr}' is not allowed")
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and _bad_attr(node.value):
+            problems.append(f"line {line}: the text '{node.value}' names a call that is not allowed")   # .agg("to_csv")
         elif isinstance(node, (ast.Match, ast.Global, ast.Nonlocal)):
             problems.append(f"line {line}: this statement is not allowed in a strategy")
     return problems

@@ -180,7 +180,7 @@ def test_lint_blocks_files_network_and_clock():
                 "from pandas import read_csv", "from numpy import random", "from lib.indicators import talib",
                 "from numpy import *", "__builtins__['open']('x')", "pd.core.generic.pickle.loads(b'')",
                 "pd.core.common.builtins", "np.lib.format.open_memmap('x')", "np.fromregex('x', 'a', float)",
-                "bars._private", "match np:\n    case object(random=r):\n        pass"):
+                "bars._private", "s.agg('to_csv', path_or_buf='x')", "(x for x in ()).gi_frame.f_builtins", "a.dump('x')", "match np:\n    case object(random=r):\n        pass"):
         assert strat.lint(bad), bad
     assert strat.lint("w = bars.close.rolling(5).mean().to_numpy()\nd = pd.to_datetime(x)\n"
                       "from lib import indicators\nfrom lib.indicators import ema\nfrom numpy import sqrt\n") == []
@@ -197,6 +197,16 @@ def test_code_hash_covers_universe_and_band(tmp_path):
     plain = version("")
     assert version("") == plain and version("chosen: {n: 4}\n") == plain          # tuning is not a new version
     assert len({plain, version("symbols: [BTCUSDT]\n"), version("rebalance_band: 0.1\n")}) == 3
+
+
+def test_a_file_in_the_factory_folder_cannot_shadow_a_library(tmp_path):
+    import subprocess, sys, shutil
+    root = tmp_path / "f"
+    shutil.copytree(strat.ROOT / "engine", root / "engine")
+    (root / "yaml.py").write_text("raise SystemExit('shadowed')\n")
+    out = subprocess.run([sys.executable, "-c", "import engine, yaml; print(yaml.__file__)"], cwd=root,
+                         capture_output=True, text=True)
+    assert out.returncode == 0 and "site-packages" in out.stdout, out.stderr
 
 
 def test_statistics_match_an_independent_library():
