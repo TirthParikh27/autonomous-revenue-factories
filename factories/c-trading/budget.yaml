@@ -1,3 +1,4 @@
+# Superseded in part: describes the 16 November blueprint. See FACTORY_SPEC.md revision 2; rewritten in its build step 1.
 # Factory C (c-trading) budget and risk limits.
 # Read by the run wrapper, by CI gate scripts and by every skill.
 # Proposed conservative defaults. Only the operator changes this file (CODEOWNERS, deny rule).
