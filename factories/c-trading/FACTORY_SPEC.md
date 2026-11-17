@@ -1,9 +1,9 @@
 # Factory C: Trading strategy factory
 
-Status: architecture, revision 2 (17 November 2026). The engine is built and tested on crypto data (build steps 2 to 4). Nothing is scheduled, and no paper trading exists yet.
+Status: architecture, revision 2 (17 November 2026). The engine is built and tested on crypto data, and the instructions, skills and agents for the idea, build and optimise stages are written (build steps 1 to 4). Nothing is scheduled, and no exam job or paper trading exists yet.
 Nothing in this factory is financial advice. It is a research harness on paper accounts.
 
-This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md). The other files in this folder (`CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, `skills/`, `agents/`) still describe the earlier blueprint and are rewritten in a later build step.
+This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md).
 
 ## 1. Purpose
 
@@ -131,9 +131,9 @@ One item per strategy, in the format of `factories/_shared/CONVENTIONS.md`.
 
 | Stage | What happens | Done by | Moves to |
 |---|---|---|---|
-| `proposed` | Card written, similarity check passed | `idea-scout` agent, engine check | `built`, `killed` |
-| `built` | Strategy code written, unit tests and leak test passed, reviewer confirms code matches card | `build` skill, `reviewer` agent | `optimised`, `killed` |
-| `optimised` | Parameters searched inside declared ranges on development data, stable region chosen, gate passed locally | `optimise` skill, engine | `exam`, `killed` |
+| `proposed` | Card written, and it is a different mechanism from every existing and killed card | `ideate` skill, `idea-scout` agent | `built`, `killed` |
+| `built` | Strategy code written, lint and leak test passed, reviewer confirms code matches card | `build` skill, `reviewer` agent | `optimised`, `killed` |
+| `optimised` | Parameters searched inside declared ranges on development data, stable region chosen, gate passed locally, reviewer did not reject | `optimise` skill, engine, `reviewer` agent | `exam`, `killed` |
 | `exam` | Final exam in CI | GitHub Actions | `paper`, `killed` |
 | `paper` | Runs on paper, watched daily | scripts, `maintain` skill | `confirmed`, `paused`, `killed` |
 | `confirmed` | Ran correctly and stayed in range for long enough, and adds to the combined book | `maintain` skill, engine check | `awaiting_human`, `paused`, `killed` |
@@ -164,7 +164,8 @@ Only these are enforced in code. Everything else is guidance that a run weighs a
 | Guardrail | Enforced by |
 |---|---|
 | Paper only | No live keys exist. Paper endpoints are hard-coded in the runner |
-| Agents cannot edit the engine, gate rules, trial log or exam results | Path deny rules, and the exam job uses `main`'s copy |
+| Agents cannot edit the engine, gate rules, trial log or exam results | Path deny rules in `.claude/settings.json`, and the exam job uses `main`'s copy |
+| Agents evaluate strategies only through the engine | The allow list permits `python3 -m engine` and no other program |
 | Held-back data is never where agents work | It is fetched only inside the exam job |
 | Every trial is counted | The engine logs before it prints, and the exam fails if trials are missing |
 | No model in the order path | Runner and journal are scripts |
@@ -217,9 +218,9 @@ Where research gives no agreed number, such as a pass mark for overfitting proba
 1. Done: engine, cost model, statistics and the judge's tests.
 2. Done for crypto: data snapshot script and the development cutoff. ETFs and FX need account keys.
 3. Done: one strategy taken by hand from card to local gate (`strategies/crypto-trend-1h/`). It failed the gate narrowly, which is a valid result.
-4. Rewrite `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, skills and agents to match this spec.
+4. Done: `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, permissions, the `ideate`, `build`, `optimise` and `weekly-review` skills, and both agents. Not yet run headless.
 5. The exam job.
-6. Paper runner and journal (needs `F-ACC-1`).
+6. Paper runner and journal (needs `F-ACC-1`), then the `winner-packet` skill.
 7. Health watch and the `maintain` skill.
 8. Idea scout, then schedules.
 

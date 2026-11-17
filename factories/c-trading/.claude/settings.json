@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Read", "Glob", "Grep", "Write", "Edit", "Agent", "WebSearch", "WebFetch",
+      "Bash(python3 -m engine check *)",
+      "Bash(python3 -m engine trial *)",
+      "Bash(python3 -m engine sweep *)",
+      "Bash(python3 -m engine gate *)"
+    ],
+    "deny": [
+      "Edit(engine/**)", "Write(engine/**)",
+      "Edit(data/**)", "Write(data/**)",
+      "Edit(tests/**)", "Write(tests/**)",
+      "Edit(state/trials/**)", "Write(state/trials/**)",
+      "Edit(state/gate/**)", "Write(state/gate/**)",
+      "Edit(exam/**)", "Write(exam/**)",
+      "Edit(paper/**)", "Write(paper/**)",
+      "Edit(health/**)", "Write(health/**)",
+      "Edit(budget.yaml)", "Write(budget.yaml)",
+      "Edit(requirements.txt)", "Write(requirements.txt)",
+      "Edit(conftest.py)", "Write(conftest.py)",
+      "Edit(CLAUDE.md)", "Write(CLAUDE.md)",
+      "Edit(ESCALATION.md)", "Write(ESCALATION.md)",
+      "Edit(.claude/**)", "Write(.claude/**)",
+      "Edit(escalations/approved/**)", "Write(escalations/approved/**)",
+      "Edit(escalations/rejected/**)", "Write(escalations/rejected/**)",
+      "Edit(STOP)", "Write(STOP)"
+    ]
+  }
+}
