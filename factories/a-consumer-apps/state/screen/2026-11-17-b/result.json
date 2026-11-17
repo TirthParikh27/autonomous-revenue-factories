@@ -1,0 +1,24 @@
+{
+  "batch": "2026-11-17-b",
+  "run": "20261117T074933Z-synthetic-screen-f03ada",
+  "runs": 3,
+  "ranker_model": "haiku (fresh subagent per run, no tools, cards in a different order and with different letters each run)",
+  "id_map_by_run": {
+    "run-1": {"A": "private-journal-that-never-loses-entries", "B": "offline-bill-list-that-keeps-paid-status", "C": "private-spend-tracking-without-bank-login"},
+    "run-2": {"A": "private-spend-tracking-without-bank-login", "B": "private-journal-that-never-loses-entries", "C": "offline-bill-list-that-keeps-paid-status"},
+    "run-3": {"A": "offline-bill-list-that-keeps-paid-status", "B": "private-spend-tracking-without-bank-login", "C": "private-journal-that-never-loses-entries"}
+  },
+  "ranks_by_item": {
+    "private-journal-that-never-loses-entries": [1, 1, 2],
+    "private-spend-tracking-without-bank-login": [2, 2, 1],
+    "offline-bill-list-that-keeps-paid-status": [3, 3, 3]
+  },
+  "median_rank": {
+    "private-journal-that-never-loses-entries": 1,
+    "private-spend-tracking-without-bank-login": 2,
+    "offline-bill-list-that-keeps-paid-status": 3
+  },
+  "killed": ["offline-bill-list-that-keeps-paid-status"],
+  "survived": ["private-journal-that-never-loses-entries", "private-spend-tracking-without-bank-login"],
+  "rationale": "Only three ideas. The bill list ranked last in all three runs, so it is the one clear gap. Journal and spend swap places across runs (1,1,2 against 2,2,1), a close call, so both survive. The ranker is a survey-style proxy for ad taps and favours emotional hooks over utility, so this kill is a weak signal about tap appeal and says nothing about the bill list's complaint evidence, which was the largest in the batch (12 complaints, 4 apps). Nothing here is demand evidence."
+}

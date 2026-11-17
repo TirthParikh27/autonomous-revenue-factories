@@ -1,8 +1,9 @@
 {
   "id": "2026-11-17-private-journal-that-never-loses-entries",
-  "stage": "discovered",
+  "stage": "specced",
   "created": "2026-11-17",
   "updated": "2026-11-17",
+  "screen_notes": ["Specific, emotionally charged pains (lost years of entries, no app lock, forced AI) that an ad can name in one line.", "Crowded by built-in and established journal apps (Apple Journal, Day One, Daylio)."],
   "summary": "Journal or mood log that stays on the device with no AI and an app lock, and keeps entries safe with user-controlled backup and restore after a device change.",
   "category": "Lifestyle",
   "evidence": [
@@ -12,7 +13,7 @@
   "scores": {"complaints": 16, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured", "note": "merged from scout candidates j1 and j2 (same core job: journal). Journaling is crowded (Day One, Apple Journal, Daylio). Some Day One users praise the AI, so the no-AI group size is unknown. Cause of data loss (sync, update, user error) unverified. Avoid mental-health claims."},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept: 16 complaints across two clusters, 5 apps; j1 and j2 merged"}],
+  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept: 16 complaints across two clusters, 5 apps; j1 and j2 merged"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T074933Z-synthetic-screen-f03ada", "note": "synthetic screen, median rank 1 of 3 (ranks 1,1,2); not demand evidence"}],
   "blocked_by": null,
   "next_check": null
 }

@@ -1,6 +1,6 @@
 {
   "id": "2026-11-17-offline-bill-list-that-keeps-paid-status",
-  "stage": "discovered",
+  "stage": "killed",
   "created": "2026-11-17",
   "updated": "2026-11-17",
   "summary": "Upcoming-bills list that opens offline, remembers paid and part-paid status, and survives a phone change.",
@@ -11,7 +11,7 @@
   "scores": {"complaints": 12, "apps_with_complaints": 4, "keyword_popularity": null, "keyword_source": "none configured", "note": "data-loss and part-payment are capability gaps, not price. Cause of the Sept-Nov crash cluster unverified (one review cites iOS 27). Crowded with budget apps, so the spec must name the differentiator."},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept: 12 complaints, 4 apps, recent, capability-based"}],
+  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept: 12 complaints, 4 apps, recent, capability-based"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "killed", "run": "20261117T074933Z-synthetic-screen-f03ada", "note": "synthetic screen, rank 3 of 3 (ranks 3,3,3, last in every run). Weak signal on ad-tap appeal only; the complaint evidence was the largest in the batch."}],
   "blocked_by": null,
   "next_check": null
 }
