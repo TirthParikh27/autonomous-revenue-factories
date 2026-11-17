@@ -1,7 +1,7 @@
 ---
 name: idea-critic
 description: Red team for Factory A. Use from spec-differentiation before an idea moves to `specced`. Given a spec and its scout file, it tries to show the idea is a false positive, using its own web reading, and returns a verdict. Read-only.
-tools: Read, Glob, WebSearch, WebFetch, Bash, mcp__trustmrr__discover_startups, mcp__trustmrr__list_startups, mcp__trustmrr__get_startup
+tools: Read, Glob, WebSearch, WebFetch, Bash, mcp__trustmrr__discover_startups, mcp__trustmrr__list_startups, mcp__trustmrr__get_startup, mcp__getappniche__search_apps, mcp__getappniche__get_app_detail, mcp__getappniche__get_app_historicals, mcp__getappniche__get_keyword_difficulty
 model: opus
 ---
 

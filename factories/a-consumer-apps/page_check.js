@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 /* Open a test page the way a phone visitor would, walk its funnel, and save what it looked like.
 
-   node page_check.js demand/<id>/site [out dir, default demand/<id>/check]
+   node page_check.js demand/sites/<id> demand/<id>/check
 
-   The page reads its settings from window.LAUNCH (see demand/config.js). This script supplies fake
+   The page reads its settings from window.LAUNCH (see demand/sites/config.js). This script supplies fake
    settings, blocks every real network call, then uses each element marked data-walk="1", "2", ...
    in order: it fills inputs, ticks boxes and clicks the rest. It prints the events the page sent,
    whether a sign-up was posted, anything the page tried to load from outside, and the screenshots
-   to look at. Nothing leaves the machine. Needs Playwright (see README, "Set up once"). */
+   to look at. It exits 1 if a step could not be used, no sign-up or event was sent, a script failed
+   or the page scrolls sideways. Nothing leaves the machine. Needs Playwright (see README, "Set up once"). */
 const path = require("path");
 const fs = require("fs");
 const { chromium } = require("playwright");
@@ -18,14 +19,15 @@ const FAKE = "https://check.invalid";
   const site = path.resolve(process.argv[2] || "");
   const index = path.join(site, "index.html");
   if (!fs.existsSync(index)) { console.error(`no index.html in ${site}`); process.exit(2); }
-  const out = path.resolve(process.argv[3] || path.join(site, "..", "check"));
+  if (!process.argv[3]) { console.error("give an output folder outside the public sites folder"); process.exit(2); }
+  const out = path.resolve(process.argv[3]);
   fs.mkdirSync(out, { recursive: true });
 
   const report = { page: index, events: [], signup_posted: false, external_requests: [], console_errors: [], steps: [], screenshots: [] };
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   await page.addInitScript((fake) => {
-    window.LAUNCH = { pixelId: "", signupEndpoint: fake + "/signup", signupKey: "check", eventEndpoint: fake + "/event" };
+    window.LAUNCH = { pixelId: "", signupEndpoint: fake + "/signup", signupKey: "check", eventEndpoint: fake + "/event", eventKey: "check" };
   }, FAKE);
   await page.route(/^https?:/, (route) => {
     const req = route.request();
@@ -56,13 +58,18 @@ const FAKE = "https://check.invalid";
   await shot("first-screen.png");
   await shot("full-page.png", true);
 
-  const marks = await page.$$eval("[data-walk]", (els) => [...new Set(els.map((e) => e.getAttribute("data-walk")))]);
-  marks.sort((a, b) => Number(a) - Number(b));
+  // Walk the marks in order, looking again after every step, because a step can reveal the next one.
+  const done = new Set();
   let failed = false;
-  for (const mark of marks) {
+  for (let guard = 0; guard < 40; guard++) {
+    const marks = await page.$$eval("[data-walk]", (els) => [...new Set(els.map((e) => e.getAttribute("data-walk")))]);
+    const mark = marks.filter((m) => !done.has(m)).sort((x, y) => Number(x) - Number(y))[0];
+    if (mark === undefined) break;
+    done.add(mark);
     const el = page.locator(`[data-walk="${mark}"]`).first();
-    const kind = await el.evaluate((e) => (e.tagName + ":" + (e.type || "")).toLowerCase());
+    let kind = "?";
     try {
+      kind = await el.evaluate((e) => (e.tagName + ":" + (e.type || "")).toLowerCase(), null, { timeout: 3000 });
       if (kind.startsWith("input:email")) await el.fill("check@example.com", { timeout: 3000 });
       else if (kind.startsWith("input:checkbox") || kind.startsWith("input:radio")) await el.check({ timeout: 3000 });
       else if (kind.startsWith("input:") || kind.startsWith("textarea")) await el.fill("check", { timeout: 3000 });
@@ -76,7 +83,15 @@ const FAKE = "https://check.invalid";
     }
     await shot(`step-${mark}.png`);
   }
+  // The page passes only if a visitor could get all the way through and it behaved.
+  report.problems = [];
+  if (failed) report.problems.push("a funnel step could not be used");
+  if (!report.steps.length) report.problems.push("no data-walk steps on the page");
+  if (!report.signup_posted) report.problems.push("no sign-up was posted");
+  if (!report.events.length) report.problems.push("no events were sent");
+  if (report.console_errors.length) report.problems.push("script errors on the page");
+  if (report.sideways_scroll) report.problems.push("the page scrolls sideways on a phone");
   await browser.close();
   console.log(JSON.stringify(report, null, 2));
-  process.exit(failed ? 1 : 0);
+  process.exit(report.problems.length ? 1 : 0);
 })().catch((e) => { console.error(String(e)); process.exit(2); });

@@ -40,7 +40,7 @@ Keep it restrained. The product is the hero and the character points at it. Do n
 1. Read the spec and the scout file's complaints. Pick three different reasons to care.
 2. Write `character.md` if the idea has none.
 3. Write one script per ad to `scripts.md`: the hook line, then per scene the narration line, the caption, and what the product screen does (which control is tapped, what changes), and the end card. Read each script against the patterns above before building it.
-4. Generate the voice, one file per narration line: `npx -y hyperframes@0.9.59 tts "<line>" -o <ad folder>/audio/vo-<n>.wav --json`. It runs a free local voice and prints `durationSeconds`. The local voice is the fallback: when the operator has connected a premium voice (see `README.md`), use that instead, because it sounds far more human. Use one voice per app. Each scene lasts as long as its line plus a short breath. Place each line in the composition as `<audio class="clip" data-start data-duration data-track-index data-volume="1" src="audio/vo-<n>.wav">`. If the command reports that the voice model is not installed, build the ad silent with captions and say so in the run report; do not stop.
+4. Generate the voice, one file per narration line: write the line to `<ad folder>/audio/vo-<n>.txt` and run `python3 voice.py --file <ad folder>/audio/vo-<n>.txt -o <ad folder>/audio/vo-<n>`. It uses the operator's HeyGen voice when his login is valid, which sounds human, and otherwise the free local voice. It prints the file it wrote, `durationSeconds`, the provider and a note. Use one voice per app. Each scene lasts as long as its line plus a short breath. Place each line in the composition as `<audio class="clip" data-start data-duration data-track-index data-volume="1" src="audio/<file>">`. If it fell back to the local voice, say so and why in the run report and in the batch preview, so the operator can renew the login and have the narration redone. If no voice works at all, build the ad silent with captions and say so; do not stop.
 5. Build each video as a HyperFrames composition: one folder per ad holding one `index.html`. `example/index.html` in this skill is a working narrated walkthrough to study for structure (camera, tap, voice clips, captions, character). Write each ad for its own idea; do not reskin the example. The rules HyperFrames needs:
    - A root element with `data-composition-id`, `data-start="0"`, `data-duration`, `data-width="1080"`, `data-height="1920"`.
    - Timed elements carry `class="clip"`, `data-start` and `data-duration`.
@@ -51,8 +51,8 @@ Keep it restrained. The product is the hero and the character points at it. Do n
 6. Before the app exists, the screens are designed mock-ups of what the spec describes. Show only features in the spec, and keep a small "Concept" mark on screen throughout. After the app ships, use real screenshots and screen recordings from the build and drop the mark.
 7. Look at it. Run `npx -y hyperframes@0.9.59 snapshot <ad folder> --at <a time in each scene> --output <ad folder>/frames` and Read the contact sheet. Fix what you see.
 8. Render: `npx -y hyperframes@0.9.59 render <ad folder> -o <ad folder>/ad.mp4`.
-9. Also make one still per idea (a 1080 by 1350 frame from the strongest scene, saved with `snapshot`), because stills are still cheap to run and some placements want them.
-10. Write `ads.json`: per ad, the file, the reason to care it tests, primary text, headline and call to action.
+9. Also keep one still per idea: a single frame of the strongest scene, saved with `snapshot <ad folder> --at <time> --output <ad folder>/still` (a separate folder, so the review frames are not cleared). It is a spare for placements that want an image and for the page. The three videos are the three creatives in the plan.
+10. Write `ads.json`: per ad, the file, the reason to care it tests, primary text, headline and call to action, and `ai_voice: true` when the narration is a synthetic voice, so the operator can apply the platform's AI label where it is required.
 11. Hand the frames, scripts and `ads.json` to the `creative-reviewer` agent. Fix what it reports and send it back once. If an ad still falls short, drop that ad and say so. If fewer than two ads survive for an idea, the idea is not ready for the batch.
 
 ## Limits that do not bend
@@ -61,8 +61,8 @@ Keep it restrained. The product is the hero and the character points at it. Do n
 - Before the app exists, every ad says "in development" or "early access", and the end card says nothing is charged today.
 - Every claim is in the idea's `claims.yaml`.
 - No real person's likeness, no minors, no public figures, no competitor logos or screens.
-- Generated video and realistic generated people stay off unless `budget.yaml` allows them. HyperFrames renders HTML you wrote, so it is not generated video. The built-in local voice is free. A premium voice, music library or realistic presenter needs a paid tool, which is `ACC-1`.
-- Run `checks/copy_lint` on the scripts and `ads.json`. Its exit code is final.
+- Generated video and realistic generated people stay off unless `budget.yaml` allows them. HyperFrames renders HTML you wrote, so it is not generated video. The operator's HeyGen voice and the local fallback need no approval. Any other voice, a music library or a realistic presenter is `ACC-1`.
+- Run `checks/copy_lint` on the scripts, `ads.json` and each ad's `index.html`. Its exit code is final.
 
 ## Outputs
 

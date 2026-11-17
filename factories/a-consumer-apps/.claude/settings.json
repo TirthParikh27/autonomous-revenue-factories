@@ -10,7 +10,10 @@
       "Bash(python3 */publish.py *)",
       "Bash(python3 */checks/*)",
       "Bash(node page_check.js *)",
-      "Bash(npx -y hyperframes@0.9.59 *)",
+      "Bash(python3 voice.py *)",
+      "Bash(npx -y hyperframes@0.9.59 snapshot *)",
+      "Bash(npx -y hyperframes@0.9.59 render *)",
+      "Bash(npx -y hyperframes@0.9.59 lint *)",
       "mcp__getappniche__search_apps", "mcp__getappniche__get_app_detail", "mcp__getappniche__get_app_historicals", "mcp__getappniche__get_keyword_difficulty"
     ],
     "deny": [
@@ -20,6 +23,7 @@
       "Edit(publish.py)", "Write(publish.py)",
       "Edit(fetch_reviews.py)", "Write(fetch_reviews.py)",
       "Edit(page_check.js)", "Write(page_check.js)",
+      "Edit(voice.py)", "Write(voice.py)",
       "Edit(checks/**)", "Write(checks/**)",
       "Edit(.claude/**)", "Write(.claude/**)",
       "Edit(.mcp.json)", "Write(.mcp.json)",

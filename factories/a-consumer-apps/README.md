@@ -34,15 +34,16 @@ The factory prepares everything and never spends or launches by itself. Your par
 
 Once:
 
-1. Tools on the machine that runs stages: Node 20 or later, then at the repo root `npm install playwright` and `npx playwright install chromium`. Demo videos render with `npx hyperframes`, which downloads itself. For the free narration voice: `pip install kokoro-onnx soundfile` into a Python environment and set `HYPERFRAMES_PYTHON` to that Python. Without it, ads are made silent with captions.
+1. Tools on the machine that runs stages: Node 22 or later and ffmpeg, then at the repo root `npm install playwright` and `npx playwright install chromium`. Demo videos render with `npx hyperframes`, which downloads itself. Narration uses your HeyGen voice when the HeyGen login on the machine is valid (`heygen auth status` renews it; an OAuth login includes 10 free minutes a month) or `HEYGEN_API_KEY` is set. The fallback is a free local voice: `pip install kokoro-onnx soundfile` into a Python environment and set `HYPERFRAMES_PYTHON` to that Python. With neither, ads are made silent with captions.
 2. A Meta ad account with an account spending limit. Raise `monthly_caps_usd.ads` in `budget.yaml` from 0.
-3. A Cloudflare Pages project that serves the `demand/` folder, and a Supabase table for the early-access list.
-4. Fill in `demand/config.js` (pixel id, sign-up endpoint and its publishable key, event endpoint). Every test page reads this one file.
+3. A Cloudflare Pages project that serves only the `demand/sites/` folder, and a Supabase table for the early-access list. Nothing else under `demand/` (plans, previews, ads, screenshots) should be public.
+4. Fill in `demand/sites/config.js` (pixel id, sign-up endpoint and its publishable key, PostHog capture URL and project key). Every test page reads this one file.
 5. Later, when something ships: Apple developer account, Stripe, Postiz.
 
 Each batch:
 
-1. Open `demand/batches/<batch>/preview.html`. It shows every idea's videos, page screenshots, price and the critic's and reviewer's verdicts.
+1. Ideas first. Open `demand/batches/<batch>/ideas.html`: each idea's evidence, competitors, price and the critic's objections. In the `A-IDEA-1` packet, delete any idea you do not want, then approve it. Nothing is built for an idea until you do.
+1a. Run `demand-test` again. It builds pages and narrated ads for the ideas you approved. Open `demand/batches/<batch>/preview.html` to see every idea's videos, page screenshots, price and the reviewer's verdict.
 2. If you like it, approve by moving the `A-AD-1` packet from `escalations/open/` to `escalations/approved/` in a commit, and merge the batch pull request. CI deploys the pages.
 3. Run the `demand-test` stage again. It creates the campaigns paused.
 4. Activate them in Ads Manager and record the date. Telemetry takes it from there.
@@ -71,7 +72,7 @@ To connect one:
 
 4. GetAppNiche's read tools are already on the allow list in `.claude/settings.json`. For PickFu, add its tool names there after you have looked at what the server offers, because creating a poll spends money.
 
-Research behind these picks (2026-11-17): they are the cheapest options an agent can call directly. The larger names (Sensor Tower, Appfigures estimates, UserTesting) cost far more, and the free tiers elsewhere have no API.
+Why these two (looked at on 2026-11-17): they were the cheapest options found that an agent can call directly. The larger names (Sensor Tower, Appfigures estimates, UserTesting) cost far more, and the free tiers found elsewhere have no API. The GetAppNiche tool names on the allow list come from its documentation and have not been called yet; correct them on first connection if they differ.
 
 ## Known limit
 
