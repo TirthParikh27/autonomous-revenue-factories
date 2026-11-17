@@ -65,6 +65,14 @@ def _simulate(open_, high, low, close, target, fee, slip, cash_rate, short_rate,
             value = cash
             for j in range(m):
                 value += pos[j] * open_[t, j]
+            gross = 0.0
+            for j in range(m):
+                gross += abs(pos[j]) * open_[t, j]
+            if gross > 0.0 and value < maintenance * gross:        # gapped through the requirement at the open
+                cash = max(0.0, value - gross * (fee + slip))
+                pos[:] = 0.0
+                dead = t
+        if dead < 0:
             # Sells first, then buys. An account that may not borrow buys only what its cash covers.
             for buying in (False, True):
                 scale = 1.0

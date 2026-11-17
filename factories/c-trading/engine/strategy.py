@@ -24,7 +24,16 @@ from . import GATE, ROOT
 from .data import Bars
 
 ALLOWED_IMPORTS = {"numpy", "pandas", "math", "lib", "lib.indicators"}
-BANNED_NAMES = {"open", "exec", "eval", "compile", "__import__", "globals", "locals", "getattr", "setattr", "input"}
+BANNED_NAMES = {"open", "exec", "eval", "compile", "__import__", "globals", "locals", "vars", "getattr", "setattr",
+                "delattr", "input", "breakpoint"}
+# numpy and pandas can themselves reach files, the network, the clock and the shell. These attribute
+# names are refused wherever they appear. This is a lint, not a sandbox: the reviewer agent reads the
+# code as well, and the judge's job runs strategy code with no repository token.
+BANNED_ATTRS = {"io", "os", "sys", "system", "popen", "subprocess", "now", "today", "utcnow", "random", "eval", "query",
+                "load", "save", "savez", "savez_compressed", "savetxt", "loadtxt", "genfromtxt", "fromfile", "tofile",
+                "memmap", "DataSource", "ctypeslib", "f2py", "testing", "HDFStore", "ExcelWriter", "ExcelFile", "pipe"}
+ALLOWED_TO = {"to_numpy", "to_frame", "to_series", "to_list", "to_dict", "to_period", "to_timestamp", "to_datetime",
+              "to_numeric", "to_timedelta", "to_pydatetime"}
 
 
 @dataclass
@@ -50,8 +59,12 @@ def lint(source: str) -> list[str]:
         else:
             if isinstance(node, ast.Name) and node.id in BANNED_NAMES:
                 problems.append(f"line {node.lineno}: use of '{node.id}' is not allowed")
-            if isinstance(node, ast.Attribute) and node.attr.startswith("__"):
-                problems.append(f"line {node.lineno}: dunder attribute access is not allowed")
+            if isinstance(node, ast.Attribute):
+                a = node.attr
+                if a.startswith("__"):
+                    problems.append(f"line {node.lineno}: dunder attribute access is not allowed")
+                elif a in BANNED_ATTRS or a.startswith("read_") or (a.startswith("to_") and a not in ALLOWED_TO):
+                    problems.append(f"line {node.lineno}: use of '.{a}' is not allowed")
             continue
         for name in names:
             if name not in ALLOWED_IMPORTS:
@@ -69,11 +82,15 @@ def load(strategy_id: str, root: Path | None = None) -> Strategy:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     cfg = yaml.safe_load((folder / "params.yaml").read_text())
+    band = _band(cfg.get("rebalance_band"))
+    # The hash covers everything that fixes the strategy's behaviour apart from its tuned parameters,
+    # so a change of universe or band after a verdict is a different version.
+    fixed = repr([cfg["dataset"], cfg.get("symbols"), band, cfg.get("ranges") or {}])
     return Strategy(
         id=strategy_id, fn=module.weights, dataset=cfg["dataset"], symbols=cfg.get("symbols"),
         ranges=cfg.get("ranges") or {}, chosen=cfg.get("chosen"),
-        code_hash=hashlib.sha256(source.encode()).hexdigest()[:16],
-        band=_band(cfg.get("rebalance_band")),
+        code_hash=hashlib.sha256((source + fixed).encode()).hexdigest()[:16],
+        band=band,
     )
 
 

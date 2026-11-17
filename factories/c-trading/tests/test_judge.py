@@ -1,4 +1,6 @@
 """Essential tests of the judge: the things that, if wrong, make every result wrong."""
+import json
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -116,6 +118,22 @@ def test_borrowing_cost_and_liquidation_by_hand():
     wiped = backtest.run(w * 1.5, bars, DATASET)
     assert wiped.liquidated and np.prod(1 + wiped.returns.to_numpy()) < 0.01
     assert (wiped.returns.iloc[21:] == 0).all()
+    # A gap through the requirement at the open is a liquidation too, even if the strategy cuts its target that bar.
+    bars = flat_bars()
+    for f in (bars.open, bars.high, bars.low, bars.close):
+        f.iloc[20:] = 70.0
+    cut = w * 1.5
+    cut.iloc[19:] = 0.0
+    assert backtest.run(cut, bars, DATASET).liquidated
+    # An account that may not borrow buys only what its cash covers: fully invested, it never goes below zero cash.
+    bars = make_bars(m=2)
+    switch = pd.DataFrame({"S0": 1.0, "S1": 0.0}, index=bars.close.index)
+    switch.iloc[1000:] = [0.0, 1.0]
+    full = backtest.run(switch, bars, DATASET)
+    fee = costs["fee"] + costs["slippage"]
+    assert not full.margin and full.exposure <= 1.0
+    ref = reference_equity(bars, switch * (1 - 2.5 * fee), costs["fee"], costs["slippage"])   # the same switch, slightly under-invested
+    assert np.prod(1 + full.returns.to_numpy()) == pytest.approx(ref[-1], rel=5e-3)
     # The same spike upward does the same to a 2x short.
     bars = flat_bars()
     bars.high.iloc[20] = 150.0
@@ -154,8 +172,26 @@ def test_leak_test_catches_a_strategy_that_uses_the_future():
 def test_lint_blocks_files_network_and_clock():
     assert strat.lint("import pandas as pd\nfrom lib import indicators\n") == []
     for bad in ("import os", "import requests", "from datetime import datetime", "x = open('f')",
-                "import importlib", "y = eval('1')", "z = (1).__class__"):
+                "import importlib", "y = eval('1')", "z = (1).__class__",
+                # numpy and pandas can reach files, the network, the clock and the shell on their own
+                "bars.close.to_csv('x.csv')", "pd.read_csv('https://example.com/x')", "pd.read_pickle('x')",
+                "pd.Timestamp.now()", "np.random.rand(3)", "pd.io.common.os.system('ls')", "np.save('x', a)",
+                "np.load('x.npy')", "df.eval('a + b')", "bars.close.to_pickle('x')", "vars(pd)"):
         assert strat.lint(bad), bad
+    assert strat.lint("w = bars.close.rolling(5).mean().to_numpy()\nd = pd.to_datetime(x)\n") == []
+
+
+def test_code_hash_covers_universe_and_band(tmp_path):
+    def version(extra):
+        folder = tmp_path / "s"
+        folder.mkdir(exist_ok=True)
+        (folder / "strategy.py").write_text("def weights(bars, params):\n    return bars.close * 0\n")
+        (folder / "params.yaml").write_text("dataset: crypto-1h\nranges: {n: {low: 1, high: 9}}\nchosen: {n: 3}\n" + extra)
+        return strat.load("s", tmp_path).code_hash
+
+    plain = version("")
+    assert version("") == plain and version("chosen: {n: 4}\n") == plain          # tuning is not a new version
+    assert len({plain, version("symbols: [BTCUSDT]\n"), version("rebalance_band: 0.1\n")}) == 3
 
 
 def test_statistics_match_an_independent_library():
@@ -236,6 +272,26 @@ def test_exam_judges_only_unseen_data_and_publishes_no_numbers(tmp_path, monkeyp
     assert health["status"] == "in_range"
     broken = paper.record(bad, dev, bars, started)
     assert broken[1]["status"] == "below_range"
+    # A watched strategy: the job stamps the start itself, on new days only, whatever the gate file says,
+    # keeps it out of the book, and a stale or broken gate file for another item does not stop the run.
+    state = tmp_path / "state"
+    (state / "items").mkdir(exist_ok=True)
+    for sid in ("good", "stale"):
+        (state / "items" / f"{sid}.json").write_text('{"stage": "watch"}')
+    (state / "gate" / "stale.json").write_text('{"pass": false}')
+    verdict = json.loads((state / "gate" / "good.json").read_text()) | {"only_luck_score_failed": True, "judged_on": "2000-01-01"}
+    (state / "gate" / "good.json").write_text(json.dumps(verdict))
+    monkeypatch.setenv("FACTORY_EXAM", "1")
+    monkeypatch.setattr(paper.strat, "load", lambda sid: good)
+    month = 24 * 30
+    for held, days in ((bars.until(len(bars.close) - month), 0), (bars, 30)):
+        monkeypatch.setattr(paper, "load_bars", lambda d, s=None, window="dev", held=held: held if window == "all" else dev)
+        assert paper.main() == 0
+        seen = json.loads((tmp_path / "paper" / "good.json").read_text())
+        assert seen["watched"] and seen["days"] == days
+        assert seen["started"] == str((bars.close.index[-month - 1] + pd.Timedelta(days=1)).date())
+    assert not (tmp_path / "paper" / "book.json").exists() and not (tmp_path / "paper" / "stale.json").exists()
+
     out = gate.evaluate(good, dev)                           # evidence a reader needs, none of it a pass mark
     assert {"annual_return", "annual_volatility", "skew", "worst_day", "longest_drawdown_days"} <= set(out["evidence"])
     assert set(out["evidence"]["half_universe"]) == {"first_half", "second_half"} and not out["only_luck_score_failed"]

@@ -44,8 +44,8 @@ costs:
       max_gross_exposure: 3.0        # Kraken offers 2x to 10x by pair; 3x is used as the cap for every coin
       borrow_cash_per_year: 0.44     # rollover 0.02% per 4 hours (published range 0.02 to 0.04%; Bitcoin 0.01 to 0.02%)
       borrow_asset_per_year: 0.44
-      maintenance_margin: 0.16       # Kraken may liquidate below a margin level of 80% and always does at 40%.
-                                     # At 5x leverage, 80% of used margin is 16% of the position
+      maintenance_margin: 0.20       # Kraken may liquidate below a margin level of 80% and always does at 40%.
+                                     # At 3x leverage that is 27% and 13% of the position. 20% sits between them
 
   etf:
     # Alpaca: no commission on US ETFs; regulatory fees on sells are under 0.01% and are inside slippage.

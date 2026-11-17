@@ -73,8 +73,8 @@ def evaluate(strategy: str | strat.Strategy, bars: Bars | None = None) -> dict:
                 r = backtest.run(strat.compute(s, sub, s.chosen), sub, s.dataset, band=s.band).daily.to_numpy()
                 a = stats.market_adjusted(r, backtest.buy_and_hold(sub, s.dataset).daily.to_numpy())[0]
                 halves[name] = {"symbols": part, "market_adjusted_sharpe": round(stats.annual_sharpe(a, ppy), 2)}
-            except ValueError as e:
-                halves[name] = {"symbols": part, "error": str(e)}
+            except Exception as e:
+                halves[name] = {"symbols": part, "error": f"{type(e).__name__}: {e}"}
 
     own = [t for t in log if t["strategy"] == s.id and t["code_hash"] == s.code_hash]
     own_matrix = trials.returns_matrix(own)

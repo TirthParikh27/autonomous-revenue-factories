@@ -108,25 +108,32 @@ def main() -> int:
     confirmed = []
     for item_path in sorted((trials.state_dir() / "items").glob("*.json")):
         item, sid = json.loads(item_path.read_text()), item_path.stem
-        # A watched strategy failed only the luck score. It is tracked from the day after the gate judged it,
-        # at the version the gate judged, and never joins the combined book. Starting any earlier would
-        # publish the held-back window that later exams depend on.
+        # A watched strategy failed only the luck score. It is tracked on new days only, at the version the
+        # gate judged, and never joins the combined book. Starting any earlier would publish the held-back
+        # window that later exams depend on.
         watched = item.get("stage") == "watch"
         judged = (trials.state_dir() / "gate" if watched else _dir("exam")) / f"{sid}.json"
         if not (watched or item.get("stage") in ("paper", "confirmed", "paused", "awaiting_human")) or not judged.exists():
             continue
-        verdict = json.loads(judged.read_text())
-        if not (verdict["only_luck_score_failed"] if watched else verdict["pass"]):
-            continue
         try:
+            verdict = json.loads(judged.read_text())
+            if not (verdict.get("only_luck_score_failed") if watched else verdict.get("pass")):
+                continue
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
                 s = strat.load(sid)
                 if s.code_hash != verdict["code_hash"] or s.chosen != verdict["params"]:
                     raise PermissionError("the strategy is not the version that was judged")
-                dev = load_bars(s.dataset, s.symbols)
-                last_seen = pd.Timestamp(verdict["judged_on" if watched else "unseen_to"])
-                started = str((last_seen + pd.Timedelta(days=1)).date())
-                paper, health = record(s, dev, load_bars(s.dataset, s.symbols, window="all"), started)
+                dev, all_bars = load_bars(s.dataset, s.symbols), load_bars(s.dataset, s.symbols, window="all")
+                if watched:
+                    # The start is stamped by this job the first time it sees the item: the day after the
+                    # newest bar it holds. Nothing an agent writes can move it into the held-back window.
+                    before = _dir("paper") / f"{sid}.json"
+                    before = json.loads(before.read_text()) if before.exists() else {}
+                    started = before["started"] if before.get("watched") and before.get("code_hash") == s.code_hash \
+                        else str((all_bars.close.index[-1] + pd.Timedelta(days=1)).date())
+                else:
+                    started = str((pd.Timestamp(verdict["unseen_to"]) + pd.Timedelta(days=1)).date())
+                paper, health = record(s, dev, all_bars, started)
         except Exception as e:
             print(f"{sid}: paper run failed ({type(e).__name__})")
             continue

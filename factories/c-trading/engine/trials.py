@@ -43,7 +43,7 @@ def evaluate(s: strat.Strategy, params: dict, bars: Bars | None = None) -> tuple
     strat.check_params(s, params)
     bars = bars or load_bars(s.dataset, s.symbols)
     key = hashlib.sha256(json.dumps(
-        [s.code_hash, sorted(params.items()), s.dataset, bars.symbols, len(bars.close), CONFIG["engine_version"]]
+        [s.id, s.code_hash, sorted(params.items()), s.dataset, bars.symbols, len(bars.close), CONFIG["engine_version"]]
         + ([s.band] if s.band is not None else []),
         default=str).encode()).hexdigest()[:16]
     result = backtest.run(strat.compute(s, bars, params), bars, s.dataset, band=s.band)

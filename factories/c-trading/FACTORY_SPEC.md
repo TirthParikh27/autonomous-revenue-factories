@@ -1,6 +1,6 @@
 # Factory C: Trading strategy factory
 
-Status: architecture, revision 2 (17 November 2026). The engine, the final exam, the paper stage and the health watch are built and tested on crypto data, and the idea, build and optimise stages have each been run through the run wrapper (build steps 1 to 7). Nothing is scheduled yet.
+Status: architecture, revision 2 (17 November 2026). The engine, the final exam, the paper stage and the health watch are built and tested on crypto data, and the idea, build and optimise stages have each been run through the run wrapper (build steps 1 to 7). The judge's daily job is scheduled and does nothing until a strategy reaches `optimised` or `watch`. The agent stages are not scheduled yet.
 Nothing in this factory is financial advice. It is a research harness on paper accounts.
 
 This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md).
@@ -52,7 +52,7 @@ Left of the line, agents work in seconds on development data. Right of the line,
 A strategy is one folder, `strategies/<id>/`:
 
 - `card.md`: the idea, the reason someone pays for this edge, the markets, the parameter ranges, and what result would kill it. Written before the first test.
-- `strategy.py`: one function, `weights(bars, params)`. It returns the target weight of every symbol at every bar, decided with data up to and including that bar. It may import only numpy, pandas and the shared indicator library. It has no file, network or clock access, which a lint step enforces.
+- `strategy.py`: one function, `weights(bars, params)`. It returns the target weight of every symbol at every bar, decided with data up to and including that bar. It may import only numpy, pandas and the shared indicator library. A lint step refuses the imports, names and numpy or pandas calls that reach files, the network, the clock or randomness. A lint is not a sandbox, so the reviewer agent also reads the code, and the judge's job runs it with no repository token.
 - `params.yaml`: the dataset, the declared parameter ranges, the chosen parameters, and optionally the strategy's own no-trade band.
 
 The engine trades a target at the next bar's open, so a strategy cannot trade on a price it has just seen. The function sees the whole history at once for speed, so the leak test (4.2) proves it only used the past.
@@ -63,7 +63,7 @@ The engine trades a target at the next bar's open, so a strategy cannot trade on
 
 | Part | Built on | Notes |
 |---|---|---|
-| Backtester | Own (numba) | Next-bar fills, fees, slippage, borrowing interest, liquidation, and a rebalance band so drift does not pay costs. Open-source vectorbt has no leverage or borrowing cost, so it was replaced. The two agree to 0.06% over five years on an hourly strategy. Checked against a hand-written reference in tests |
+| Backtester | Own (numba) | Next-bar fills, fees, slippage, borrowing interest, liquidation, and a rebalance band so drift does not pay costs. Open-source vectorbt has no leverage or borrowing cost, so it was replaced. In a one-off comparison on 17 November 2026 the two agreed to 0.06% over five years on an hourly strategy (not kept as a test, since vectorbt is no longer a dependency). Checked against a hand-written reference in tests |
 | Indicators | TA-Lib | `lib/indicators.py`. Protected like the engine. A strategy that needs something else writes it inside its own file, where its code hash covers it |
 | Parameter search | Optuna | Searches only inside the card's declared ranges. Every run is a counted trial |
 | Cost model | Own | One table per market in `engine/config.yaml`, sourced from venue fee pages. Every result is also produced at raised costs |
@@ -96,7 +96,7 @@ What the gate can and cannot see is measured in section 9. In short, on five yea
 
 - Development data stops at a cutoff date. It is the only market data that exists where agents work.
 - The held-back window, from the cutoff to today, exists only inside one GitHub Actions job.
-- The judge's job (`.github/workflows/c-trading-daily.yml`) runs daily and picks up every item at `optimised`. It takes the engine and its own workflow from `main`, and only `strategy.py` and `params.yaml` from the `factory-state` branch.
+- The judge's job (`.github/workflows/c-trading-daily.yml`) runs daily and picks up every item at `optimised`. It takes the engine and its own workflow from `main`, and from the `factory-state` branch the strategy's `strategy.py` and `params.yaml` plus the run state it judges against: items, the trial log and gate files, all of which agents are denied from editing.
 - It checks that the submitted code and parameters are the ones whose trials are in the log, re-runs the gate on development data, and only then runs the strategy once across the held-back window. Three things must hold there: the leak test passes, the market-adjusted return after costs is positive, and the result is not below the 5th percentile of what the development result predicts for a window that short.
 - The job writes `exam/<id>.json`: pass or fail per check, nothing else, and moves the item to `paper` or `killed`. Agents never see held-back returns. A strategy takes the exam once.
 - A failed strategy's family is closed. A later strategy whose development returns move with a failed one is refused before any look.
