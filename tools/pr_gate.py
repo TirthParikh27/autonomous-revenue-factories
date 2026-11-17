@@ -14,8 +14,11 @@ import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
+from coverage.config import DEFAULT_EXCLUDE
+
 ROOT = Path(__file__).resolve().parents[1]
-OPT_OUT = re.compile(r"#\s*pragma:\s*no ?cover")
+# The same comment forms coverage itself treats as "do not measure this".
+OPT_OUT = re.compile(DEFAULT_EXCLUDE[0])
 CODE_SUFFIXES = {".py", ".js", ".jsx", ".ts", ".tsx", ".swift", ".sh", ".sql"}
 
 
@@ -81,7 +84,7 @@ def parse_name_status(raw: str) -> list[tuple[str, str]]:
 def git_diff(base: str, *args: str, paths: tuple[str, ...] = ()) -> str:
     return subprocess.run(
         ["git", "diff", *args, f"{base}...HEAD", "--", *paths],
-        cwd=ROOT, check=True, capture_output=True, text=True,
+        cwd=ROOT, check=True, capture_output=True, text=True, errors="replace",
     ).stdout
 
 

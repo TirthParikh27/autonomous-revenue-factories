@@ -34,8 +34,16 @@ def test_a_file_moved_without_edits_needs_no_test_and_is_not_one():
 
 
 def test_new_coverage_opt_out_is_reported():
-    diff = "+++ b/run.py\n+def pay():  # pragma: no cover\n+    return 1\n-old  # pragma: no cover\n"
-    assert pr_gate.coverage_opt_outs(diff) == ["def pay():  # pragma: no cover"]
+    diff = (
+        "+++ b/run.py\n+def pay():  # pragma: no cover\n+    return 1\n-old  # pragma: no cover\n"
+        "+def a():  # pragma no cover\n+def b():  # PRAGMA: NO COVER\n+def c():  #pragma:nocover\n"
+    )
+    assert pr_gate.coverage_opt_outs(diff) == [
+        "def pay():  # pragma: no cover",
+        "def a():  # pragma no cover",
+        "def b():  # PRAGMA: NO COVER",
+        "def c():  #pragma:nocover",
+    ]
 
 
 def test_docs_only_change_passes():
