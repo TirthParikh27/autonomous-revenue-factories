@@ -1,0 +1,18 @@
+# Seed categories for gap mining. A starting list, not a limit: the run may add a category it can justify.
+# Order reflects subscription revenue at the 75th percentile in RevenueCat's data (see RESEARCH_REPORT.md).
+# The weekly review may propose changes by pull request.
+categories:
+  - Productivity
+  - Education
+  - Business
+  - Health and Fitness
+  - Finance
+  - Utilities
+  - Lifestyle
+  - Food and Drink
+  - Photo and Video
+last_mined: {}   # category: date, filled in by gap-mining runs
+what_to_prefer:
+  - A specific job people already pay a competitor for, where recent reviews show it is done badly
+  - A differentiator that is a capability, not a look or a lower price
+  - Something one small app can do well without a network of users or licensed content

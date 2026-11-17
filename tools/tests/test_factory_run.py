@@ -153,3 +153,11 @@ def test_submission_freeze_refuses_build_and_release(repo, stage):
     (factory / "state" / "SUBMISSIONS_FROZEN").write_text("A-ACCT-1 2026-11-20\n")
     assert run(repo, stage=stage) == factory_run.REFUSED
     assert run(repo, stage="screen") == factory_run.PASSED  # other stages keep running
+
+
+def test_factory_allow_and_deny_lists_are_passed_as_flags(repo):
+    factory = repo / "factories" / "demo"
+    (factory / ".claude").mkdir()
+    (factory / ".claude" / "settings.json").write_text('{"permissions": {"allow": ["Read"], "deny": ["Edit(budget.yaml)"]}}')
+    cmd = factory_run.build_command("screen", {"max_turns": 5, "max_budget_usd": 1}, "r1", factory)
+    assert cmd[-4:] == ["--allowedTools", "Read", "--disallowedTools", "Edit(budget.yaml)"]

@@ -178,3 +178,42 @@ def test_overlap_copied_feature_code_fails(tmp_path):
     scores, fails = run_overlap(a, b, c)
     assert scores[str(b)] == 100.0 and scores[str(c)] == 0.0
     assert len(fails) == 1 and str(b) in fails[0]
+
+
+# ---------- publish (dry run) ----------
+
+import json
+
+import publish
+
+
+def test_publish_ads_needs_an_approved_packet_and_writes_paused_campaigns_once(tmp_path):
+    plan_path = tmp_path / "plan.json"
+    plan_path.write_text(json.dumps(plan()))
+    budget = with_ads_cap(2000)
+    assert publish.publish_ads(plan_path, "A-AD-1", tmp_path, budget, "2026-12")       # no packet yet
+    assert not (tmp_path / "readback.json").exists()
+    (tmp_path / "escalations" / "approved").mkdir(parents=True)
+    (tmp_path / "escalations" / "approved" / "2026-12-01-A-AD-1-batch1.md").write_text("ok")
+    assert publish.publish_ads(plan_path, "A-AD-1", tmp_path, budget, "2026-12") == []
+    assert publish.publish_ads(plan_path, "A-AD-1", tmp_path, budget, "2026-12") == []  # retry
+    campaigns = json.loads((tmp_path / "readback.json").read_text())["campaigns"]
+    assert [c["status"] for c in campaigns] == ["PAUSED", "PAUSED"]
+
+
+def test_publish_ads_refuses_a_plan_over_budget(tmp_path):
+    plan_path = tmp_path / "plan.json"
+    plan_path.write_text(json.dumps(plan()))
+    (tmp_path / "escalations" / "approved").mkdir(parents=True)
+    (tmp_path / "escalations" / "approved" / "A-AD-1.md").write_text("ok")
+    assert publish.publish_ads(plan_path, "A-AD-1", tmp_path, BUDGET, "2026-12")       # ads cap is 0
+    assert not (tmp_path / "readback.json").exists()
+
+
+def test_publish_drafts_writes_drafts_and_refuses_bad_copy(tmp_path):
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps({"posts": [{"caption": "Three priorities, one week.", "hashtags": ["#planning"]}]}))
+    assert publish.publish_drafts(manifest, []) == []
+    assert json.loads((tmp_path / "drafts.json").read_text())["drafts"] == [{"post": 1, "id": "dry-1", "state": "draft"}]
+    manifest.write_text(json.dumps({"posts": [{"caption": "Users love it. Rated 4.8 out of 5"}]}))
+    assert publish.publish_drafts(manifest, [])

@@ -22,7 +22,7 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 
 1. Confirm `monthly_caps_usd.ads` covers the batch's tranche 1 budget. If it is 0 or too low, raise `BUD-1` and stop.
 2. If this is the factory's first early-access list, confirm a `PII-1` packet is in `escalations/approved/`. If not, raise it and stop.
-3. For each idea, have the `app-builder` agent create `demand/<id>/site/`: one static page that states the job and the differentiation in the brand's voice, the words "in development", the proposed price on a "Get early access at $X a month" button, and a privacy link. Clicking the button fires `price_click` and opens a form that says the app is not available yet and nothing is charged today, with one email field and a consent line. Submitting fires `committed_signup`. No payment is taken at any point.
+3. For each idea, create `demand/<id>/site/`: one static page that states the job and the differentiation in the brand's voice, the words "in development", the proposed price on a "Get early access at $X a month" button, and a privacy link. Clicking the button fires `price_click` and opens a form that says the app is not available yet and nothing is charged today, with one email field and a consent line. Submitting fires `committed_signup`. No payment is taken at any point.
 4. For each idea, write three ad creatives to `demand/<id>/ads/` (image or short motion from designed mock-ups labelled as concept, primary text, headline) and `demand/<id>/claims.yaml`.
 5. Check each idea: the site builds, all three events fire, the price matches the spec, the "in development" and "nothing is charged today" lines and the privacy link are present, and no creative shows a mock-up as a shipping app. Run `checks/copy_lint --pre-build --has-price` on the page and ads. Drop ideas you cannot get right.
 6. Write `demand/batches/<batch>/plan.json`: per idea, the page path, the three creatives, the tranche 1 lifetime budget and duration from `budget.yaml`, the audience (broad, one country, the platform's own targeting), and the tracking parameters.
@@ -31,9 +31,9 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 ## Steps: after approval
 
 8. When the packet is in `approved/` and the pull request is merged, CI deploys the pages. Fetch each public URL and confirm it returns the page.
-9. Have the `ads-publisher` agent create one campaign per idea from `plan.json`, status paused, lifetime budget as planned. Run `checks/ads_paused`, which reads every campaign back.
+9. Run `python3 publish.py ads demand/batches/<batch>/plan.json --packet A-AD-1`. It creates one paused campaign per idea and reads each back. Until ad credentials exist it runs dry and writes `readback.json` without contacting Meta.
 10. The operator activates the batch in Ads Manager and writes `demand_test.activated` into the batch file. When that date is present, move the items to `demand_t1`.
-11. Tranche 2: when telemetry moves an item to `demand_t2`, have `ads-publisher` create the tranche 2 campaign for it, paused, using the best-performing creative. It is covered by the same `A-AD-1` packet, which states both tranche budgets. The operator activates. A top-up, where telemetry calls one, is created the same way.
+11. Tranche 2: when telemetry moves an item to `demand_t2`, create the tranche 2 campaign for it with `publish.py ads`, paused, using the best-performing creative. It is covered by the same `A-AD-1` packet, which states both tranche budgets. The operator activates. A top-up, where telemetry calls one, is created the same way.
 
 ## Hard checks
 

@@ -32,6 +32,7 @@ validation:
   window_days: 150       # from the first scheduled run
   on_exhaustion: pause_and_escalate   # trigger BUD-2 if no item has reached winner
 
+model: sonnet            # default for every stage. A stage may name its own under per_run
 run_timeout_minutes: 60   # the wrapper kills a longer run; an older lock is stale
 
 per_run:                 # passed by the wrapper as --max-turns and --max-budget-usd
@@ -39,12 +40,12 @@ per_run:                 # passed by the wrapper as --max-turns and --max-budget
   synthetic-screen:           {max_turns: 20,  max_budget_usd: 1.50}
   spec-differentiation:       {max_turns: 40,  max_budget_usd: 3.00}
   demand-test:                {max_turns: 80,  max_budget_usd: 8.00}
-  mvp-build:                  {max_turns: 150, max_budget_usd: 12.00}
+  mvp-build:                  {max_turns: 150, max_budget_usd: 12.00, model: opus}
   release-readiness:          {max_turns: 60,  max_budget_usd: 5.00}
   paid-test:                  {max_turns: 40,  max_budget_usd: 3.00}
   content-drafts:             {max_turns: 50,  max_budget_usd: 3.00}
   telemetry-winner-detection: {max_turns: 30,  max_budget_usd: 1.50}
-  weekly-review:              {max_turns: 40,  max_budget_usd: 4.00}
+  weekly-review:              {max_turns: 40,  max_budget_usd: 4.00, model: opus}
 
 per_item_caps_usd:       # cumulative token spend on one item while in that stage
   discovered: 2
