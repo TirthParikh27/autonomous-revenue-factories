@@ -161,3 +161,6 @@ def test_factory_allow_and_deny_lists_are_passed_as_flags(repo):
     (factory / ".claude" / "settings.json").write_text('{"permissions": {"allow": ["Read"], "deny": ["Edit(budget.yaml)"]}}')
     cmd = factory_run.build_command("screen", {"max_turns": 5, "max_budget_usd": 1}, "r1", factory)
     assert cmd[-4:] == ["--allowedTools", "Read", "--disallowedTools", "Edit(budget.yaml)"]
+    (factory / ".mcp.json").write_text("{}")
+    cmd = factory_run.build_command("screen", {"max_turns": 5, "max_budget_usd": 1}, "r1", factory)
+    assert cmd[-3:] == ["--mcp-config", str(factory / ".mcp.json"), "--strict-mcp-config"]
