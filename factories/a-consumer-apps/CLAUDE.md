@@ -26,7 +26,11 @@ Each run does one stage. You are started by the run wrapper with one skill named
 7. Update `state/items/<id>.json`, appending to `history`. Use only transitions listed in `FACTORY_SPEC.md` section 3.2.
 8. End with the shared `run-report` skill. Always.
 
+<<<<<<< HEAD
 Run one simple command per Bash call. Chained commands are denied, and a denial fails the run. Use Read and Glob to look at files. The wrapper records token cost in the ledger, so you do not.
+=======
+Run one simple command per Bash call. Chained commands are denied, and a denial fails the run. Use Read and Glob to look at files. The Write tool creates folders, so never run `mkdir`, `mv` or `cp`. The wrapper records token cost in the ledger, so you do not.
+>>>>>>> origin/main
 
 Stage order: `gap-mining`, `synthetic-screen`, `spec-differentiation`, `demand-test`, `mvp-build`, `release-readiness`, `paid-test`, `content-drafts`, `telemetry-winner-detection`, `weekly-review`. The weekly review is switched on only after four weeks of run reports.
 
