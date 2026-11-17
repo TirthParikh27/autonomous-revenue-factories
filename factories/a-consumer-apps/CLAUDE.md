@@ -123,4 +123,4 @@ Deterministic gates:
 - The run wrapper's caps (`--max-turns`, `--max-budget-usd`, `--permission-prompts none`, per-stage allow list) and its failure on any `permission_denials`.
 - Pruned connector lists per scheduled task. No task in this factory needs Gmail, HubSpot, Notion, Drive or Calendar.
 - Vendor-side caps: the Meta account spending limit, prepaid or capped billing on Postiz, ElevenLabs, Supabase and Expo where offered, and a monthly limit on Claude usage credits.
-- A committed `.mcp.json` listing only the official RevenueCat endpoint, with any other MCP server pinned and reviewed before it is added.
+- A committed `.mcp.json` listing only servers the operator approved (TrustMRR read-only discovery, approved 2026-11-17; the official RevenueCat endpoint when its account exists), passed to runs with `--strict-mcp-config`. Any other MCP server is pinned and reviewed before it is added.

@@ -102,6 +102,9 @@ def build_command(stage: str, caps: dict, run_id: str, factory_dir: Path | None 
         tools += ["--allowedTools", *perms["allow"]]
     if perms.get("deny"):
         tools += ["--disallowedTools", *perms["deny"]]
+    mcp = (factory_dir / ".mcp.json") if factory_dir else None
+    if mcp and mcp.exists():  # only the factory's own reviewed servers, never the user's
+        tools += ["--mcp-config", str(mcp), "--strict-mcp-config"]
     binary = os.environ.get("FACTORY_CLAUDE_CMD", "claude").split()
     prompt = (
         f"You are run {run_id}. Do exactly one stage: {stage}. Read CLAUDE.md, then follow "
