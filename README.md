@@ -8,3 +8,4 @@ Research and design only. Nothing in this repository has been built or run yet.
 - [`RESEARCH_REPORT.md`](RESEARCH_REPORT.md): what is verifiably earning money, seven factory models ranked by portfolio expected value (consumer app portfolio first), a review of demand-testing services, a tooling matrix with verified prices and MCP status, and an audit of the operator environment.
 - [`ARCHITECTURE.md`](ARCHITECTURE.md): the shared runtime, control plane, escalation protocol and build sequence.
 - [`factories/`](factories/): one self-contained blueprint per factory (`FACTORY_SPEC.md`, `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, `skills/`, `agents/`), plus shared conventions in [`factories/_shared/`](factories/_shared/).
+- [`ui/`](ui/): the Board and Live pages over the factories' files, with an on/off switch per factory. Start it with `python ui/serve.py`.

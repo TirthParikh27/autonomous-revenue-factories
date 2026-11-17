@@ -1,0 +1,79 @@
+# How each factory is shown in the UI. This file only names things and orders the stage columns.
+# A factory folder with no entry here still appears: its columns come from the stages its items have been through.
+#
+# Per stage: `from` lists the item stages the column holds, `runs` the skills that work it,
+# `gate` says what the operator approves there, and `short` is an optional shorter label. The Live view draws a machine for the stage ids it knows
+# (STAGE_ART and STAGE_MODELS in static/live.html) and a plain box for the rest.
+
+a-consumer-apps:
+  name: App factory
+  short: Apps
+  tagline: Finds app ideas in real complaints, tests demand with paid traffic, builds the winners.
+  stages:
+    - {id: mine, name: Mine, from: [discovered], runs: [gap-mining]}
+    - {id: screen, name: Screen, from: [screened], runs: [synthetic-screen]}
+    - {id: spec, name: Spec, from: [specced], runs: [spec-differentiation]}
+    - {id: demand, name: Demand test, short: Demand, from: [demand_t1, demand_t2, demand_validated], runs: [demand-test, ad-creative], gate: Ad spend needs your approval}
+    - {id: build, name: Build, from: [building, release_candidate], runs: [mvp-build, release-readiness]}
+    - {id: launch, name: Launch, from: [submitted, rejected], runs: [content-drafts], gate: Release needs your approval}
+    - {id: grow, name: Grow, from: [live, paid_t1, paid_t2, winner], runs: [paid-test, telemetry-winner-detection]}
+
+c-trading:
+  name: Trading factory
+  short: Trading
+  tagline: Proposes trading strategies, tries hard to break them, and paper trades the survivors.
+  stages:
+    - {id: idea, name: Idea, from: [proposed], runs: [ideate]}
+    - {id: code, name: Code, from: [built], runs: [build]}
+    - {id: backtest, name: Backtest gate, short: Backtest, from: [optimised], runs: [optimise]}
+    - {id: exam, name: Final exam, short: Exam, from: [exam], gate: Runs once, in CI}
+    - {id: paper, name: Paper trade, short: Paper, from: [paper, paused], runs: [maintain]}
+    - {id: watch, name: Watch, from: [watch, confirmed], runs: [winner-packet], gate: Real money needs your approval}
+
+b-ecommerce:
+  name: E-commerce factory
+  short: E-commerce
+  tagline: Digital products first, then print on demand.
+  stages:
+    - {id: discover, name: Discover, from: [discovered], runs: [discover]}
+    - {id: offer, name: Offer, from: [specced], runs: [offer-spec]}
+    - {id: store, name: Store, from: [built, test_passed], runs: [build-store, purchase-check]}
+    - {id: creative, name: Creative, from: [live, creative_ready], runs: [creative]}
+    - {id: campaign, name: Campaign, from: [campaign_drafted, spend_test, iterating], runs: [campaign-draft], gate: Ad spend needs your approval}
+    - {id: winner, name: Winner, from: [winner], runs: [telemetry]}
+
+d-directories:
+  name: Directories factory
+  short: Directories
+  tagline: Niche directory sites built from verified data.
+  stages:
+    - {id: niche, name: Niche, from: [discovered, niche_proposed], runs: [niche-discovery], gate: Niche and data source need your approval}
+    - {id: data, name: Data, from: [raw_acquired, verified], runs: [dataset-acquisition, clean-verify]}
+    - {id: site, name: Site, from: [built, qa_passed], runs: [site-build, content-qa]}
+    - {id: canary, name: Canary, from: [canary_live, index_confirmed], runs: [canary-deploy, index-telemetry]}
+    - {id: scale, name: Scale, from: [scaled, monetised, winner], runs: [monetise]}
+
+e-outbound:
+  name: Outbound factory
+  short: Outbound
+  tagline: Builds a demo for each qualified lead and drafts the outreach.
+  stages:
+    - {id: signal, name: Signal, from: [signal_found], runs: [source-signals]}
+    - {id: qualify, name: Qualify, from: [qualified], runs: [qualify-accounts]}
+    - {id: demo, name: Demo, from: [demo_built, demo_verified], runs: [build-demo, qa-demo]}
+    - {id: outreach, name: Outreach, from: [draft_ready, sent, replied], runs: [draft-outreach, handle-replies], gate: You send every message}
+    - {id: deliver, name: Deliver, from: [call_booked, proposal_drafted, won, delivering, delivered], runs: [deliver-offer]}
+
+f-apify-actors:
+  name: Actors factory
+  short: Actors
+  tagline: A portfolio of Apify Store actors.
+  stages:
+    - {id: gap, name: Gap scan, from: [discovered], runs: [gap-scan]}
+    - {id: actorspec, name: Spec, from: [specified], runs: [spec-compliance]}
+    - {id: actorbuild, name: Build, from: [built], runs: [build-actor]}
+    - {id: test, name: Live test, short: Live, from: [tested], runs: [live-test], gate: Publishing needs your approval}
+    - {id: monitor, name: Monitor, from: [live, degraded], runs: [publish, monitor]}
+
+g-marketplace-tools:
+  hidden: true   # folded into the app factory; the blueprint is kept for reference
