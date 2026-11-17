@@ -20,7 +20,6 @@ web_categories:      # web products and micro-SaaS. Names follow TrustMRR's cate
   - E-commerce
   - Design Tools
   - Developer Tools
-last_mined: {}   # category: date, filled in by gap-mining runs
 what_to_prefer:
   - A specific job people already pay a competitor for, where recent reviews show it is done badly
   - A differentiator that is a capability, not a look or a lower price
