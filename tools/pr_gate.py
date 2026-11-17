@@ -76,9 +76,9 @@ def parse_name_status(raw: str) -> list[tuple[str, str]]:
     return changes
 
 
-def git_diff(base: str, *args: str) -> str:
+def git_diff(base: str, *args: str, paths: tuple[str, ...] = ()) -> str:
     return subprocess.run(
-        ["git", "diff", *args, f"{base}...HEAD"],
+        ["git", "diff", *args, f"{base}...HEAD", "--", *paths],
         cwd=ROOT, check=True, capture_output=True, text=True,
     ).stdout
 
@@ -99,7 +99,9 @@ def main() -> int:
     patterns = protected_patterns((ROOT / ".github" / "CODEOWNERS").read_text())
     changes = parse_name_status(git_diff(args.base, "-z", "--name-status", "-M100%"))
     untested, protected = judge(changes, patterns)
-    opt_outs = coverage_opt_outs(git_diff(args.base, "-U0", "--", "*.py", ":(exclude)tools/tests/test_pr_gate.py"))
+    opt_outs = coverage_opt_outs(git_diff(
+        args.base, "-U0", paths=("*.py", ":(exclude,glob)**/tests/**", ":(exclude,glob)**/test_*.py")
+    ))
 
     if protected:
         note = "Waits for the operator to merge. Protected files changed: " + ", ".join(protected)
