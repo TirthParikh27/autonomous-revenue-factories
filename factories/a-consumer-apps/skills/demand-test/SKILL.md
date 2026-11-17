@@ -13,7 +13,7 @@ Strangers who see an ad owe the idea nothing. What they click and how far they g
 
 ## Inputs
 
-- Items at `specced`, up to `ads.max_ideas_per_batch` and the free slots under `pipeline.max_concurrent_demand_tests`. Those without the operator's go get the evidence page (steps A to C). Those with it get a page and ads (step 1 onward).
+- Items at `specced`, up to `ads.max_ideas_per_batch` and the free slots under `pipeline.max_concurrent_demand_tests`. Also items at `awaiting_human` whose `A-IDEA-1` packet has been decided (step C). Those without the operator's go get the evidence page (steps A to C). Those with it get a page and ads (step 1 onward).
 - `state/specs/<id>.md`, including the proposed price.
 - `data/privacy_notice.md` if it exists (operator-approved text). If it does not, write a draft privacy page, mark it DRAFT, and ask for approval of the text in the `PII-1` packet. Pages are written per idea; there is no template.
 - Competitor prices come from the scout file and the spec. Do not fetch competitor pages.
@@ -29,7 +29,7 @@ C. When the packet is in `approved/`, each idea still listed in it returns to `s
 
 ## Steps: preparing a batch
 
-Only for items at `specced` with `idea_approved: true`.
+Only for items at `specced` whose id is listed in an `A-IDEA-1` packet under `escalations/approved/`. Read the packet itself; do not trust the flag alone. The `A-AD-1` packet names that `A-IDEA-1` file.
 
 Work through the ideas one at a time and finish each completely (page, ads, checks, review) before starting the next. A run that ends with four finished ideas is better than one with fifteen half-made. A later run picks up the rest and adds them to the same batch before the packet is raised.
 

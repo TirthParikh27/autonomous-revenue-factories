@@ -285,6 +285,32 @@ def test_copy_lint_reads_html_as_a_person_would():
     html = "<style>.a{width:100%}</style><p>In development. Early access.</p><script>var x = 50 % 3;</script>"
     assert copy_lint.lint(copy_lint.visible_text(html), pre_build=True) == []
     assert copy_lint.lint(copy_lint.visible_text("<p>In development. Users love it.</p>"), pre_build=True)
+    assert copy_lint.lint(copy_lint.visible_text("<p>In development. Users&nbsp;love it. &#9733;&#9733;</p>"), pre_build=True)
+
+
+def test_page_check_fails_a_page_wider_than_the_phone(tmp_path):
+    proc = run_page_check(tmp_path, (PAGE % "f.hidden=false") + '<div style="width:900px;height:10px"></div>')
+    assert proc.returncode == 1
+    assert json.loads(proc.stdout)["sideways_scroll"]
+
+
+def test_voice_never_prints_or_crashes_on_a_strange_credentials_file(tmp_path, capsys, monkeypatch):
+    voice = _voice()
+    cred = tmp_path / ".heygen" / "credentials"
+    cred.parent.mkdir()
+    for content in ["api_key: SECRETKEY123\nother: x", '{"oauth": "x"}', '{"oauth": {"access_token": "SECRETKEY123", "expires_at": 5}}', "[1]"]:
+        cred.write_text(content)
+        assert voice.heygen_headers({}, tmp_path)[0] is None
+    cred.write_text(json.dumps({"oauth": {"access_token": "t", "expires_at": "2999-01-01T00:00:00.123456789Z"}}))
+    assert voice.heygen_headers({}, tmp_path)[0] is not None                     # long fractions still parse on Python 3.9
+
+    def boom(*a, **k):
+        raise ValueError("Invalid header value b'SECRETKEY123'")
+    monkeypatch.setattr(voice, "heygen_headers", lambda: ({"X-Api-Key": "SECRETKEY123"}, "HeyGen API key"))
+    monkeypatch.setattr(voice, "speak_heygen", boom)
+    monkeypatch.setattr(voice, "speak_local", boom)
+    assert voice.main(["hello", "-o", str(tmp_path / "vo")]) == 1
+    assert "SECRETKEY123" not in capsys.readouterr().out
 
 
 # ---- voice.py: which voice is used, and that a dead login falls back instead of failing or leaking

@@ -38,7 +38,7 @@ Generative video and realistic AI people or scenes are disabled in `budget.yaml`
 
 ## Tools
 
-Simulator recording from CI artefacts, HeyGen CLI and HyperFrames skills as installed locally (verified 2026-11-16; run HyperFrames with `npx hyperframes`), ffmpeg, ElevenLabs API, `publish.py drafts`, Read, Write, Bash.
+Simulator recording from CI artefacts, HeyGen CLI and HyperFrames skills as installed locally (verified 2026-11-16; run HyperFrames with `npx -y hyperframes@0.9.59`), ffmpeg, ElevenLabs API, `publish.py drafts`, Read, Write, Bash.
 
 ## Hard check
 

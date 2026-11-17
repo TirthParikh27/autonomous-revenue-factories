@@ -8,6 +8,7 @@ Exit 0 if every file is clean, 1 otherwise. Each problem is printed with its fil
 from __future__ import annotations
 
 import argparse
+import html
 import re
 import sys
 from pathlib import Path
@@ -32,7 +33,7 @@ NUMERIC_CLAIM = r"\b\d+(\.\d+)?\s?(%|x\b|times\b)"
 def visible_text(text: str) -> str:
     """For HTML and SVG, keep only what a person reads: drop style and script blocks, then tags."""
     text = re.sub(r"(?is)<(style|script)\b.*?</\1\s*>", " ", text)
-    return re.sub(r"(?s)<[^>]+>", " ", text)
+    return html.unescape(re.sub(r"(?s)<[^>]+>", " ", text)).replace("\xa0", " ")
 
 
 def lint(text: str, pre_build: bool = False, has_price: bool = False, claims: list[str] | None = None) -> list[str]:

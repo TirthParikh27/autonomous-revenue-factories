@@ -50,7 +50,7 @@ per_run:                 # passed by the wrapper as --max-turns and --max-budget
 per_item_caps_usd:       # cumulative token spend on one item while in that stage
   discovered: 2
   screened: 4            # the spec and the idea critic's research
-  specced: 3
+  specced: 10            # the page, three narrated ads and their review are made at this stage
   demand_test: 12        # tokens only. Ad spend is capped under ads:
   build: 100             # first overrun raises A-BLD-1, second kills
 

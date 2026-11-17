@@ -54,7 +54,8 @@ const FAKE = "https://check.invalid";
 
   await page.goto("file://" + index);
   await page.waitForTimeout(400);
-  report.sideways_scroll = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
+  const sideways = () => page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+  report.sideways_scroll = await sideways();
   await shot("first-screen.png");
   await shot("full-page.png", true);
 
@@ -83,12 +84,13 @@ const FAKE = "https://check.invalid";
     }
     await shot(`step-${mark}.png`);
   }
+  report.sideways_scroll = report.sideways_scroll || (await sideways().catch(() => false));
   // The page passes only if a visitor could get all the way through and it behaved.
   report.problems = [];
   if (failed) report.problems.push("a funnel step could not be used");
   if (!report.steps.length) report.problems.push("no data-walk steps on the page");
   if (!report.signup_posted) report.problems.push("no sign-up was posted");
-  if (!report.events.length) report.problems.push("no events were sent");
+  if (!report.events.includes("committed_signup")) report.problems.push("no committed_signup event was sent");
   if (report.console_errors.length) report.problems.push("script errors on the page");
   if (report.sideways_scroll) report.problems.push("the page scrolls sideways on a phone");
   await browser.close();

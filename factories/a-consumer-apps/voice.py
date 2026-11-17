@@ -18,6 +18,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import subprocess
 import sys
 import urllib.request
@@ -38,25 +39,32 @@ def heygen_headers(env=os.environ, home: Optional[Path] = None) -> Tuple[Optiona
         return None, "no HeyGen login found"
     raw = cred_file.read_text().strip()
     if not raw.startswith("{"):
+        if not re.fullmatch(r"[A-Za-z0-9._-]+", raw):
+            return None, "HeyGen credentials file is unreadable"
         return {"X-Api-Key": raw}, "HeyGen API key from the credentials file"
     try:
         cred = json.loads(raw)
     except ValueError:
         return None, "HeyGen credentials file is unreadable"
-    oauth = cred.get("oauth") or {}
+    if not isinstance(cred, dict):
+        return None, "HeyGen credentials file is unreadable"
+    oauth = cred.get("oauth")
+    oauth = oauth if isinstance(oauth, dict) else {}
     if oauth.get("access_token"):
         expires = oauth.get("expires_at")
         expired = False
         if expires:
-            try:
-                when = dt.datetime.fromisoformat(expires.replace("Z", "+00:00"))
+            try:   # drop fractional seconds: Python 3.9 parses only some lengths of them
+                when = dt.datetime.fromisoformat(re.sub(r"\.\d+", "", str(expires)).replace("Z", "+00:00"))
+                if when.tzinfo is None:
+                    when = when.replace(tzinfo=dt.timezone.utc)
                 expired = when - dt.timedelta(minutes=1) < dt.datetime.now(dt.timezone.utc)
-            except ValueError:
+            except (ValueError, TypeError):
                 expired = True
         if not expired:
             return {"Authorization": "Bearer " + oauth["access_token"], "X-HeyGen-Source": "cli"}, "HeyGen login"
         if not cred.get("api_key"):
-            return None, "HeyGen login has expired; the operator renews it with `heygen auth status` or `heygen auth login --oauth`"
+            return None, "HeyGen login has expired; the operator renews it with `heygen auth login --oauth`"
     if cred.get("api_key"):
         return {"X-Api-Key": cred["api_key"]}, "HeyGen API key from the credentials file"
     return None, "no HeyGen login found"
@@ -74,6 +82,8 @@ def speak_heygen(text: str, out: Path, voice: str, headers: dict, opener=urllib.
         raise RuntimeError("HeyGen returned no audio")
     with opener(urllib.request.Request(url), timeout=120) as resp:
         audio = resp.read()
+    if not audio:
+        raise RuntimeError("HeyGen returned empty audio")
     target = out.with_name(out.name + ".mp3")
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_bytes(audio)
@@ -85,7 +95,9 @@ def speak_heygen(text: str, out: Path, voice: str, headers: dict, opener=urllib.
 def speak_local(text: str, out: Path, voice: Optional[str], run=subprocess.run) -> dict:
     target = out.with_name(out.name + ".wav")
     target.parent.mkdir(parents=True, exist_ok=True)
-    cmd = ["npx", "-y", HYPERFRAMES, "tts", text, "-o", str(target), "--json"]
+    source = out.with_name(out.name + ".line.txt")   # passed as a file so a line starting with "-" is not read as an option
+    source.write_text(text)
+    cmd = ["npx", "-y", HYPERFRAMES, "tts", "--text-file", str(source), "-o", str(target), "--json"]
     if voice:
         cmd += ["-v", voice]
     proc = run(cmd, capture_output=True, text=True, timeout=300)
@@ -111,13 +123,18 @@ def main(argv=None) -> int:
     parser.add_argument("--provider", choices=["auto", "heygen", "local"], default="auto")
     args = parser.parse_args(argv)
     if args.file:
+        if not args.file.exists():
+            parser.error("no such file: " + str(args.file))
         args.text = args.file.read_text().strip()
     if not args.text:
         parser.error("give the line as an argument or with --file")
 
     notes = []
     if args.provider in ("auto", "heygen"):
-        headers, note = heygen_headers()
+        try:
+            headers, note = heygen_headers()
+        except Exception:
+            headers, note = None, "HeyGen credentials could not be read"
         notes.append(note)
         if headers:
             try:
@@ -125,14 +142,15 @@ def main(argv=None) -> int:
                 print(json.dumps({**result, "note": note}))
                 return 0
             except Exception as exc:  # fall back, but say why
-                notes.append("HeyGen call failed: " + str(exc)[:200])
+                status = getattr(exc, "code", None)   # never echo the exception text: it can contain the credential
+                notes.append("HeyGen call failed: " + type(exc).__name__ + (" " + str(status) if status else ""))
         if args.provider == "heygen":
             print(json.dumps({"provider": None, "note": "; ".join(notes)}))
             return 1
     try:
         result = speak_local(args.text, args.output, args.voice if args.provider == "local" else None)
     except Exception as exc:
-        print(json.dumps({"provider": None, "note": "; ".join(notes + [str(exc)[:300]])}))
+        print(json.dumps({"provider": None, "note": "; ".join(notes + [str(exc)[:300] if isinstance(exc, RuntimeError) else type(exc).__name__])}))
         return 1
     print(json.dumps({**result, "note": "; ".join(notes + ["used the free local voice"])}))
     return 0
