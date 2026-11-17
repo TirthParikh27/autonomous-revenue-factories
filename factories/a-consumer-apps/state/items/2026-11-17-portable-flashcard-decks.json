@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-portable-flashcard-decks",
+  "stage": "discovered",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Flashcard users lose decks or cannot move them between apps; they want decks that are never deleted and import and export cleanly.",
+  "category": "Education",
+  "evidence": [
+    {"claim": "10 dated complaints of deleted or non-portable flashcard decks across 3 apps (Noji, Quizlet, Brainscape)", "source": "state/scout/2026-11-17-education-b.json (edu-b7; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 10, "apps_with_complaints": 3, "keyword_popularity": null, "keyword_source": "none configured", "note": "weakest of the kept set: 3 apps; Anki is a strong free incumbent"},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept, marginal: 3 apps, data-loss not price"}],
+  "blocked_by": null,
+  "next_check": null
+}

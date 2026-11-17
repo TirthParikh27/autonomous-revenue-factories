@@ -1,0 +1,131 @@
+{
+  "category": "Business (iOS)",
+  "run_date": "2026-11-17",
+  "method": "Apple public search and customer review RSS feeds via fetch_reviews.py (reviews rated 3 stars or under, up to 3 pages per app). Quotes are copied from the saved files in state/scout/reviews/. No Reddit, no WebFetch, no keyword tool used.",
+  "candidates": [
+    {
+      "id": "b-c1",
+      "unmet_job": "Move a small business's invoice, estimate and customer history out of one invoicing app and into another (import and export of the whole record), so an account lock, forced upgrade or app failure does not strand years of billing data.",
+      "competing_apps": [
+        {"name": "Invoice Simple: Invoice Maker", "url": "https://apps.apple.com/us/app/invoice-simple-invoice-maker/id694831622"},
+        {"name": "Invoice2go: Easy Invoice Maker", "url": "https://apps.apple.com/us/app/invoice2go-easy-invoice-maker/id540236748"},
+        {"name": "Invoice Maker - Invoice Fly", "url": "https://apps.apple.com/us/app/invoice-maker-invoice-fly/id1606911248"},
+        {"name": "Invoice Generator - Zoho", "url": "https://apps.apple.com/us/app/invoice-generator-zoho/id1061863220"},
+        {"name": "Invoice Maker / Estimate App", "url": "https://apps.apple.com/us/app/invoice-maker-estimate-app/id1314873764"}
+      ],
+      "complaints": [
+        {"app": "Invoice Simple", "quote": "As soon as I figure out how to import data into a new app I’m gone forever.", "date": "2025-11-01", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=694831622/sortBy=mostRecent/json"},
+        {"app": "Invoice Simple", "quote": "Pay $199.99 or no more invoices and you can cancel but you’ll lose all of your data.", "date": "2025-09-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=694831622/sortBy=mostRecent/json"},
+        {"app": "Invoice Simple", "quote": "You will find yourself with a customer data base that you can’t do anything with years down the road.", "date": "2026-05-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=694831622/sortBy=mostRecent/json"},
+        {"app": "Invoice Simple", "quote": "I didn’t want to lose ten years of invoices and customer history so I was forced to pay it", "date": "2026-11-03", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=694831622/sortBy=mostRecent/json"},
+        {"app": "Invoice Simple", "quote": "I'd like to switch over from the app that I'm currently using into this app because I like it better but I don't have time to sit there one by one and import everything into this app", "date": "2025-06-17", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=694831622/sortBy=mostRecent/json"},
+        {"app": "Invoice2go", "quote": "Locked out of my invoices, customer list, outstanding balances, with customer support off for the weekend and no one to help for over 48 hours.", "date": "2026-10-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=540236748/sortBy=mostRecent/json"},
+        {"app": "Invoice2go", "quote": "the response from tech support was to close my account without notification.", "date": "2026-02-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=540236748/sortBy=mostRecent/json"},
+        {"app": "Invoice2go", "quote": "They deleted my account for no reason, no explanation. Now I have 35+ invoices out that I have to track down.", "date": "2026-01-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=540236748/sortBy=mostRecent/json"},
+        {"app": "Invoice2go", "quote": "I’ve switched to the monthly subscription, so I can back up my data, and make the move to something else.", "date": "2026-03-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=540236748/sortBy=mostRecent/json"},
+        {"app": "Invoice Generator - Zoho", "quote": "Okay app, no option to export or any other review options for your invoices. Very basic. Not built for scale.", "date": "2026-10-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1061863220/sortBy=mostRecent/json"},
+        {"app": "Invoice Maker - Invoice Fly", "quote": "The update on 11/4 has failed no matter what connection circumstances, and has thus locked up out of using the app where all of our invoicing is stored", "date": "2026-11-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1606911248/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": [],
+      "trend_signals": [],
+      "not_found": [
+        "No keyword volume or difficulty source available to this run.",
+        "No trend source checked. Account-closure complaints at Invoice2go recur from 2025-11 to 2026-11 in the review feed, which is a review-feed observation, not an external trend source.",
+        "Did not verify whether any app already offers invoice import or export; not checked in store listings.",
+        "Many complaints on these same apps are about price changes and invoice caps; those are excluded from this candidate as price-only."
+      ],
+      "evidence_strength": "Moderate. 11 dated complaints across 5 apps, but only about 4 name import or export directly; the rest are lockout and data loss."
+    },
+    {
+      "id": "b-c2",
+      "unmet_job": "Capture business receipts on a phone without losing any, and get them out as a tax-time report or CSV that actually generates and can be reconciled against bank transactions.",
+      "competing_apps": [
+        {"name": "Smart Receipts: Expenses & Tax", "url": "https://apps.apple.com/us/app/smart-receipts-expenses-tax/id905698613"},
+        {"name": "SimplyWise: Receipts, Expenses", "url": "https://apps.apple.com/us/app/simplywise-receipts-expenses/id1538521095"},
+        {"name": "Foreceipt Receipt Tracker App", "url": "https://apps.apple.com/us/app/foreceipt-receipt-tracker-app/id721048897"},
+        {"name": "Receipt Lens - Expense Tracker", "url": "https://apps.apple.com/us/app/receipt-lens-expense-tracker/id1424280764"},
+        {"name": "Receipt Scanner - Track Expenses", "url": "https://apps.apple.com/us/app/receipt-scanner-track-expenses/id1550270774"}
+      ],
+      "complaints": [
+        {"app": "Smart Receipts", "quote": "It’s so aggravating to scan or/take pictures of the receipts maybe 10 at a time only to find out that they weren’t uploaded.", "date": "2026-10-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=905698613/sortBy=mostRecent/json"},
+        {"app": "Smart Receipts", "quote": "If I try to scan or import more than one image, it says complete but receipts are never added to report.", "date": "2026-10-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=905698613/sortBy=mostRecent/json"},
+        {"app": "Smart Receipts", "quote": "they deleted all my pictures of receipts I had for the past two months.", "date": "2026-04-20", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=905698613/sortBy=mostRecent/json"},
+        {"app": "Smart Receipts", "quote": "I’ve lost dozens of receipts that I can’t recover", "date": "2026-01-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=905698613/sortBy=mostRecent/json"},
+        {"app": "Smart Receipts", "quote": "At some point this app stopped letting me export CSV files.", "date": "2025-01-17", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=905698613/sortBy=mostRecent/json"},
+        {"app": "SimplyWise", "quote": "And on top of that the offline receipt saving function fails.", "date": "2026-01-17", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1538521095/sortBy=mostRecent/json"},
+        {"app": "SimplyWise", "quote": "Now it’s tax time and nothing has reconciled in months.", "date": "2026-03-18", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1538521095/sortBy=mostRecent/json"},
+        {"app": "SimplyWise", "quote": "you cannot search through your database to find the correct receipt, nor can you reconcile from the receipt database.", "date": "2025-11-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1538521095/sortBy=mostRecent/json"},
+        {"app": "SimplyWise", "quote": "It would be great if you could download your receipts into a Quicken format that could be uploaded!", "date": "2026-03-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1538521095/sortBy=mostRecent/json"},
+        {"app": "Foreceipt", "quote": "I lost all my receipts pictures", "date": "2025-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=721048897/sortBy=mostRecent/json"},
+        {"app": "Foreceipt", "quote": "sat down tonight to work on taxes and not a single receipts will scan and verify.", "date": "2025-01-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=721048897/sortBy=mostRecent/json"},
+        {"app": "Foreceipt", "quote": "it's impossible to export reports via pdf without getting a failed notice, no matter how many times you try on the desktop site with any browser.", "date": "2024-02-21", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=721048897/sortBy=mostRecent/json"},
+        {"app": "Receipt Lens", "quote": "No way to export your data in any sort of meaningful way.", "date": "2024-12-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1424280764/sortBy=mostRecent/json"},
+        {"app": "Receipt Lens", "quote": "ended up erasing every single backed up receipt and all data.", "date": "2025-03-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1424280764/sortBy=mostRecent/json"},
+        {"app": "Receipt Lens", "quote": "Not being able to export makes the app pretty worthless.", "date": "2024-07-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1424280764/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": [],
+      "trend_signals": [],
+      "not_found": [
+        "No keyword volume or difficulty source available to this run.",
+        "No trend source checked.",
+        "Receipt Scanner - Track Expenses (id 1550270774) reviews were saved but not read, so it has no complaints in this file.",
+        "Several quotes are older than 12 months (Foreceipt 2024-02-21, Receipt Lens 2024-07 and 2024-12, Smart Receipts 2025-01); the most recent complaints are from 2026-10 (Smart Receipts) and 2026-03 (SimplyWise).",
+        "Foreceipt feed returned only 5 reviews from 2025 or later in the pages read; recency at that app is thin.",
+        "Many complaints at these apps are paywall or price (for example OCR behind a subscription); excluded as price-only."
+      ],
+      "evidence_strength": "Moderate. 15 dated complaints across 4 apps with a consistent pattern of lost receipts and failed report export; recency is mixed."
+    },
+    {
+      "id": "b-c3",
+      "unmet_job": "Fill out and sign a PDF on a phone so that text fits the form fields, the signature stays where it was placed on export, and there is a record of what was signed, including sending one document to several signers at once.",
+      "competing_apps": [
+        {"name": "Signeasy: Sign PDF Documents", "url": "https://apps.apple.com/us/app/signeasy-sign-pdf-documents/id381786507"},
+        {"name": "SignNow: e-Signature app", "url": "https://apps.apple.com/us/app/signnow-e-signature-app/id489262811"},
+        {"name": "Fill and Sign Documents: eSign", "url": "https://apps.apple.com/us/app/fill-and-sign-documents-esign/id1361059450"},
+        {"name": "eSign: Signature Scanner & PDF", "url": "https://apps.apple.com/us/app/esign-signature-scanner-pdf/id1502608223"},
+        {"name": "eSign App: Sign PDF Documents", "url": "https://apps.apple.com/us/app/esign-app-sign-pdf-documents/id6446249178"}
+      ],
+      "complaints": [
+        {"app": "Fill and Sign Documents", "quote": "Every time I entered a text entry it would cut off the first letter.", "date": "2026-10-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1361059450/sortBy=mostRecent/json"},
+        {"app": "Fill and Sign Documents", "quote": "When exporting the file, the signature shifts out of place, which makes using this app completely pointless for me.", "date": "2026-08-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1361059450/sortBy=mostRecent/json"},
+        {"app": "Fill and Sign Documents", "quote": "You are not able to make the text smaller to fit the paperwork.", "date": "2026-05-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1361059450/sortBy=mostRecent/json"},
+        {"app": "SignNow", "quote": "Can’t write my initials small enough to fit on a small blank", "date": "2026-09-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=489262811/sortBy=mostRecent/json"},
+        {"app": "SignNow", "quote": "I have no record of what I signed; Unlike Docusign", "date": "2026-08-19", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=489262811/sortBy=mostRecent/json"},
+        {"app": "SignNow", "quote": "I have no way to send one e-mail to multiple people so a document appears in their mail box to sign as their own document.", "date": "2026-06-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=489262811/sortBy=mostRecent/json"},
+        {"app": "SignNow", "quote": "When I fill out paperwork on my end and then save it, I can’t go back into it and edit the edits that I made.", "date": "2026-06-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=489262811/sortBy=mostRecent/json"},
+        {"app": "SignNow", "quote": "Took my money and did not allow me to download my signed document.", "date": "2026-07-19", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=489262811/sortBy=mostRecent/json"},
+        {"app": "Signeasy", "quote": "Every other time I try to e sign a document - sign easy says the document is in a format it doesn’t recognize.", "date": "2026-07-20", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=381786507/sortBy=mostRecent/json"},
+        {"app": "Signeasy", "quote": "when you open documents to sign and it just spins and is stuck or opens a different document to sign.", "date": "2026-10-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=381786507/sortBy=mostRecent/json"},
+        {"app": "Signeasy", "quote": "Font editing / sizing your printed name and signature is not automatically adjusted to the font of the document itself.", "date": "2026-02-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=381786507/sortBy=mostRecent/json"},
+        {"app": "eSign: Signature Scanner & PDF", "quote": "Paid and when exporting a signed a pdf or photo, the signature is not attached", "date": "2026-06-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1502608223/sortBy=mostRecent/json"},
+        {"app": "eSign: Signature Scanner & PDF", "quote": "You can’t accurately scan your signature.", "date": "2026-06-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1502608223/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": [],
+      "trend_signals": [],
+      "not_found": [
+        "No keyword volume or difficulty source available to this run.",
+        "No trend source checked.",
+        "eSign App: Sign PDF Documents (id 6446249178) reviews were saved but not read, so it has no complaints in this file.",
+        "The largest complaint cluster at these apps is a paywall at export, surprise charges after a free trial, and difficulty cancelling. Those are price and billing complaints and are excluded here. This candidate uses only the capability complaints (field fit, export fidelity, signing record, multi-signer send, document recognition).",
+        "Did not check what free or built-in iOS tools (for example Markup in Files) already do, so overlap with the OS is unassessed."
+      ],
+      "evidence_strength": "Moderate to thin. 13 dated complaints across 4 apps, all 2026, but each capability issue is raised by only 1 to 3 reviewers; the dominant complaint at these apps is price and billing."
+    }
+  ],
+  "excluded": [],
+  "excluded_notes": "No candidate matched data/excluded_categories.yaml. Rejected-list items for Business (recurring invoices with CSV export, mileage auto-tracking, business card scanning) were not retried: they are already covered by state/scout/2026-11-17-business.json from another run, and this run did not add broader evidence for them.",
+  "injection_suspected": [
+    {
+      "url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=694831622/sortBy=mostRecent/json",
+      "app": "Invoice Simple",
+      "date": "2025-11-18",
+      "text_quoted_as_data": "Feel free to tweak any part of it (add your business type or exact fee breakdown if you have screenshots), but this version is emotional, factual, and written to rank high and warn others effectively. Post it on both the App Store and Google Play if you can — the more visible, the better.",
+      "note": "Instruction-like text inside a review, apparently pasted from a chatbot reply by the reviewer. It is addressed to the reviewer, not to this agent. Not followed. Review not used as a complaint."
+    }
+  ],
+  "limits": [
+    "Only reviews rated 3 stars or under from the US storefront RSS feed, up to 3 pages per app. Reviews are listed most recent first, so older complaints at some apps are the only ones available.",
+    "Fewer than 8 candidates: 3 candidates reached 10 or more dated complaints across 4 or more apps. Other Business sub-areas (business phone numbers, CRM, project management, estimates) were not searched.",
+    "No competitor web pages, keyword tools or trend sources were read."
+  ]
+}

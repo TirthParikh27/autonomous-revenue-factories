@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-exact-manual-nutrient-tracking",
+  "stage": "discovered",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Enter exact food values from a label and track nutrients such as fiber, net carbs and added sugar without an AI guess replacing the numbers.",
+  "category": "Health and Fitness",
+  "evidence": [
+    {"claim": "10 dated complaints about inexact manual entry and missing nutrients across 4 apps", "source": "state/scout/2026-11-17-health-fitness.json (c5; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 10, "apps_with_complaints": 4, "keyword_popularity": null, "keyword_source": "none configured", "note": "nutrition is crowded (MyFitnessPal, Cronometer); spec must name a real capability difference. Avoid medical claims"},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept, marginal: crowded space, 4 apps"}],
+  "blocked_by": null,
+  "next_check": null
+}

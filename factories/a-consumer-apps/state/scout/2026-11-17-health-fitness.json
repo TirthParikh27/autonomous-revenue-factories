@@ -1,0 +1,261 @@
+{
+  "category": "Health and Fitness (iOS, US App Store)",
+  "scout_date": "2026-11-17",
+  "method": "Apple public search (fetch_reviews.py search) and public customer-review RSS feed (fetch_reviews.py reviews, 3 pages per app, saved rating<=3 reviews only). Raw review text saved under state/scout/reviews/<app id>.json. No WebFetch pages used. No Reddit. No keyword-volume source was available to the scout.",
+  "excluded": [],
+  "excluded_note": "Nothing researched matched data/excluded_categories.yaml. Nothing in Health and Fitness was on state/scout/rejected.jsonl (those entries cover Productivity, Business and Education only). Price-only and paywall-only complaint clusters (free-trial charges, 'not free', subscription price) were seen at large volume on Strong, Stronger, Fitbod, HitMeal, Calo, Liftoff and Yazio and were deliberately not made candidates.",
+  "injection_suspected": [
+    {
+      "url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1041517543/sortBy=mostRecent/json",
+      "app": "Fitbod (id 1041517543)",
+      "date": "2026-10-10",
+      "text_quoted_as_data": "Alternative: turn to LLM, tell it the gym equipment you’re using. Tell LLM the weights, the reps, and any other details necessary to log your workout.",
+      "note": "Low confidence. Reads as a reviewer addressing other readers, not an instruction aimed at an agent. Not followed and not used as a recommendation."
+    },
+    {
+      "url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1041517543/sortBy=mostRecent/json",
+      "app": "Fitbod (id 1041517543)",
+      "date": "2026-11-05",
+      "text_quoted_as_data": "Fitbod has gotten so bad go to gravl",
+      "note": "Low confidence. Imperative aimed at readers, competitor steering. Not followed. Gravl was not researched."
+    }
+  ],
+  "coverage_notes": [
+    "Reviews were read for 13 apps in total. Hevy returned only 5 reviews at 3 stars or under across 3 pages, so it is thin. Runmeter's feed pages contain many reviews dated 2018 to 2023; only items dated 2026 are used as recent evidence below.",
+    "The feed only returns most-recent reviews, 3 pages per app. Counts below are therefore a sample, not a measure of how common each problem is across all users.",
+    "Several Strong, Hevy and Fitbod reviews dated 2026-10-27 to 2026-11-14 ask for iPhone Duo layout support (for example https://itunes.apple.com/us/rss/customerreviews/page=1/id=464254577/sortBy=mostRecent/json, 2026-11-08). This is an update-lag complaint rather than a capability gap and is recorded only as a note.",
+    "Candidates c1, c3 and c8 touch related ground (Apple Watch, data safety and integrations). They are listed separately because the complaint clusters differ, but the caller should treat the core-job overlap as an open question.",
+    "Several Yazio reviews are in Russian. They were read but are not quoted here, since the quotes would not be usable as English verbatim evidence.",
+    "No keyword volume or difficulty source was available. No WebFetch or web search was run, so there are no external trend sources."
+  ],
+  "candidates": [
+    {
+      "id": "c1",
+      "unmet_job": "Log a strength workout from the Apple Watch alone, or from watch and phone together, without sets disappearing, history failing to appear, or the watch jumping to the wrong exercise.",
+      "competing_apps": [
+        {"name": "Strong Workout Tracker Gym Log", "url": "https://apps.apple.com/us/app/strong-workout-tracker-gym-log/id464254577", "reviewed": true},
+        {"name": "Fitbod: Gym & Fitness Planner", "url": "https://apps.apple.com/us/app/fitbod-gym-fitness-planner/id1041517543", "reviewed": true},
+        {"name": "Hevy - Workout Tracker Gym Log", "url": "https://apps.apple.com/us/app/hevy-workout-tracker-gym-log/id1458862350", "reviewed": true},
+        {"name": "RepCount - Gym Workout Tracker", "url": "https://apps.apple.com/us/app/repcount-gym-workout-tracker/id594982044", "reviewed": true},
+        {"name": "Stronger - Gym Workout Planner", "url": "https://apps.apple.com/us/app/stronger-gym-workout-planner/id1621719397", "reviewed": true},
+        {"name": "Apple Fitness", "url": "https://apps.apple.com/us/app/apple-fitness/id1208224953", "reviewed": false}
+      ],
+      "complaints": [
+        {"app": "Strong", "quote": "Often, the apple watch sync removes sets, and even entirely fails to track my workouts after completion", "date": "2026-09-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "Apple watch sync used to work, doesnt anymore", "date": "2026-07-17", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "Having to start the workout on the watch and then carrying it over to the phone is a drawback", "date": "2026-07-20", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "I’ll mark a set as done on my phone then my watch won’t see it so I do it there, then I go back to my phone and I’ve lost like 5 sets and have to re-enter them.", "date": "2026-06-03", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "the app will regularly lose sets you have already saved", "date": "2026-05-26", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "every other update breaks the watch functionality, which is how I primarily interact with the app", "date": "2026-11-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "Most recent update broke the Apple Watch sync. And now the app no longer syncs heart rate with your workout.", "date": "2026-11-03", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "Fitbod is no longer working with my Apple Watch!", "date": "2026-10-23", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Hevy", "quote": "Every time I use my watch to progress the current exercise or change the weight or reps, it jumps to the next exercise.", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1458862350/sortBy=mostRecent/json"},
+        {"app": "RepCount", "quote": "Also needs Apple Watch support. Would be nice to workout without my phone.", "date": "2026-10-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=594982044/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "really needs a watch app", "date": "2026-01-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1621719397/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none (no source available)",
+      "trend_signals": [],
+      "not_found": "Apple Fitness was not read. Hevy sample is small (5 low-rated reviews). Complaints are concentrated on Strong, so breadth across apps is moderate. No evidence on how many users run workouts from the watch alone."
+    },
+    {
+      "id": "c2",
+      "unmet_job": "Record a run so that the distance, pace and splits are right, auto-pause does not trigger falsely, and a finished run is never lost.",
+      "competing_apps": [
+        {"name": "Nike Run Club: Running Coach", "url": "https://apps.apple.com/us/app/nike-run-club-running-coach/id387771637", "reviewed": true},
+        {"name": "ASICS Runkeeper - Run Tracker", "url": "https://apps.apple.com/us/app/asics-runkeeper-run-tracker/id300235330", "reviewed": true},
+        {"name": "Runmeter Running GPS Tracker", "url": "https://apps.apple.com/us/app/runmeter-running-gps-tracker/id326498704", "reviewed": true},
+        {"name": "adidas Running: Run tracker", "url": "https://apps.apple.com/us/app/adidas-running-run-tracker/id336599882", "reviewed": false},
+        {"name": "Polar Beat: Running & Fitness", "url": "https://apps.apple.com/us/app/polar-beat-running-fitness/id555252645", "reviewed": false}
+      ],
+      "complaints": [
+        {"app": "Nike Run Club", "quote": "the app keeps auto pausing my runs despite having the option off", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=387771637/sortBy=mostRecent/json"},
+        {"app": "Nike Run Club", "quote": "recently it has started consistently undercounting my runs by 2–3%", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=387771637/sortBy=mostRecent/json"},
+        {"app": "Nike Run Club", "quote": "My past 3 runs have been cut short by this app.", "date": "2026-10-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=387771637/sortBy=mostRecent/json"},
+        {"app": "Nike Run Club", "quote": "clicking on stop to save it, and it vanishes…. Gone for good…", "date": "2026-09-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=387771637/sortBy=mostRecent/json"},
+        {"app": "Nike Run Club", "quote": "I have lost 2 runs in a row. When I end my run the app gets stuck on pause even though I didn’t hit pause.", "date": "2026-09-19", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=387771637/sortBy=mostRecent/json"},
+        {"app": "Runkeeper", "quote": "it’s keeping track of time but not distance", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=300235330/sortBy=mostRecent/json"},
+        {"app": "Runkeeper", "quote": "it keep saying the pace is 0:00/mile", "date": "2026-10-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=300235330/sortBy=mostRecent/json"},
+        {"app": "Runkeeper", "quote": "I ran a mile only to open Run Keeper and find it was paused the entire time.", "date": "2026-08-18", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=300235330/sortBy=mostRecent/json"},
+        {"app": "Runkeeper", "quote": "I have to restart my phone before every run or it doesn’t track time or distance", "date": "2026-08-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=300235330/sortBy=mostRecent/json"},
+        {"app": "Runkeeper", "quote": "the audio setting tells me my current split is something bizarre like 100+ hours a mile", "date": "2026-08-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=300235330/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none (no source available)",
+      "trend_signals": [
+        {"signal": "Reviewers on Nike Run Club say they run Strava alongside it to cross-check or replace it, and one says Nike layoffs may mean the app is not maintained.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=387771637/sortBy=mostRecent/json", "date": "2026-10-27"}
+      ],
+      "not_found": "Runmeter has only one 2026 complaint on distance recording (title only, no text). Its older complaints from 2018 to 2023 are not used. adidas Running and Polar Beat were not read, so only two apps carry the evidence. The two large apps are free, so no evidence on willingness to pay for a replacement. No GPS accuracy measurements were gathered by the scout."
+    },
+    {
+      "id": "c3",
+      "unmet_job": "Keep a long-term training, food or run history safe across updates, new phones and account problems, and be able to restore or bring it in from another app.",
+      "competing_apps": [
+        {"name": "Strong Workout Tracker Gym Log", "url": "https://apps.apple.com/us/app/strong-workout-tracker-gym-log/id464254577", "reviewed": true},
+        {"name": "Fitbod: Gym & Fitness Planner", "url": "https://apps.apple.com/us/app/fitbod-gym-fitness-planner/id1041517543", "reviewed": true},
+        {"name": "Stronger - Gym Workout Planner", "url": "https://apps.apple.com/us/app/stronger-gym-workout-planner/id1621719397", "reviewed": true},
+        {"name": "Liftoff - Ranked Gym Workouts", "url": "https://apps.apple.com/us/app/liftoff-ranked-gym-workouts/id6448081563", "reviewed": true},
+        {"name": "AI Calorie Tracker by Yazio", "url": "https://apps.apple.com/us/app/ai-calorie-tracker-by-yazio/id946099227", "reviewed": true},
+        {"name": "HitMeal - Calorie & Food Tracker", "url": "https://apps.apple.com/us/app/hitmeal-calorie-food-tracker/id1544461026", "reviewed": true},
+        {"name": "Calorie Counter PRO MyNetDiary", "url": "https://apps.apple.com/us/app/calorie-counter-pro-mynetdiary/id352247139", "reviewed": true},
+        {"name": "Nike Run Club: Running Coach", "url": "https://apps.apple.com/us/app/nike-run-club-running-coach/id387771637", "reviewed": true},
+        {"name": "ASICS Runkeeper - Run Tracker", "url": "https://apps.apple.com/us/app/asics-runkeeper-run-tracker/id300235330", "reviewed": true}
+      ],
+      "complaints": [
+        {"app": "Strong", "quote": "recently my workout history has disappeared", "date": "2026-09-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "All of my years of data are gone.", "date": "2026-06-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "the inability to import workouts", "date": "2026-07-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "I lost all of my recorded workouts of 6 months due to a simple forgotten password issue.", "date": "2026-01-19", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1621719397/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "I’ve had numerous exercise routines deleted.", "date": "2026-11-01", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Liftoff", "quote": "cannot figure out how to add old workouts", "date": "2026-10-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6448081563/sortBy=mostRecent/json"},
+        {"app": "Yazio", "quote": "The app logged me out and wiped all my progress, including my 200-day streak.", "date": "2026-07-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=946099227/sortBy=mostRecent/json"},
+        {"app": "Yazio", "quote": "it restarted my goals and erased my previous progress", "date": "2026-08-23", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=946099227/sortBy=mostRecent/json"},
+        {"app": "HitMeal", "quote": "when I upgraded my iPhone I lost all of my information", "date": "2026-01-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "HitMeal", "quote": "My over 6 months of data froze and had reset to a new account", "date": "2026-05-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "MyNetDiary", "quote": "poof your logged entries are gone.", "date": "2026-05-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=352247139/sortBy=mostRecent/json"},
+        {"app": "Nike Run Club", "quote": "My running records and stats over the past 6 years completely disappeared.", "date": "2026-09-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=387771637/sortBy=mostRecent/json"},
+        {"app": "Runkeeper", "quote": "there’s no way to recover it", "date": "2026-09-17", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=300235330/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none (no source available)",
+      "trend_signals": [],
+      "not_found": "The causes are mixed (updates, accounts, sync, subscription lapses), so one fix may not address all of them. No evidence on whether users would pay for a backup or import tool as a standalone product. Not checked: whether competing apps already offer export or import and how well they work, apart from one Strong reviewer who describes a CSV export buried in settings (https://itunes.apple.com/us/rss/customerreviews/page=2/id=464254577/sortBy=mostRecent/json, 2026-07-03)."
+    },
+    {
+      "id": "c4",
+      "unmet_job": "Get a generated strength plan that adjusts to time off, skipped days, rep preferences and the user's own edits, instead of repeating the same exercises or overwriting custom changes.",
+      "competing_apps": [
+        {"name": "Fitbod: Gym & Fitness Planner", "url": "https://apps.apple.com/us/app/fitbod-gym-fitness-planner/id1041517543", "reviewed": true},
+        {"name": "Stronger - Gym Workout Planner", "url": "https://apps.apple.com/us/app/stronger-gym-workout-planner/id1621719397", "reviewed": true},
+        {"name": "Liftoff - Ranked Gym Workouts", "url": "https://apps.apple.com/us/app/liftoff-ranked-gym-workouts/id6448081563", "reviewed": true},
+        {"name": "Strong Workout Tracker Gym Log", "url": "https://apps.apple.com/us/app/strong-workout-tracker-gym-log/id464254577", "reviewed": true},
+        {"name": "Hevy - Workout Tracker Gym Log", "url": "https://apps.apple.com/us/app/hevy-workout-tracker-gym-log/id1458862350", "reviewed": false}
+      ],
+      "complaints": [
+        {"app": "Fitbod", "quote": "the first workout back would be a “max effort day” at or above my peak weight", "date": "2026-10-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "Every time you customize it to create custom workouts it erases them and comes up with its own.", "date": "2026-11-01", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "why am I still doing virtually all the programming myself", "date": "2026-10-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "Recommending six reps when you typically do 20-25 on any given day exercise.", "date": "2026-10-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "repeats excercises from the same muscle", "date": "2026-11-09", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "Want to modify the “AI generated” (single default) workout routine? You can’t.", "date": "2026-05-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1621719397/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "if you set strength as your goal the AI shouldn’t be trying to make you do 10 reps", "date": "2026-03-19", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1621719397/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "if you happen to skip a day, it starts acting weird.", "date": "2026-06-18", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1621719397/sortBy=mostRecent/json"},
+        {"app": "Liftoff", "quote": "It literally gave me the same 3 exercises 10 times in a row.", "date": "2026-09-19", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=6448081563/sortBy=mostRecent/json"},
+        {"app": "Liftoff", "quote": "This app doesn’t have a lick of variety in any planning", "date": "2026-10-23", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6448081563/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "there’s no options for having Strong enforce progressive overload", "date": "2026-07-03", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=464254577/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none (no source available)",
+      "trend_signals": [
+        {"signal": "Several Fitbod reviewers say a recent update or an AI coach beta made their plans worse, and two name other apps they are moving to.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1041517543/sortBy=mostRecent/json", "date": "2026-11-02"},
+        {"signal": "One Fitbod reviewer says a general-purpose LLM can replace the app for workout logging and planning.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1041517543/sortBy=mostRecent/json", "date": "2026-10-10"}
+      ],
+      "not_found": "Caution on claims: the Fitbod reviewer on 2026-10-13 links the problem to injury risk. Health-claim territory was avoided, and this entry reports only the planning behaviour. Fitbod complaints are about 5 of the 11 above, so evidence is weighted to one app. Hevy was not mined for this job."
+    },
+    {
+      "id": "c5",
+      "unmet_job": "Enter exact food values by hand (from a label) and track the nutrients the user cares about, such as fiber, net carbs and added sugar, without an AI guess replacing the numbers.",
+      "competing_apps": [
+        {"name": "AI Calorie Tracker by Yazio", "url": "https://apps.apple.com/us/app/ai-calorie-tracker-by-yazio/id946099227", "reviewed": true},
+        {"name": "HitMeal - Calorie & Food Tracker", "url": "https://apps.apple.com/us/app/hitmeal-calorie-food-tracker/id1544461026", "reviewed": true},
+        {"name": "Calo: AI Food Calorie Counter", "url": "https://apps.apple.com/us/app/calo-ai-food-calorie-counter/id6447434453", "reviewed": true},
+        {"name": "Calorie Counter PRO MyNetDiary", "url": "https://apps.apple.com/us/app/calorie-counter-pro-mynetdiary/id352247139", "reviewed": true},
+        {"name": "Calorie Counter +", "url": "https://apps.apple.com/us/app/calorie-counter/id444924121", "reviewed": false},
+        {"name": "AI Calorie Counter - Appediet", "url": "https://apps.apple.com/us/app/ai-calorie-counter-appediet/id6450329545", "reviewed": false}
+      ],
+      "complaints": [
+        {"app": "Yazio", "quote": "I have the nutritional label for my food, let me manually input it again please!!", "date": "2026-07-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=946099227/sortBy=mostRecent/json"},
+        {"app": "Yazio", "quote": "Can’t quick add anymore. Now the quick add is replaced by some AI generated macros, now you can’t physically edit.", "date": "2026-07-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=946099227/sortBy=mostRecent/json"},
+        {"app": "Yazio", "quote": "I need Quick Add to let me QUICKLY ADD them.", "date": "2026-07-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=946099227/sortBy=mostRecent/json"},
+        {"app": "Yazio", "quote": "I find it more important to track fiber than fat for example so I would like to be able to pin fiber to the top menu", "date": "2026-06-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=946099227/sortBy=mostRecent/json"},
+        {"app": "Calo", "quote": "I’m unable to add calories just food that the app calculates for me which is a bummer", "date": "2026-10-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=6447434453/sortBy=mostRecent/json"},
+        {"app": "HitMeal", "quote": "Anyone counting carbs knows that you subtract fiber from carbs and this app doesn’t allow you to see fiber.", "date": "2026-01-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "HitMeal", "quote": "This app does not track added sugars, so if that metric is important to you, the app won’t do.", "date": "2026-04-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "HitMeal", "quote": "I also don’t like that the app doesn’t take into consideration fiber when counting net carbs.", "date": "2026-07-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "HitMeal", "quote": "Why can’t we just do the work to add our own food like adults instead of using AI for every little thing.", "date": "2026-03-23", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "MyNetDiary", "quote": "the app will not import any vitamins that you take even if they are logged in Apple Health.", "date": "2026-05-21", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=352247139/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none (no source available)",
+      "trend_signals": [
+        {"signal": "A cluster of Yazio reviews between 2026-07-23 and 2026-07-29 object to a Quick Add change that replaced manual entry with AI estimation. At least 6 separate reviews in that window; 4 are quoted or cited above.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=946099227/sortBy=mostRecent/json", "date": "2026-07-29"}
+      ],
+      "not_found": "Yazio's developer reply (quoted in a 2026-07-29 review) says AI is optional with a toggle, and the reviewer disputes this; the scout cannot verify the app state. The nutrient-tracking part is evidenced mostly on HitMeal. Calorie Counter + and Appediet were not read. Most tracker reviews in this sample are about ads, price or free-trial billing, which are excluded from this candidate. Diet and nutrient reviews carry health-claim risk and were kept to logging behaviour only."
+    },
+    {
+      "id": "c6",
+      "unmet_job": "Get food recognised correctly, from a barcode or a photo, with nutrition values that match the package, so the user does not have to fix every entry by hand.",
+      "competing_apps": [
+        {"name": "HitMeal - Calorie & Food Tracker", "url": "https://apps.apple.com/us/app/hitmeal-calorie-food-tracker/id1544461026", "reviewed": true},
+        {"name": "Calo: AI Food Calorie Counter", "url": "https://apps.apple.com/us/app/calo-ai-food-calorie-counter/id6447434453", "reviewed": true},
+        {"name": "Calorie Counter PRO MyNetDiary", "url": "https://apps.apple.com/us/app/calorie-counter-pro-mynetdiary/id352247139", "reviewed": true},
+        {"name": "AI Calorie Tracker by Yazio", "url": "https://apps.apple.com/us/app/ai-calorie-tracker-by-yazio/id946099227", "reviewed": true},
+        {"name": "Liftoff - Ranked Gym Workouts", "url": "https://apps.apple.com/us/app/liftoff-ranked-gym-workouts/id6448081563", "reviewed": true},
+        {"name": "Arise: AI Food Calorie Counter", "url": "https://apps.apple.com/us/app/arise-ai-food-calorie-counter/id549217094", "reviewed": false}
+      ],
+      "complaints": [
+        {"app": "HitMeal", "quote": "Never and I mean not one single time has the food ai scanner gotten what was on my plate even remotely close", "date": "2026-10-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "HitMeal", "quote": "I’ve tried scanning six different barcodes and it won’t pick up any of them", "date": "2026-03-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "HitMeal", "quote": "the barcode scanner doesn’t work at all", "date": "2026-06-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "Calo", "quote": "Said my toast was a grilled cheese sandwich.", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6447434453/sortBy=mostRecent/json"},
+        {"app": "Calo", "quote": "it read it as wrap instead of a bowl", "date": "2026-10-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=6447434453/sortBy=mostRecent/json"},
+        {"app": "MyNetDiary", "quote": "I don’t think that the AI photo of your food is an accurate count of calories when I weigh it versus actually just taking a picture.", "date": "2026-05-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=352247139/sortBy=mostRecent/json"},
+        {"app": "MyNetDiary", "quote": "food is wrong using barcodes all of a sudden", "date": "2026-10-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=352247139/sortBy=mostRecent/json"},
+        {"app": "Yazio", "quote": "even if when I scan an item that has all the nutrients on it it still gets it wrong", "date": "2026-06-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=946099227/sortBy=mostRecent/json"},
+        {"app": "Liftoff", "quote": "Scanned barcode and calories/protein never matched the facts on the can.", "date": "2026-09-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6448081563/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none (no source available)",
+      "trend_signals": [],
+      "not_found": "This is the most crowded sub-area in the sample: the store search for calorie counters returned at least 10 competing apps, and most carry AI scanning. The scout did not test any scanner and found no accuracy benchmark. Whether a differentiated capability exists here is not established by this evidence."
+    },
+    {
+      "id": "c7",
+      "unmet_job": "Create custom exercises that keep their notes, photos, body-part tags and rep ranges, and see those notes on the exercise history the next time.",
+      "competing_apps": [
+        {"name": "Strong Workout Tracker Gym Log", "url": "https://apps.apple.com/us/app/strong-workout-tracker-gym-log/id464254577", "reviewed": true},
+        {"name": "Stronger - Gym Workout Planner", "url": "https://apps.apple.com/us/app/stronger-gym-workout-planner/id1621719397", "reviewed": true},
+        {"name": "Fitbod: Gym & Fitness Planner", "url": "https://apps.apple.com/us/app/fitbod-gym-fitness-planner/id1041517543", "reviewed": true},
+        {"name": "RepCount - Gym Workout Tracker", "url": "https://apps.apple.com/us/app/repcount-gym-workout-tracker/id594982044", "reviewed": true},
+        {"name": "Iron - Workout Tracker", "url": "https://apps.apple.com/us/app/iron-workout-tracker/id1479893244", "reviewed": false}
+      ],
+      "complaints": [
+        {"app": "Strong", "quote": "Can't put your own machines in detail.", "date": "2026-09-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "when you create exercises, you’re unable to assign body parts to them after saving them initially.", "date": "2026-07-03", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "Why can I take notes on a set of any given move, but when I view the history of that move I can’t see the notes?", "date": "2026-06-21", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "They only currently allow you to either keep your original template or override your original template.", "date": "2026-06-18", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "Wish the app had a way to build rep ranges into templates.", "date": "2026-10-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "the recent update got rid of all the notes I had written for previous workouts.", "date": "2026-10-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1621719397/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "Disappointing to see perceived effort and notes removed from historical view", "date": "2026-09-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1621719397/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "its not gonna track the progress for your custom exercises", "date": "2026-01-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1621719397/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "I liked the “notes” function to save notes on my setup on different machines, but those no longer save/appear.", "date": "2026-11-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1041517543/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none (no source available)",
+      "trend_signals": [],
+      "not_found": "Hevy and Liftoff were not mined for this job, and it is unknown whether they already do this well. Evidence is concentrated on Strong, with Stronger and Fitbod each contributing a note-visibility complaint. Several of these are small feature requests rather than reasons to switch apps."
+    },
+    {
+      "id": "c8",
+      "unmet_job": "Move workout, weight and activity data between a fitness or nutrition app and Apple Health, Strava, Garmin or Coros without manual re-entry.",
+      "competing_apps": [
+        {"name": "Strong Workout Tracker Gym Log", "url": "https://apps.apple.com/us/app/strong-workout-tracker-gym-log/id464254577", "reviewed": true},
+        {"name": "Stronger - Gym Workout Planner", "url": "https://apps.apple.com/us/app/stronger-gym-workout-planner/id1621719397", "reviewed": true},
+        {"name": "Fitbod: Gym & Fitness Planner", "url": "https://apps.apple.com/us/app/fitbod-gym-fitness-planner/id1041517543", "reviewed": true},
+        {"name": "AI Calorie Tracker by Yazio", "url": "https://apps.apple.com/us/app/ai-calorie-tracker-by-yazio/id946099227", "reviewed": true},
+        {"name": "HitMeal - Calorie & Food Tracker", "url": "https://apps.apple.com/us/app/hitmeal-calorie-food-tracker/id1544461026", "reviewed": true},
+        {"name": "ASICS Runkeeper - Run Tracker", "url": "https://apps.apple.com/us/app/asics-runkeeper-run-tracker/id300235330", "reviewed": true},
+        {"name": "Nike Run Club: Running Coach", "url": "https://apps.apple.com/us/app/nike-run-club-running-coach/id387771637", "reviewed": true}
+      ],
+      "complaints": [
+        {"app": "Strong", "quote": "I want my workout to upload to Strava.", "date": "2026-06-23", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Strong", "quote": "I would like to be able to copy/paste the workout summary into Strava and for some reason, that’s not possible.", "date": "2026-09-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=464254577/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "it doesn’t connect to my Apple health or other similar trackers.", "date": "2026-02-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1621719397/sortBy=mostRecent/json"},
+        {"app": "Stronger", "quote": "wish it would connect to my Apple health so it’s actually log that I worked out", "date": "2026-01-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1621719397/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "it doesn’t integrate with a lot of other fitness apps I work with.", "date": "2026-10-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "Fitbod", "quote": "I can’t use both as one will override the other.", "date": "2026-11-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1041517543/sortBy=mostRecent/json"},
+        {"app": "HitMeal", "quote": "It doesn’t track my weight from my scale app, and I have to manually input my weight every time", "date": "2026-01-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1544461026/sortBy=mostRecent/json"},
+        {"app": "Yazio", "quote": "How difficult is it to enable water read from Apple Health?", "date": "2026-11-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=946099227/sortBy=mostRecent/json"},
+        {"app": "Runkeeper", "quote": "The sync between Garmin and Runkeeper just stops working all the time with no warning", "date": "2026-08-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=300235330/sortBy=mostRecent/json"},
+        {"app": "Runkeeper", "quote": "the option is not inside the app to choose coros", "date": "2026-10-03", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=300235330/sortBy=mostRecent/json"},
+        {"app": "Nike Run Club", "quote": "it stopped syncing with Strava after my phone battery died in the middle of a run", "date": "2026-11-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=387771637/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none (no source available)",
+      "trend_signals": [],
+      "not_found": "Evidence is spread across many apps but each complaint is a single integration (Strava, Apple Health, Garmin, Coros, scale apps), so there is no single clear target. Strava, Apple Health and Garmin themselves were not researched, and they may be the competitors for this job. Apple platform capability limits were not checked. Overlaps with c1 and c3."
+    }
+  ]
+}

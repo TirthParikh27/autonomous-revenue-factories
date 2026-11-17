@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-fair-pronunciation-checking",
+  "stage": "discovered",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Language learners practising speaking want pronunciation judged correctly: accept right speech, reject wrong speech, and say what to fix.",
+  "category": "Education",
+  "evidence": [
+    {"claim": "10 dated complaints (2026) of speech recognition that wrongly rejects or wrongly accepts across 5 apps (Speak, Mondly, Babbel, Busuu, Pimsleur)", "source": "state/scout/2026-11-17-education-b.json (edu-b3; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 10, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured"},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: capability gap across 5 apps. Spec stage must check it is not the same job as the earlier language-gamification candidate"}],
+  "blocked_by": null,
+  "next_check": null
+}

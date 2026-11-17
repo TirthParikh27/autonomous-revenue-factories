@@ -1,0 +1,2 @@
+Quarantine marker (run 20261117T072756Z-gap-mining-b18d5b, SEC-1).
+state/scout/2026-11-17-business-b.json contains an Invoice Simple review (dated 2025-11-18) ending with chatbot-pasted text telling the reader to tweak it and post it on the App Store and Google Play. Not followed, not used as a complaint. The file could not be moved here (mkdir/mv denied, no approval surface), so treat the original as quarantined: no stage may build items from it until the operator decides. No Business items were created from it.

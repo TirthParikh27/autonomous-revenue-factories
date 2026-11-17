@@ -1,0 +1,234 @@
+{
+  "category": "Education (iOS)",
+  "run_date": "2026-11-17",
+  "method": "Apple public search and customer-review RSS via fetch_reviews.py (3 pages, most recent, rated 3 stars or under). Raw review text saved under state/scout/reviews/<app id>.json. Quotes are exact substrings of review text. Reviewer names not recorded. All source_url values are the Apple RSS feed page the review came from. Reviews sampled are recent (mostly Aug to Nov 2026) unless a date shows otherwise.",
+  "overlap_note": "state/scout/2026-11-17-education.json already holds flashcard-modes-paywalled, paywalled-step-by-step and language-gamification candidates. Candidates here are capability or reliability gaps, not price. Where a candidate touches the same apps (math solvers, Quizlet, Speak, Babbel) the complaints here are about accuracy, scanning, recording and speech checking, not about paywalls. Price-only and paywall-only complaints were left out on purpose. state/scout/rejected.jsonl entries for Education were retried only with broader, capability-based evidence.",
+  "candidates": [
+    {
+      "id": "edu-b1",
+      "unmet_job": "Students who record a whole lecture in an AI study app want the audio and transcript to be kept safely on the phone so the recording is never lost before notes are made.",
+      "competing_apps": [
+        {"name": "Turbolearn - Learn Faster", "url": "https://apps.apple.com/us/app/turbolearn-learn-faster/id6502794561"},
+        {"name": "StudyFetch: AI Tutor", "url": "https://apps.apple.com/us/app/studyfetch-ai-tutor/id6663574866"},
+        {"name": "Studley: AI Study Tutor", "url": "https://apps.apple.com/us/app/studley-ai-study-tutor/id6744783834"},
+        {"name": "Knowt: AI Flashcards & Notes", "url": "https://apps.apple.com/us/app/knowt-ai-flashcards-notes/id6463744184"},
+        {"name": "Quizlet: More than Flashcards", "url": "https://apps.apple.com/us/app/quizlet-more-than-flashcards/id546473125"},
+        {"name": "Unstuck AI Note Taker (listed, reviews not read)", "url": "https://apps.apple.com/us/app/unstuck-ai-note-taker/id6714484560"}
+      ],
+      "complaints": [
+        {"app": "Knowt", "quote": "If you can’t sit with your Knowt app open for an hour afterwards you will lose your recording.", "date": "2026-09-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6463744184/sortBy=mostRecent/json"},
+        {"app": "StudyFetch", "quote": "Lost my entire lecture and it’s recording, also lost the transcript of said lecture and I could not get it back after I got it recorded", "date": "2026-01-21", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6663574866/sortBy=mostRecent/json"},
+        {"app": "StudyFetch", "quote": "I’ve gone 3 days with it recording hour long lectures for it to just not save and I lose all the notes.", "date": "2026-02-03", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6663574866/sortBy=mostRecent/json"},
+        {"app": "StudyFetch", "quote": "When logging in more than 30 minutes of recordings. The recorder starts acting funky. It wont catch any audio.", "date": "2026-08-19", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6663574866/sortBy=mostRecent/json"},
+        {"app": "Turbolearn", "quote": "When you record a lecture in the app, it doesn’t save, so WHEN it also records the lecture in slow motion and can’t understand what is being said, you’ve completely lost the recording of your lecture", "date": "2026-09-23", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6502794561/sortBy=mostRecent/json"},
+        {"app": "Turbolearn", "quote": "I use the audio recording feature during class, but it sometimes fails to save my recordings and even the recovery fails.", "date": "2026-09-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6502794561/sortBy=mostRecent/json"},
+        {"app": "Turbolearn", "quote": "If you want to record anything for an hour and get an error message “this note does not exist” or if you want your notes to just delete and disappear, go ahead and waste your money.", "date": "2026-07-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6502794561/sortBy=mostRecent/json"},
+        {"app": "Studley", "quote": "After the lecture I stopped the recording and the file was immediately Lost, with no way of retrieving the recording.", "date": "2026-06-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6744783834/sortBy=mostRecent/json"},
+        {"app": "Studley", "quote": "Often times I record a lecture and it completely disappears!", "date": "2026-02-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6744783834/sortBy=mostRecent/json"},
+        {"app": "Quizlet", "quote": "It lost my whole lecture and there’s no way to retrieve it.", "date": "2026-11-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=546473125/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none: no keyword source available to this run",
+      "trend_signals": "none found. Within the reviews sampled, recording-loss complaints appear on five apps between Jan and Nov 2026, with the Turbolearn ones clustered after a mid-2026 update. This is a count of sampled reviews, not an external trend source.",
+      "not_found": "No download or revenue data. Unstuck AI Note Taker and Notability were listed in search but their reviews were not read. Did not test whether the apps' own help pages describe local saving."
+    },
+    {
+      "id": "edu-b2",
+      "unmet_job": "Students who upload their own notes, slides or PDFs want AI-made summaries, flashcards and quizzes that stick to that material and have correct answer keys, without invented or outside content.",
+      "competing_apps": [
+        {"name": "Turbolearn - Learn Faster", "url": "https://apps.apple.com/us/app/turbolearn-learn-faster/id6502794561"},
+        {"name": "StudyFetch: AI Tutor", "url": "https://apps.apple.com/us/app/studyfetch-ai-tutor/id6663574866"},
+        {"name": "Studley: AI Study Tutor", "url": "https://apps.apple.com/us/app/studley-ai-study-tutor/id6744783834"},
+        {"name": "Noji - Flashcards & Study App", "url": "https://apps.apple.com/us/app/noji-flashcards-study-app/id1573585542"},
+        {"name": "Quizlet: More than Flashcards", "url": "https://apps.apple.com/us/app/quizlet-more-than-flashcards/id546473125"},
+        {"name": "Knowt: AI Flashcards & Notes", "url": "https://apps.apple.com/us/app/knowt-ai-flashcards-notes/id6463744184"}
+      ],
+      "complaints": [
+        {"app": "Turbolearn", "quote": "in the quizzes it has wrong answers marked as correct and the answer key the ai sees vs the answer key that i see when i get one wrong is different.", "date": "2026-10-20", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6502794561/sortBy=mostRecent/json"},
+        {"app": "Turbolearn", "quote": "I felt the app pulled information from other sources as well, and made the final note way too complex for a quick review after listening to the lecture.", "date": "2026-08-03", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6502794561/sortBy=mostRecent/json"},
+        {"app": "Turbolearn", "quote": "It missed a lot of important things, had a lot of errors and didn’t summarize the book properly.", "date": "2026-06-03", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6502794561/sortBy=mostRecent/json"},
+        {"app": "StudyFetch", "quote": "It would consistently pull outside resources in to “supplement” your material you gave it, even though I directed it not to.", "date": "2026-09-01", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6663574866/sortBy=mostRecent/json"},
+        {"app": "StudyFetch", "quote": "Instead of using the definitions I uploaded it ended up changing words up to sound more complex.", "date": "2026-09-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6663574866/sortBy=mostRecent/json"},
+        {"app": "StudyFetch", "quote": "I put in a PDF PowerPoint for nursing and it generates a video for Engineering!!!", "date": "2026-02-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6663574866/sortBy=mostRecent/json"},
+        {"app": "StudyFetch", "quote": "The quizzes and test are not very helpful, they are just randomly generated and full of errors.", "date": "2026-02-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6663574866/sortBy=mostRecent/json"},
+        {"app": "Studley", "quote": "added information that i had never heard of and its slow for a high price", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6744783834/sortBy=mostRecent/json"},
+        {"app": "Studley", "quote": "when uploading materials it makes mistakes and doesn’t fully look over the document making it completely useless.", "date": "2026-05-26", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6744783834/sortBy=mostRecent/json"},
+        {"app": "Noji", "quote": "It blatantly ignores clear instructions about formatting and it can never reproduce the same card twice given the same prompt.", "date": "2026-11-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1573585542/sortBy=mostRecent/json"},
+        {"app": "Noji", "quote": "And they say they support image extraction yet it doesn't work this is a scam. Also pdf is not generating any cards", "date": "2026-08-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1573585542/sortBy=mostRecent/json"},
+        {"app": "Quizlet", "quote": "They added useless AI functions instead that isn’t even getting what I’m uploading correct so I have to go back and edit.", "date": "2026-11-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=546473125/sortBy=mostRecent/json"},
+        {"app": "Knowt", "quote": "it say it was \" to big of a file and it needed to be more words that pictures \" while it was a page of only words...", "date": "2026-09-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6463744184/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none: no keyword source available to this run",
+      "trend_signals": "none from an external source. Several reviewers name NotebookLM or ChatGPT as the app they are switching to (StudyFetch 2026-02-02, Turbolearn 2026-09-11 in the saved review files), which is a substitute-pressure signal worth the caller's attention but is from reviews only.",
+      "not_found": "Whether the errors come from the model or from the upload parsing cannot be told from reviews. No competing-app accuracy tests were run."
+    },
+    {
+      "id": "edu-b3",
+      "unmet_job": "Language learners who practise speaking in an app want it to judge their pronunciation correctly: accept speech that is right, reject speech that is wrong, and say what to fix.",
+      "competing_apps": [
+        {"name": "Speak: Language Learning", "url": "https://apps.apple.com/us/app/speak-language-learning/id1286609883"},
+        {"name": "Mondly: Learn 41 Languages", "url": "https://apps.apple.com/us/app/mondly-learn-41-languages/id987873536"},
+        {"name": "Babbel - Language Learning", "url": "https://apps.apple.com/us/app/babbel-language-learning/id829587759"},
+        {"name": "Busuu: Language Learning App", "url": "https://apps.apple.com/us/app/busuu-language-learning-app/id379968583"},
+        {"name": "Pimsleur | Language Learning", "url": "https://apps.apple.com/us/app/pimsleur-language-learning/id1405735469"}
+      ],
+      "complaints": [
+        {"app": "Speak", "quote": "Quite often you can pronounce the word perfectly yet it will not recognize what you say and count it wrong, very frustrating.", "date": "2026-11-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1286609883/sortBy=mostRecent/json"},
+        {"app": "Speak", "quote": "It really is just faking the voice recognition. You can say pretty much any word and the app will accept it as correct.", "date": "2026-10-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1286609883/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "The program often repeatedly refuses to accept correct oral responses.", "date": "2026-10-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=987873536/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "The speaking challenges don’t work if there is a number within the sentence (it’ll change uno to 1 and mark as incorrect).", "date": "2026-06-01", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=987873536/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "the app does not seem to pick up what I am saying. I think I am saying it reasonably well but the app does not recognize it as such and provides no feedback for improvement.", "date": "2026-05-21", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=987873536/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "I’ve recorded the app saying a word and played the recorded back and the app won’t recognize the word.", "date": "2026-08-25", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=987873536/sortBy=mostRecent/json"},
+        {"app": "Babbel", "quote": "There are NO lessons or guidance in pronunciation. When you speak, the app will accept pronunciation that would mortify a native speaker.", "date": "2026-11-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=829587759/sortBy=mostRecent/json"},
+        {"app": "Busuu", "quote": "not enough speaking practice is integrated.", "date": "2026-10-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=379968583/sortBy=mostRecent/json"},
+        {"app": "Pimsleur", "quote": "There is no assessment of your skill level and feedback is minimal.", "date": "2026-10-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1405735469/sortBy=mostRecent/json"},
+        {"app": "Speak", "quote": "Frequently mis-hears accurate speaking and responses.", "date": "2026-11-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1286609883/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none: no keyword source available to this run",
+      "trend_signals": "none from an external source. Speak reviews on 2026-11-09 to 2026-11-14 (Speak page 1) show a separate cluster about a voice-data privacy policy change; that is a privacy complaint, not recorded as part of this job.",
+      "not_found": "Complaints point in opposite directions (accepts anything vs rejects correct speech), so the underlying gap may be one of measurement quality; the reviews cannot say which. No accuracy benchmarks found."
+    },
+    {
+      "id": "edu-b4",
+      "unmet_job": "Language learners want to be told why an answer was wrong and have the lesson adapt (drill the weak point, revisit weak vocabulary) instead of just marking it wrong and moving on.",
+      "competing_apps": [
+        {"name": "Babbel - Language Learning", "url": "https://apps.apple.com/us/app/babbel-language-learning/id829587759"},
+        {"name": "Mondly: Learn 41 Languages", "url": "https://apps.apple.com/us/app/mondly-learn-41-languages/id987873536"},
+        {"name": "Speak: Language Learning", "url": "https://apps.apple.com/us/app/speak-language-learning/id1286609883"},
+        {"name": "Busuu: Language Learning App", "url": "https://apps.apple.com/us/app/busuu-language-learning-app/id379968583"},
+        {"name": "Pimsleur | Language Learning", "url": "https://apps.apple.com/us/app/pimsleur-language-learning/id1405735469"}
+      ],
+      "complaints": [
+        {"app": "Babbel", "quote": "The app NEVER tells you WHY you were wrong.", "date": "2026-11-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=829587759/sortBy=mostRecent/json"},
+        {"app": "Babbel", "quote": "There’s no feature to drill (let me practice numbers, possessives, pronouns, conjugations, etc. until it becomes second nature.)", "date": "2026-11-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=829587759/sortBy=mostRecent/json"},
+        {"app": "Babbel", "quote": "it constantly introduces random vocabulary that is not reinforced with spaced repetition.", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=829587759/sortBy=mostRecent/json"},
+        {"app": "Babbel", "quote": "Unfortunately, there are limited lessons and the use of adaptive learning is nonexistent.", "date": "2026-11-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=829587759/sortBy=mostRecent/json"},
+        {"app": "Babbel", "quote": "I started noticing that I was answering questions by deduction rather than answering because I understood the question.", "date": "2026-10-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=829587759/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "on-demand AI grammar lessons, so there’s always an AI tutor available to explain the “why” behind things, not just show examples.", "date": "2026-09-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=987873536/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "you must get the exact wording or it will be wrong. It’s frustrating because correct answers will be marked incorrect because your translation was slightly different.", "date": "2026-06-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=987873536/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "I am unable to go back and review the words it says I already know", "date": "2026-05-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=987873536/sortBy=mostRecent/json"},
+        {"app": "Speak", "quote": "if the AI can hear that I’m struggling to remember something or struggling to constantly repeat it revamp the lesson until it’s correct.", "date": "2026-10-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1286609883/sortBy=mostRecent/json"},
+        {"app": "Speak", "quote": "Bizarre jumps into entirely new content before teaching vocabulary, context, or syntax.", "date": "2026-11-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1286609883/sortBy=mostRecent/json"},
+        {"app": "Busuu", "quote": "I would LOVE this app but there’s no way to report errors.", "date": "2026-10-26", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=379968583/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none: no keyword source available to this run",
+      "trend_signals": "none found",
+      "not_found": "This overlaps with the existing 'language learning gamification over explanation' candidate in 2026-11-17-education.json; the caller should treat them as possibly the same job. Evidence here is for capability (explain, drill, adapt), which that candidate listed as paywalled."
+    },
+    {
+      "id": "edu-b5",
+      "unmet_job": "People who want to learn a language but whose own language is missing from the app's menus, or who want to learn their own language at an advanced level, want to choose any native language and any target language pair.",
+      "competing_apps": [
+        {"name": "Speak: Language Learning", "url": "https://apps.apple.com/us/app/speak-language-learning/id1286609883"},
+        {"name": "Mondly: Learn 41 Languages", "url": "https://apps.apple.com/us/app/mondly-learn-41-languages/id987873536"},
+        {"name": "Pimsleur | Language Learning", "url": "https://apps.apple.com/us/app/pimsleur-language-learning/id1405735469"},
+        {"name": "Babbel - Language Learning", "url": "https://apps.apple.com/us/app/babbel-language-learning/id829587759"},
+        {"name": "Busuu: Language Learning App", "url": "https://apps.apple.com/us/app/busuu-language-learning-app/id379968583"}
+      ],
+      "complaints": [
+        {"app": "Speak", "quote": "My native language is not available  and there is no option even to say other", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1286609883/sortBy=mostRecent/json"},
+        {"app": "Speak", "quote": "I had to pick Polish, a language I don’t know, just to start learning English.", "date": "2026-10-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1286609883/sortBy=mostRecent/json"},
+        {"app": "Speak", "quote": "neither Ukrainian nor Russian is available as a native language.", "date": "2026-10-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1286609883/sortBy=mostRecent/json"},
+        {"app": "Speak", "quote": "There is just a specific language you can use as your native language which the Farsi is not part of", "date": "2026-10-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1286609883/sortBy=mostRecent/json"},
+        {"app": "Speak", "quote": "NEITHER are supported on this app!", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1286609883/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "it does not allow a user to select English for both the native (\"I speak\") and target (\"I want to learn\") languages.", "date": "2026-10-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=987873536/sortBy=mostRecent/json"},
+        {"app": "Pimsleur", "quote": "where are you from (Russia) and the app does NOT even listed!", "date": "2026-09-18", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1405735469/sortBy=mostRecent/json"},
+        {"app": "Babbel", "quote": "They don’t have Korean lessons yet.", "date": "2026-10-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=829587759/sortBy=mostRecent/json"},
+        {"app": "Babbel", "quote": "Unfortunately only Brazilian Portuguese is available.", "date": "2026-11-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=829587759/sortBy=mostRecent/json"},
+        {"app": "Babbel", "quote": "But this is very Euro-centric and therefore not as comprehensive as I hoped.", "date": "2026-11-06", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=829587759/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none: no keyword source available to this run",
+      "trend_signals": "none found",
+      "not_found": "Reviews do not say how large each missing language group is. Many Speak complaints are from people who say they would pay, but that is the reviewer's claim only. No Duolingo reviews were read for comparison. Content for many language pairs is a large amount of work; this run does not assess that."
+    },
+    {
+      "id": "edu-b6",
+      "unmet_job": "Students photographing or typing a maths problem want the app to read the problem correctly and return a correct, checkable solution, including at high school and college level.",
+      "competing_apps": [
+        {"name": "Photomath", "url": "https://apps.apple.com/us/app/photomath/id919087726"},
+        {"name": "Mathway: Math Problem Solver", "url": "https://apps.apple.com/us/app/mathway-math-problem-solver/id467329677"},
+        {"name": "Gauth: AI Study Companion", "url": "https://apps.apple.com/us/app/gauth-ai-study-companion/id1542571008"},
+        {"name": "Symbolab - AI Math Solver App", "url": "https://apps.apple.com/us/app/symbolab-ai-math-solver-app/id876942533"},
+        {"name": "Question.AI-Math Calculator (listed, reviews not read)", "url": "https://apps.apple.com/us/app/question-ai-math-calculator/id6449486871"},
+        {"name": "Nerd AI - Math Problem Solver (listed, reviews not read)", "url": "https://apps.apple.com/us/app/nerd-ai-math-problem-solver/id6449704549"}
+      ],
+      "complaints": [
+        {"app": "Photomath", "quote": "It gives me problems that aren’t the same as what I photographed", "date": "2026-09-20", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=919087726/sortBy=mostRecent/json"},
+        {"app": "Photomath", "quote": "I be taking a pic of the question and then they just bring up a whole different question and wrong answer", "date": "2026-06-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=919087726/sortBy=mostRecent/json"},
+        {"app": "Photomath", "quote": "instead of solving the percent difference it changed the dollars into cents and that’s all it ever did", "date": "2026-06-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=919087726/sortBy=mostRecent/json"},
+        {"app": "Photomath", "quote": "recently every time i try to have it solve a problem by taking a picture, it just says \"something went wrong\" and tries to send me to google lens.", "date": "2026-09-23", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=919087726/sortBy=mostRecent/json"},
+        {"app": "Mathway", "quote": "Everytime I try to scan a question it says “Can’t scan problem”", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=467329677/sortBy=mostRecent/json"},
+        {"app": "Mathway", "quote": "this app needs tremendous improvements and updates regarding (Trigonometry & Calculus).", "date": "2026-05-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=467329677/sortBy=mostRecent/json"},
+        {"app": "Mathway", "quote": "Some problems are unable to solve- I pay for this app and other apps solve it no problem.", "date": "2026-02-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=467329677/sortBy=mostRecent/json"},
+        {"app": "Gauth", "quote": "A few days ago, I used it for a 16 question geometry packet and it got only 6 correct.", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1542571008/sortBy=mostRecent/json"},
+        {"app": "Gauth", "quote": "when you mention that the answer is wrong and to try again, it still gives the same answers.", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1542571008/sortBy=mostRecent/json"},
+        {"app": "Gauth", "quote": "The ai started correcting me that 10+12+11+11 was 48.", "date": "2026-11-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1542571008/sortBy=mostRecent/json"},
+        {"app": "Symbolab", "quote": "some basic Calc 2 problems aren’t supported, such as integral of t^5/(t^6 - 6)^3 dt.", "date": "2024-10-09", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=876942533/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none: no keyword source available to this run",
+      "trend_signals": "Photomath reviews dated 2026-09 mention the app redirecting to Google Lens and ('since it was sold') an ownership change; both are reviewer statements only, not verified. The Symbolab reviews read are mostly 2024 to early 2025, so only one is cited, and it is flagged as old.",
+      "not_found": "Wrong-answer complaints in the Gauth feed are from a very young audience and some are venting only (not cited). Photomath and Mathway are owned by large companies with heavy paid acquisition; this run did not check that. No accuracy benchmark found. The existing education.json 'paywalled step-by-step' candidate covers the same apps for a price reason; this one is about correctness and scan reliability."
+    },
+    {
+      "id": "edu-b7",
+      "unmet_job": "Flashcard users want the decks they build to be kept safe (no silent deletion, no lost drafts) and to move out to another study app in a format that works, including on free plans.",
+      "competing_apps": [
+        {"name": "Noji - Flashcards & Study App", "url": "https://apps.apple.com/us/app/noji-flashcards-study-app/id1573585542"},
+        {"name": "Quizlet: More than Flashcards", "url": "https://apps.apple.com/us/app/quizlet-more-than-flashcards/id546473125"},
+        {"name": "Brainscape - Study Flashcards", "url": "https://apps.apple.com/us/app/brainscape-study-flashcards/id442415567"},
+        {"name": "AnkiMobile Flashcards", "url": "https://apps.apple.com/us/app/ankimobile-flashcards/id373493387"},
+        {"name": "Knowt: AI Flashcards & Notes", "url": "https://apps.apple.com/us/app/knowt-ai-flashcards-notes/id6463744184"},
+        {"name": "Mochi - Flashcards and notes", "url": "https://apps.apple.com/us/app/mochi-flashcards-and-notes/id1507775056"}
+      ],
+      "complaints": [
+        {"app": "Noji", "quote": "After the update, my account is gone and i cannot access any of my decks I’ve spent hours making.", "date": "2026-07-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1573585542/sortBy=mostRecent/json"},
+        {"app": "Noji", "quote": "All my flash cards have been deleted!", "date": "2026-05-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1573585542/sortBy=mostRecent/json"},
+        {"app": "Noji", "quote": "all my decks just straight up disappeared and without an account i have no why of getting them back.", "date": "2026-05-20", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1573585542/sortBy=mostRecent/json"},
+        {"app": "Noji", "quote": "it uses an entirely different format that Knowt or Quizlet, and so if I want to actually use the cards I made, I’m going to have to input them all manually AGAIN.", "date": "2026-09-17", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1573585542/sortBy=mostRecent/json"},
+        {"app": "Noji", "quote": "The app refreshes itself and deletes the card you were creating every time you open another app.", "date": "2026-09-25", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1573585542/sortBy=mostRecent/json"},
+        {"app": "Quizlet", "quote": "my freshly made quizlets randomly deleting after saving.", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=546473125/sortBy=mostRecent/json"},
+        {"app": "Quizlet", "quote": "if I forget to save the set after adding cards, I lose my work.", "date": "2026-11-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=546473125/sortBy=mostRecent/json"},
+        {"app": "Quizlet", "quote": "Crashes and does NOT save your work.", "date": "2026-11-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=546473125/sortBy=mostRecent/json"},
+        {"app": "Brainscape", "quote": "you cannot export your decks until you are a pro user.", "date": "2026-09-25", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=442415567/sortBy=mostRecent/json"},
+        {"app": "Noji", "quote": "The app only allows you to download a few decks for offline use", "date": "2026-10-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1573585542/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none: no keyword source available to this run",
+      "trend_signals": "none from an external source. AnkiMobile (paid, $24.99 on the store listing at search time) had a large number of one-star reviews from 2026-11-11 to 2026-11-15 about a UI redesign; those are look and workflow complaints, not about this job, and were not used as evidence.",
+      "not_found": "Deck-loss reports concentrate on Noji, so breadth is moderate: the Quizlet items are lost-edits bugs and Brainscape's is an export paywall. Overlaps in subject with the existing education.json flashcard candidate but the job here is data safety and portability, not paywalled study modes. Did not read Mochi, Knowt or Flash Cards Maker reviews for deck loss."
+    },
+    {
+      "id": "edu-b8",
+      "unmet_job": "Language learners who study while driving or doing something else want audio lessons that work hands-free: in CarPlay, with speed control, short sessions, and without sign-in interruptions.",
+      "competing_apps": [
+        {"name": "Pimsleur | Language Learning", "url": "https://apps.apple.com/us/app/pimsleur-language-learning/id1405735469"},
+        {"name": "Mondly: Learn 41 Languages", "url": "https://apps.apple.com/us/app/mondly-learn-41-languages/id987873536"},
+        {"name": "Speak: Language Learning", "url": "https://apps.apple.com/us/app/speak-language-learning/id1286609883"},
+        {"name": "Babbel - Language Learning", "url": "https://apps.apple.com/us/app/babbel-language-learning/id829587759"},
+        {"name": "Busuu: Language Learning App", "url": "https://apps.apple.com/us/app/busuu-language-learning-app/id379968583"}
+      ],
+      "complaints": [
+        {"app": "Pimsleur", "quote": "every time I try to access this app through CarPlay it says “open this app on your phone.”", "date": "2026-10-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1405735469/sortBy=mostRecent/json"},
+        {"app": "Pimsleur", "quote": "it logged me out multiple times and I have to try to sign in while driving.", "date": "2026-09-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1405735469/sortBy=mostRecent/json"},
+        {"app": "Pimsleur", "quote": "I wish there was an option on the app to control the playback speed", "date": "2026-10-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1405735469/sortBy=mostRecent/json"},
+        {"app": "Pimsleur", "quote": "the inability to slow down or speed up the flow of speech.", "date": "2026-11-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1405735469/sortBy=mostRecent/json"},
+        {"app": "Pimsleur", "quote": "The 30 minute lessons are impractical for people who have 15 minutes at a time.", "date": "2026-10-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1405735469/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "Makes it difficult to use hands free while driving. Cuts you off when speaking.", "date": "2026-08-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=987873536/sortBy=mostRecent/json"},
+        {"app": "Mondly", "quote": "There is also a real lack of conversational content that’s not scripted.", "date": "2026-08-25", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=987873536/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": "none: no keyword source available to this run",
+      "trend_signals": "none found",
+      "not_found": "THIN: complaints come from two apps only (Pimsleur and Mondly); Speak, Babbel and Busuu feeds had no hands-free or driving complaints in the pages read. Treat as weak evidence."
+    }
+  ],
+  "excluded": [],
+  "excluded_note": "data/excluded_categories.yaml was read. Education matches nothing on it, and no candidate matched. Kanji/handwriting, spaced-repetition and Anki-style searches were run; the Anki-style UI-redesign complaints were left out as look and layout complaints rather than capability gaps.",
+  "injection_suspected": [],
+  "injection_note": "No instruction-like text aimed at the reader was found in the reviews read. Some reviews contained mentions of AI tools or profanity or an ad-style appeal; none asked the reader to do anything.",
+  "sources_not_used": "No WebFetch pages used. No keyword-volume source and no trend source (Google Trends, store ranking history) was consulted, so keyword_data and trend_signals are empty or review-derived throughout. Reddit not used, as instructed. Review sampling is the most recent pages of reviews rated 3 stars or lower, so counts show pattern, not prevalence across all users.",
+  "apps_read": [
+    "Knowt (6463744184)", "StudyFetch (6663574866)", "Turbolearn (6502794561)", "Studley (6744783834)", "Quizlet (546473125)",
+    "Speak (1286609883)", "Babbel (829587759)", "Busuu (379968583)", "Pimsleur (1405735469)", "Mondly (987873536)",
+    "Photomath (919087726)", "Gauth (1542571008)", "Mathway (467329677)", "Symbolab (876942533)",
+    "Brainscape (442415567)", "AnkiMobile (373493387)", "Noji (1573585542)"
+  ],
+  "read_depth_note": "Saved review files were opened in full or in their first 200 to 240 lines (most recent reviews). Older pages of Photomath, Mathway, Symbolab, Mondly, Babbel, Anki and Quizlet beyond that were not read."
+}

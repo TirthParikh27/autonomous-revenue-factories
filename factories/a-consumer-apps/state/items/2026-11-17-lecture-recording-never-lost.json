@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-lecture-recording-never-lost",
+  "stage": "discovered",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Students who record whole lectures want audio and transcript kept safely on the phone so a recording is never lost before notes are made.",
+  "category": "Education",
+  "evidence": [
+    {"claim": "10 dated 2026 complaints of lost lecture recordings or transcripts across 5 apps (Knowt, StudyFetch, Turbolearn, Studley, Quizlet), Jan to Nov 2026", "source": "state/scout/2026-11-17-education-b.json (edu-b1; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 10, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured"},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: recent complaints about one capability across 5 competing apps"}],
+  "blocked_by": null,
+  "next_check": null
+}

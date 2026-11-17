@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-watch-strength-logging-that-syncs",
+  "stage": "discovered",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Log a strength workout from the Apple Watch alone or with the phone without lost sets, missing history or the watch jumping to the wrong exercise.",
+  "category": "Health and Fitness",
+  "evidence": [
+    {"claim": "11 dated complaints about watch strength logging and sync across 5 apps", "source": "state/scout/2026-11-17-health-fitness.json (c1; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 11, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured", "note": "folds in the history-safety job (c3) and custom exercises (c7); those were not made separate items to avoid a shared core job"},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: capability gap across 5 apps"}],
+  "blocked_by": null,
+  "next_check": null
+}

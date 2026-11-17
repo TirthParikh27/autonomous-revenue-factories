@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-source-faithful-ai-study-material",
+  "stage": "discovered",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Students who upload their own notes or PDFs want AI summaries, flashcards and quizzes that stay within that material and have correct answer keys.",
+  "category": "Education",
+  "evidence": [
+    {"claim": "12 dated complaints (Feb to Nov 2026) of AI study tools adding outside content, errors and wrong answer keys across 6 apps (Turbolearn, StudyFetch, Studley, Noji, Quizlet, Knowt). Substitute pressure from NotebookLM and ChatGPT noted by reviewers.", "source": "state/scout/2026-11-17-education-b.json (edu-b2; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 12, "apps_with_complaints": 6, "keyword_popularity": null, "keyword_source": "none configured", "risk": "general-purpose LLM substitutes"},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: capability gap (source fidelity) across 6 apps"}],
+  "blocked_by": null,
+  "next_check": null
+}
