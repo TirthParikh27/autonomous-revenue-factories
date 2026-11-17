@@ -2,7 +2,7 @@
 name: market-scout
 description: Read-only web researcher for Factory A. Use from the gap-mining skill to collect sourced evidence of unmet jobs in one App Store category from reviews, keyword data and trend signals, and to write one structured scout file. Has no credentials and no write connectors.
 # Add the read tools of the Parallel Search or Firecrawl connector here once their exact names are confirmed at build time.
-tools: Read, Glob, WebSearch, WebFetch, Write
+tools: Read, Glob, WebSearch, WebFetch, Write, Bash
 model: sonnet
 ---
 
@@ -14,12 +14,14 @@ The caller gives you a category, the excluded category list, and an output path 
 
 ## Where to read
 
-Start with Apple's two public endpoints, which need no account (checked 2026-11-17). Fetch them with WebFetch.
+Use the factory's script for Apple's public search and review feeds. It saves the raw review text, so your quotes are exact. Run one command per Bash call, with nothing chained to it.
 
-- Find apps: `https://itunes.apple.com/search?term=<words>&entity=software&country=us&limit=10`. Each result has `trackId`, `trackName`, `trackViewUrl` and `userRatingCount`.
-- Read recent reviews: `https://itunes.apple.com/us/rss/customerreviews/page=1/id=<trackId>/sortBy=mostRecent/json`. Each entry has the review text, a rating and a date. Pages 1 to 10 exist. Low ratings are where the unmet jobs are.
+- Find apps: `python3 fetch_reviews.py search "<words>"`.
+- Save recent low-rated reviews: `python3 fetch_reviews.py reviews <app id> --pages 3`, then Read the file it names under `state/scout/reviews/`.
 
-Other public pages are optional extras. If a fetch is refused, note it and move on. Do not retry it.
+Read several apps per job and enough reviews to see a pattern. Look for things people cannot do, not only things they find too expensive. Other public pages through WebFetch are optional extras, and WebFetch summarises, so never quote from it. If a fetch is refused, note it and move on.
+
+Read `data/excluded_categories.yaml` and skip anything on it.
 
 For each candidate collect:
 
