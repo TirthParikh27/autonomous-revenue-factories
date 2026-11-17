@@ -9,7 +9,7 @@ You are a fresh session with no memory. Everything you need is in files. Read `C
 
 ## Inputs
 
-- `data/seeds.yaml`: seed categories and what to prefer. Record the date you mined a category in its `last_mined`. Prefer categories with stronger revenue at the 75th percentile in the RevenueCat data (Business, Education, Productivity ahead of Travel and Gaming).
+- `data/seeds.yaml`: seed categories and what to prefer. Record the date you mined each category in `state/scout/last_mined.json` (a map of category to date; prefix web categories with `web:`), and read that file to see what was mined before. Prefer categories with stronger revenue at the 75th percentile in the RevenueCat data (Business, Education, Productivity ahead of Travel and Gaming).
 - `data/excluded_categories.yaml`: categories that are killed on sight.
 - `state/items/`: existing items, to avoid duplicates and to count the pipeline.
 - `journal/LESSONS.md`.
