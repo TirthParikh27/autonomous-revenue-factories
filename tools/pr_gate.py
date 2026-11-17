@@ -110,9 +110,10 @@ def same_python(old: str, new: str) -> bool:
         return False
 
 
+# A line that starts with a skip: a decorator or a call, not a string that mentions one.
 TEST_SKIP = re.compile(
-    r"pytest\.mark\.(skip|skipif|xfail)\b|pytest\.(skip|xfail)\(|unittest\.skip"
-    r"|\b(it|test|describe)\.(skip|only)\(|\bx(it|describe)\("
+    r"@?(pytest\.mark\.(skip|skipif|xfail)\b|pytest\.(skip|xfail)\(|unittest\.skip"
+    r"|(it|test|describe)\.(skip|only)\(|x(it|describe)\()"
 )
 TEST_DEF = re.compile(r"^\s*(?:async\s+)?def\s+(test_\w+)")
 
@@ -130,7 +131,7 @@ def weakened_tests(diff: str) -> list[str]:
         elif line.startswith("+"):
             if match := TEST_DEF.match(line[1:]):
                 added.add(match.group(1))
-            if TEST_SKIP.search(line):
+            if TEST_SKIP.match(line[1:].lstrip()):
                 skips.append(f"{path}: {line[1:].strip()}")
     gone = [f"{path}: {name} removed" for name, path in removed.items() if name not in added]
     return gone + skips

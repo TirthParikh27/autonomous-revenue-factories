@@ -163,6 +163,7 @@ def test_removed_and_skipped_tests_are_named():
         "diff --git a/web/pay.test.ts b/web/pay.test.ts\n"
         "+it.skip('charges once', () => {})\n"
         "+describe.only('pay', () => {})\n"
+        "+    note = 'it.skip( and @pytest.mark.skip in a string are not skips'\n"
         "diff --git a/pay.py b/pay.py\n"
         "-def test_helper():\n+@pytest.mark.skip\n"
     )
