@@ -188,7 +188,7 @@ The judge is tested before any strategy is mined, and again after every engine c
 |---|---|
 | Matches an independent backtest | The engine's equity curve matches a hand-written loop to within 0.1% (`tests/test_judge.py`) |
 | Catches look-ahead | A strategy using the next bar, and one normalising with the full-sample mean, both fail the leak test |
-| Rejects noise | 200 random strategies on real crypto data. The best had a raw Sharpe of 1.33 from market exposure alone. None of the top 25 passed |
+| Rejects noise | 200 random strategies on real crypto data. The best had a raw Sharpe of 1.39 from market exposure alone. None of the top 25 passed |
 | Finds a planted edge | In a synthetic market, a planted edge with Sharpe 2 or 3 before costs passed. Sharpe 1 and 0.5 did not |
 
 | The exam's look at unseen data | In 40 synthetic markets each, with ten unseen months: a strategy with no edge passed 22 times, Sharpe 2 passed 36 times, Sharpe 3 passed 34 times |
