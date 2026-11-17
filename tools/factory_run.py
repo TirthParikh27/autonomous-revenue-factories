@@ -124,7 +124,7 @@ def evidence_ok(report: Path) -> bool:
     for heading in ("## Not done", "## Denied or blocked"):
         if heading not in text:
             return False
-    match = re.search(r"^## Evidence\s*\n(.*?)(?=^## |\Z)", text, re.S | re.M)
+    match = re.search(r"^## Evidence[^\n]*\n(.*?)(?=^## |\Z)", text, re.S | re.M)
     return bool(match and re.search(r"^\s*-\s*\S+", match.group(1), re.M))
 
 
