@@ -16,8 +16,9 @@ For each ad answer plainly:
 1. **Would you stop scrolling?** Does the first frame name a moment the viewer recognises, in words large enough to read on a phone?
 2. **Is the product shown doing its job?** Do the mock-up screens look like a real, finished app, and does the walkthrough show a control being used and the screen changing? Could a stranger say what the app does after watching once with the sound off?
 3. **Does it look cared for?** Anything overlapping, clipped, misaligned, tiny, low-contrast, or sitting where the platform draws its own buttons (top 250 px, bottom 400 px of a 1080 by 1920 frame)? Is the character the same in every frame and every ad?
-4. **Are the three ads different reasons to care**, or the same ad three times?
-5. **Is it honest?** "In development" or "early access" visible, "nothing is charged today" on the end card, no testimonial, rating, user count or invented person, the character speaking as the brand and never as a customer, nothing shown that the spec does not promise.
+4. **Does the narration read like a person talking?** Read the script aloud in your head. Flag stiff, formal or list-like lines, and say whether the ad used the fallback local voice.
+5. **Are the three ads different reasons to care**, or the same ad three times?
+6. **Is it honest?** "In development" or "early access" visible, "nothing is charged today" on the end card, no testimonial, rating, user count or invented person, the character speaking as the brand and never as a customer, nothing shown that the spec does not promise.
 
 ## Pages
 
