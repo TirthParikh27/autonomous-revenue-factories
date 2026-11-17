@@ -8,3 +8,8 @@ extend-exclude = [
 [lint]
 select = ["F", "E9", "B"]
 ignore = ["B905"]   # zip() lengths are checked where they matter
+
+[lint.per-file-ignores]
+# B023 stays on for new code. Here the lambdas are used up inside the loop that defines them.
+"factories/c-trading/data/fetch_binance.py" = ["B023"]
+"factories/c-trading/engine/validate.py" = ["B023"]
