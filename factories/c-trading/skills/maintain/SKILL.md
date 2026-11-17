@@ -5,7 +5,7 @@ description: The self-improving loop of Factory C. Use on the maintenance run to
 
 # Maintain
 
-Read `CLAUDE.md` and `budget.yaml` first. Work through every item at `paper`, `confirmed` or `paused`.
+Read `CLAUDE.md` and `budget.yaml` first. Work through every item at `paper`, `confirmed`, `paused` or `watch`.
 
 The judge's daily job writes `paper/<id>.json` (the forward-test record) and `health/<id>.json` (the record against the range its backtest predicts). You read them. You never compute them.
 
@@ -33,6 +33,14 @@ The judge's daily job writes `paper/<id>.json` (the forward-test record) and `he
    When development data has not moved forward yet, the choice is between pause and retire.
 4. **Confirm.** Move a `paper` item to `confirmed` when its record is long enough to mean something and it has stayed in range. Judge the length from how often it trades and how wide its predicted range is, and write the reasoning in the item. As a guide, hourly strategies need weeks to a few months and daily ones several months. Before confirming, check in the gate file how close its nearest neighbour among confirmed strategies is. A near-copy adds nothing to the combined book and stays at `paper`.
 5. Move a `paused` item back to `paper` when its record has returned inside its range and stayed there.
+
+## Watched strategies
+
+An item at `watch` failed only the deflated Sharpe ratio and is tracked on new prices to see whether it was real. It is not diagnosed, re-tuned or confirmed.
+
+- `below_range` for more than a blip: move it to `killed`.
+- Otherwise leave it. When development data has moved forward to include its watch period, run `python3 -m engine gate <id>` once. It is a counted trial at the same parameters. If it passes, call the `reviewer` agent with the task `result` and move the item to `optimised`, where it takes the exam like any strategy. If it fails again, kill it unless the score has clearly risen with the extra data.
+- Never change its parameters, and never count its paper result as evidence in a packet.
 
 ## Never
 

@@ -88,6 +88,8 @@ A strategy passes when all four hold:
 
 The remaining evidence is reported for judgement, not coded as thresholds: overfitting probability of the sweep, spread of results across the sweep, stability across sub-periods, drawdown, turnover and cost share. The reviewer weighs it and can reject, with reasons written to the item file.
 
+A strategy that fails only the deflated Sharpe ratio is a near miss. It is not thrown away on that one number and it is not tweaked and re-tested, which is how false winners are made. The `optimise` run reads the whole result and decides whether to watch it on new prices, also try the idea in another market, or drop it. A watched strategy is promoted only by passing this same gate once more data has come in.
+
 What the gate can and cannot see is measured in section 9. In short, on five years of data it finds strong edges and cannot tell a modest real edge from luck.
 
 ### 4.4 Development data and the final exam
@@ -136,8 +138,9 @@ One item per strategy, in the format of `factories/_shared/CONVENTIONS.md`.
 | Stage | What happens | Done by | Moves to |
 |---|---|---|---|
 | `proposed` | Card written, and it is a different mechanism from every existing and killed card | `ideate` skill, `idea-scout` agent | `built`, `killed` |
-| `built` | Strategy code written, lint and leak test passed, reviewer confirms code matches card | `build` skill, `reviewer` agent | `optimised`, `killed` |
+| `built` | Strategy code written, lint and leak test passed, reviewer confirms code matches card | `build` skill, `reviewer` agent | `optimised`, `watch`, `killed` |
 | `optimised` | Parameters searched inside declared ranges on development data, stable region chosen, gate passed locally, reviewer did not reject. Waits here for the final exam | `optimise` skill, engine, `reviewer` agent, then the exam job | `paper`, `killed` |
+| `watch` | A near miss: failed only the deflated Sharpe ratio, and the `optimise` run judged the rest of the evidence good. Tracked daily on new prices at fixed parameters. Never in the combined book, never escalated | scripts, `maintain` skill | `optimised` (by passing the gate once more data is in), `killed` |
 | `paper` | Runs on paper, watched daily | scripts, `maintain` skill | `confirmed`, `paused`, `killed` |
 | `confirmed` | Ran correctly and stayed in range for long enough, and adds to the combined book | `maintain` skill, engine check | `awaiting_human`, `paused`, `killed` |
 | `awaiting_human` | Winner packet sent (`F-CAP-1`) | `winner-packet` skill | operator's decision |
@@ -212,6 +215,8 @@ Each part of the judge is taken from published research or established practice,
 | Optimisation | Few parameters, ranges fixed in advance, stable regions over single best points, fit across markets | Carver |
 | Idea quality | A stated reason someone pays for the edge | Carver; AQR factor research |
 | Novelty | Reject returns too correlated with existing strategies | WorldQuant BRAIN |
+| Robustness to the universe | Re-run on each half of the symbols, reported as evidence | WorldQuant BRAIN's sub-universe test |
+| Near misses | Not discarded on one number and not tweaked. A model chooses which to watch; only new prices or another market can promote one | Harvey and Liu (2015) on marginal results; Moskowitz, Ooi and Pedersen (2012) on ideas that hold across markets; Carver on one set of parameters for all markets |
 | Maintenance | Compare live results with the predicted distribution; refit on past data only; do not tune after bad out-of-sample results | Carver; López de Prado's lifecycle |
 | Combining strategies | Equal risk weights across weakly related strategies | Carver; AQR |
 | Separation of roles | The author of an idea never approves it; every trial logged | López de Prado; Man Group |

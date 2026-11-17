@@ -35,6 +35,24 @@ def max_drawdown(r: np.ndarray) -> float:
     return float((equity / np.maximum.accumulate(equity) - 1.0).min())
 
 
+def describe(r: np.ndarray, periods_per_year: float) -> dict:
+    """Plain descriptions of a daily return series. Evidence for a reader, never a pass mark."""
+    equity = np.cumprod(1.0 + r)
+    under = equity < np.maximum.accumulate(equity)
+    longest = run = 0
+    for u in under:
+        run = run + 1 if u else 0
+        longest = max(longest, run)
+    sd = r.std(ddof=1)
+    return {
+        "annual_return": round(float(equity[-1] ** (periods_per_year / len(r)) - 1), 4) if equity[-1] > 0 else -1.0,
+        "annual_volatility": round(float(sd * np.sqrt(periods_per_year)), 4),
+        "skew": round(float(((r - r.mean()) ** 3).mean() / r.std() ** 3), 2) if sd > 0 else 0.0,
+        "worst_day": round(float(r.min()), 4),
+        "longest_drawdown_days": int(longest),
+    }
+
+
 def expected_max_sharpe(n_trials: float, var_sharpe: float) -> float:
     """Best per-period Sharpe expected from n zero-skill trials (False Strategy Theorem)."""
     if n_trials <= 1 or var_sharpe <= 0:

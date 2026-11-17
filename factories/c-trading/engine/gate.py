@@ -64,6 +64,18 @@ def evaluate(strategy: str | strat.Strategy, bars: Bars | None = None) -> dict:
         "beats_buy_and_hold": {"pass": bool(sr > bench_sr), "sharpe": round(sr, 2), "benchmark_sharpe": round(bench_sr, 2)},
     }
 
+    # Does the result survive on each half of the universe? Not logged as trials: same code, same parameters.
+    halves = {}
+    if len(bars.symbols) >= 4:
+        for name, part in (("first_half", bars.symbols[::2]), ("second_half", bars.symbols[1::2])):
+            sub = bars.only(part)
+            try:
+                r = backtest.run(strat.compute(s, sub, s.chosen), sub, s.dataset, band=s.band).daily.to_numpy()
+                a = stats.market_adjusted(r, backtest.buy_and_hold(sub, s.dataset).daily.to_numpy())[0]
+                halves[name] = {"symbols": part, "market_adjusted_sharpe": round(stats.annual_sharpe(a, ppy), 2)}
+            except ValueError as e:
+                halves[name] = {"symbols": part, "error": str(e)}
+
     own = [t for t in log if t["strategy"] == s.id and t["code_hash"] == s.code_hash]
     own_matrix = trials.returns_matrix(own)
     own_sharpes = sorted(t["sharpe"] for t in own)
@@ -78,8 +90,9 @@ def evaluate(strategy: str | strat.Strategy, bars: Bars | None = None) -> dict:
 
     out = {
         "strategy": s.id, "trial": trial["id"], "dataset": s.dataset, "params": s.chosen,
-        "engine_version": CONFIG["engine_version"], "code_hash": s.code_hash,
+        "engine_version": CONFIG["engine_version"], "code_hash": s.code_hash, "judged_on": trial["at"][:10],
         "pass": all(c["pass"] for c in checks.values()),
+        "only_luck_score_failed": [k for k, c in checks.items() if not c["pass"]] == ["deflated_sharpe"],
         "checks": checks,
         "evidence": {
             "sweep_overfitting_probability": (round(stats.pbo(own_matrix, GATE["pbo_blocks"]), 2)
@@ -90,6 +103,8 @@ def evaluate(strategy: str | strat.Strategy, bars: Bars | None = None) -> dict:
             "max_drawdown": trial["max_drawdown"], "total_return": trial["total_return"],
             "orders": trial["orders"], "turnover_per_year": trial["turnover_per_year"],
             "cost_per_year": trial["cost_per_year"], "exposure": trial["exposure"],
+            **stats.describe(daily, ppy),
+            "half_universe": halves or "needs at least 4 symbols",
             "average_weight_by_symbol": {k: round(float(v), 3) for k, v in
                                          strat.compute(s, bars, s.chosen).fillna(0.0).mean().items()},
             "closest_other_strategy": closest,

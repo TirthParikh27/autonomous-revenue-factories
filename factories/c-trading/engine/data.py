@@ -25,6 +25,10 @@ class Bars:
         """The first n bars only. Used by the leak test."""
         return Bars(*(getattr(self, f).iloc[:n] for f in FIELDS))
 
+    def only(self, symbols: list[str]) -> "Bars":
+        """These symbols only. Used by the part-universe check."""
+        return Bars(*(getattr(self, f)[symbols] for f in FIELDS))
+
     @property
     def symbols(self) -> list[str]:
         return list(self.close.columns)

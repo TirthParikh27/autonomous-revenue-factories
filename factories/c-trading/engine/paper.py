@@ -106,20 +106,26 @@ def main() -> int:
         print("refused: the paper stage runs only inside the judge's job", file=sys.stderr)
         return 2
     confirmed = []
-    for path in sorted(_dir("exam").glob("*.json")):
-        exam = json.loads(path.read_text())
-        item_path = trials.state_dir() / "items" / f"{exam['strategy']}.json"
-        item = json.loads(item_path.read_text()) if item_path.exists() else {}
-        if not exam["pass"] or item.get("stage") not in ("paper", "confirmed", "paused", "awaiting_human"):
+    for item_path in sorted((trials.state_dir() / "items").glob("*.json")):
+        item, sid = json.loads(item_path.read_text()), item_path.stem
+        # A watched strategy failed only the luck score. It is tracked from the day after the gate judged it,
+        # at the version the gate judged, and never joins the combined book. Starting any earlier would
+        # publish the held-back window that later exams depend on.
+        watched = item.get("stage") == "watch"
+        judged = (trials.state_dir() / "gate" if watched else _dir("exam")) / f"{sid}.json"
+        if not (watched or item.get("stage") in ("paper", "confirmed", "paused", "awaiting_human")) or not judged.exists():
             continue
-        sid = exam["strategy"]
+        verdict = json.loads(judged.read_text())
+        if not (verdict["only_luck_score_failed"] if watched else verdict["pass"]):
+            continue
         try:
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
                 s = strat.load(sid)
-                if s.code_hash != exam["code_hash"] or s.chosen != exam["params"]:
-                    raise PermissionError("the strategy is not the version that passed the exam")
+                if s.code_hash != verdict["code_hash"] or s.chosen != verdict["params"]:
+                    raise PermissionError("the strategy is not the version that was judged")
                 dev = load_bars(s.dataset, s.symbols)
-                started = str((pd.Timestamp(exam["unseen_to"]) + pd.Timedelta(days=1)).date())
+                last_seen = pd.Timestamp(verdict["judged_on" if watched else "unseen_to"])
+                started = str((last_seen + pd.Timedelta(days=1)).date())
                 paper, health = record(s, dev, load_bars(s.dataset, s.symbols, window="all"), started)
         except Exception as e:
             print(f"{sid}: paper run failed ({type(e).__name__})")
@@ -130,6 +136,7 @@ def main() -> int:
             same_day = before.get("last_day") == paper["last_day"]
             health["days_below_range_in_a_row"] = before.get("days_below_range_in_a_row", 0) + (0 if same_day else 1)
         health["last_day"] = paper["last_day"]
+        paper["watched"] = health["watched"] = watched
         for folder, doc in (("paper", paper), ("health", health)):
             _dir(folder).mkdir(parents=True, exist_ok=True)
             (_dir(folder) / f"{sid}.json").write_text(json.dumps(doc, indent=2) + "\n")

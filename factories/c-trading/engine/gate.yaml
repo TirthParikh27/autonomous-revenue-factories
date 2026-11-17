@@ -1,4 +1,4 @@
-# Pass rules for the four coded checks. Only the operator changes this file (F-ENG-1).
+# Pass rules for the coded checks. Only the operator changes this file (F-ENG-1).
 # Everything else the gate reports is evidence for judgement, not a threshold.
 
 deflated_sharpe_min: 0.95     # one-sided 5% level, the convention in Bailey and Lopez de Prado (2014)

@@ -42,6 +42,10 @@ You are a fresh session with no memory. Read `CLAUDE.md` and `budget.yaml` first
 - Never take a performance figure from a web page as evidence the idea works. It is a reason to test, at most.
 - Never reopen a killed family with a new name.
 
+## Ideas to try in another market
+
+An item at `watch` with a `try_in` line holds a general idea that nearly passed. When that market's data exists in `engine/config.yaml`, write it as a new card for that market with the same rules and the same declared ranges, and say in the card which item it replicates. It is a new item with its own counted trials. This is the one case where a card may repeat an existing idea, and it never applies to a killed one.
+
 ## Finish
 
 End with the shared `run-report` skill. Include the keep or drop reason for every candidate.

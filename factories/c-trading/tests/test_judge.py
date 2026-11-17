@@ -236,5 +236,8 @@ def test_exam_judges_only_unseen_data_and_publishes_no_numbers(tmp_path, monkeyp
     assert health["status"] == "in_range"
     broken = paper.record(bad, dev, bars, started)
     assert broken[1]["status"] == "below_range"
+    out = gate.evaluate(good, dev)                           # evidence a reader needs, none of it a pass mark
+    assert {"annual_return", "annual_volatility", "skew", "worst_day", "longest_drawdown_days"} <= set(out["evidence"])
+    assert set(out["evidence"]["half_universe"]) == {"first_half", "second_half"} and not out["only_luck_score_failed"]
     both = paper.book([record, broken[0]])                   # equal risk: the two cancel after the cutoff
     assert both["days"] == 365 and abs(both["paper_result"]) < abs(record["paper_result"])

@@ -41,7 +41,7 @@ jobs:
               sat = (state / "exam" / f"{p.stem}.json").exists()
               if stage == "optimised" and not sat:
                   exam.append(p.stem)
-              elif stage in ("paper", "confirmed", "paused", "awaiting_human") and sat:
+              elif (stage in ("paper", "confirmed", "paused", "awaiting_human") and sat) or stage == "watch":
                   paper.append(p.stem)
           print("exam=" + " ".join(exam))
           print("all=" + " ".join(exam + paper))
