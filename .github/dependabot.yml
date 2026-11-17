@@ -1,0 +1,23 @@
+# Proposes updates for the pinned actions and the dev tools. Each update waits a week after release,
+# so a compromised version is usually caught before it reaches us. These pull requests wait for Tirth.
+# factories/c-trading/requirements.txt is left out on purpose: its pins are part of the judge (F-ENG-1).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      dev-tools:
+        patterns: ["*"]
