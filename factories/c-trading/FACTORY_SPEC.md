@@ -1,6 +1,6 @@
 # Factory C: Trading strategy factory
 
-Status: architecture, revision 2 (17 November 2026). The engine, the final exam, the paper stage and the health watch are built and tested on crypto data, and the idea, build and optimise stages have each been run through the run wrapper (build steps 1 to 7). The judge's daily job is scheduled and does nothing until a strategy reaches `optimised` or `watch`. The agent stages are not scheduled yet.
+Status: architecture, revision 2 (17 November 2026). The engine, the final exam, the paper stage and the health watch are built and tested on crypto data, and the idea, build and optimise stages have each been run through the run wrapper (build steps 1 to 7). The judge's daily job is built but has no timer yet: it is started by hand, and does nothing until a strategy reaches `optimised` or `watch`. The agent stages are not scheduled either. Nothing in this factory runs on its own until Tirth says so.
 Nothing in this factory is financial advice. It is a research harness on paper accounts.
 
 This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md).
