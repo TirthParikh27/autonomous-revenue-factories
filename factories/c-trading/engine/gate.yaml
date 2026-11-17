@@ -7,3 +7,4 @@ trial_cluster_correlation: 0.5   # trials whose daily returns correlate above th
 leak_cut_points: 4            # how many truncation points the leak test checks
 pbo_blocks: 16                # blocks for the overfitting-probability estimate (the paper's default)
 exam_range_tail: 0.05         # the exam fails a result below the 5th percentile of what development data predicts
+health_range_tail: 0.05       # a paper record below the 5th percentile of what development data predicts is out of range

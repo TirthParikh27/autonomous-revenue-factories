@@ -1,0 +1,83 @@
+name: c-trading-daily
+# The judge's daily job for the trading factory (factories/c-trading/FACTORY_SPEC.md sections 4.4 to 4.6).
+#   1. Final exam for every strategy waiting at `optimised`.
+#   2. Paper stage and health watch for every strategy that passed.
+# A schedule always runs the copy of this file on main, with the engine from main.
+# Only strategy.py and params.yaml are taken from the factory-state branch.
+# Prices after the development cutoff are downloaded here and nowhere else.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 5 * * *"     # yesterday's bars are published about three hours after midnight UTC
+permissions:
+  contents: write
+concurrency: c-trading-daily
+env:
+  FACTORY: factories/c-trading
+  STATE: state-branch/factories/c-trading
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: factory-state
+          path: state-branch
+      - name: Find strategies waiting for the exam or on paper
+        id: find
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os, pathlib, re
+          state = pathlib.Path(os.environ["STATE"])
+          exam, paper = [], []
+          for p in sorted((state / "state" / "items").glob("*.json")):
+              if not re.fullmatch(r"[a-z0-9-]+", p.stem):
+                  continue
+              stage = json.loads(p.read_text()).get("stage")
+              sat = (state / "exam" / f"{p.stem}.json").exists()
+              if stage == "optimised" and not sat:
+                  exam.append(p.stem)
+              elif stage in ("paper", "confirmed", "paused", "awaiting_human") and sat:
+                  paper.append(p.stem)
+          print("exam=" + " ".join(exam))
+          print("all=" + " ".join(exam + paper))
+          PY
+      - uses: actions/setup-python@v5
+        if: steps.find.outputs.all != ''
+        with:
+          python-version: "3.13"
+      - name: Exam, paper stage and health watch
+        if: steps.find.outputs.all != ''
+        env:
+          EXAM: ${{ steps.find.outputs.exam }}
+          ALL: ${{ steps.find.outputs.all }}
+          FACTORY_EXAM: "1"
+        run: |
+          pip install -q -r "$FACTORY/requirements.txt"
+          export FACTORY_STATE_DIR="$PWD/$STATE/state"
+          for id in $ALL; do
+            mkdir -p "$FACTORY/strategies/$id"
+            cp "$STATE/strategies/$id/strategy.py" "$STATE/strategies/$id/params.yaml" "$FACTORY/strategies/$id/"
+          done
+          cd "$FACTORY"
+          python data/fetch_binance.py --window dev --verify > /dev/null
+          python data/fetch_binance.py --window exam > /dev/null
+          for id in $EXAM; do
+            python -m engine.exam "$id" 2> /dev/null || true
+          done
+          python -m engine.paper 2> /dev/null
+      - name: Record the results
+        if: steps.find.outputs.all != ''
+        working-directory: state-branch
+        run: |
+          git config user.name "trading factory judge"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A factories/c-trading
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Exam and paper results"
+          git pull -q --rebase
+          git push -q

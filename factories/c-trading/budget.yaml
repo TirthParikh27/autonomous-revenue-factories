@@ -2,7 +2,7 @@
 # Only the operator edits this file (deny rule). A wish to change it is escalation GEN-1.
 # All USD. Paper only: no live limits exist because no live trading exists.
 #
-# Hard limits: monthly_caps_usd, per_run, run_timeout_minutes, paper, escalation.
+# Hard limits: monthly_caps_usd, per_run, run_timeout_minutes, escalation.
 # Pass rules for strategies are not here. They are in engine/gate.yaml, and the bar rises
 # with the number of trials on its own. "Reference points" are guidance, not gates.
 
@@ -21,18 +21,12 @@ per_run:                 # passed by the wrapper as --max-turns and --max-budget
   build:         {max_turns: 60,  max_budget_usd: 5.00, model: opus}
   optimise:      {max_turns: 60,  max_budget_usd: 5.00, model: opus}
   weekly-review: {max_turns: 40,  max_budget_usd: 4.00, model: opus}
-  # maintain and winner-packet are added with the paper runner (FACTORY_SPEC.md section 11)
+  # maintain and winner-packet are added in build step 7 (FACTORY_SPEC.md section 11)
 
 pipeline:
   max_new_cards_per_run: 3
   max_items_awaiting_build: 6        # ideate does nothing above this
   max_trials_per_run: 120            # spend guard on one optimise run, not a target
-
-paper:                   # enforced by the runner script, not by an agent
-  enabled: false                     # until F-ACC-1 is approved for the venue
-  starting_equity_usd: 100000        # notional paper money
-  max_gross_exposure: 1.0            # no leverage
-  shorting: false
 
 escalation:
   default_packet_expiry_days: 7

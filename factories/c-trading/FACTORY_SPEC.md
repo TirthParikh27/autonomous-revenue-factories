@@ -1,6 +1,6 @@
 # Factory C: Trading strategy factory
 
-Status: architecture, revision 2 (17 November 2026). The engine and the final exam are built and tested on crypto data, and the idea, build and optimise stages have each been run through the run wrapper (build steps 1 to 5). Nothing is scheduled, and no paper trading exists yet.
+Status: architecture, revision 2 (17 November 2026). The engine, the final exam, the paper stage and the health watch are built and tested on crypto data, and the idea, build and optimise stages have each been run through the run wrapper (build steps 1 to 6). Nothing is scheduled yet.
 Nothing in this factory is financial advice. It is a research harness on paper accounts.
 
 This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md).
@@ -22,7 +22,7 @@ Three findings from the research shape everything below:
 ## 2. Scope
 
 - **Timeframe:** 15-minute, hourly and daily bars, holding periods from under an hour to a few weeks. All three data sources provide 15-minute history. The shorter the bar, the larger the share of return that costs take, so a 15-minute strategy has to clear the same cost tests with far less room.
-- **Markets:** US ETFs and spot crypto (Alpaca paper account), FX (OANDA demo account).
+- **Markets:** spot crypto now. US ETFs and FX once the operator creates the Alpaca and OANDA accounts their data needs.
 - **Data:** Alpaca bars (US, from 2016), OANDA candles (FX, from 2005), Binance public archive (crypto). Pulled by scripts into fixed snapshots.
 - **Strategy families:** any that bar data can test honestly. Trend, momentum, mean reversion, carry, breakout, seasonality, cross-market signals, and combinations.
 - **Out of scope:** real money; anything faster than 15-minute bars or dependent on speed (arbitrage across venues, market making); single stocks until survivorship-free data is bought; crypto derivatives until a paper venue open to Australians is confirmed; prediction markets. Adding any of these is escalation `F-VENUE-1`.
@@ -42,7 +42,7 @@ Three findings from the research shape everything below:
                                                      |   winner packet -> operator
 ```
 
-Left of the line, agents work in seconds on development data. Right of the line, nothing is written by a model: the exam, the paper runner and the health watch are scripts.
+Left of the line, agents work in seconds on development data. Right of the line, nothing is written by a model: the exam, the paper stage and the health watch are scripts.
 
 ## 4. Components
 
@@ -93,26 +93,28 @@ What the gate can and cannot see is measured in section 9. In short, on five yea
 
 - Development data stops at a cutoff date. It is the only market data that exists where agents work.
 - The held-back window, from the cutoff to today, exists only inside one GitHub Actions job.
-- The exam job (`.github/workflows/c-trading-exam.yml`) runs daily and picks up every item at `optimised`. It takes the engine and its own workflow from `main`, and only `strategy.py` and `params.yaml` from the `factory-state` branch.
+- The judge's job (`.github/workflows/c-trading-daily.yml`) runs daily and picks up every item at `optimised`. It takes the engine and its own workflow from `main`, and only `strategy.py` and `params.yaml` from the `factory-state` branch.
 - It checks that the submitted code and parameters are the ones whose trials are in the log, re-runs the gate on development data, and only then runs the strategy once across the held-back window. Three things must hold there: the leak test passes, the market-adjusted return after costs is positive, and the result is not below the 5th percentile of what the development result predicts for a window that short.
 - The job writes `exam/<id>.json`: pass or fail per check, nothing else, and moves the item to `paper` or `killed`. Agents never see held-back returns. A strategy takes the exam once.
 - A failed strategy's family is closed. A later strategy whose development returns move with a failed one is refused before any look.
 - The cutoff rolls forward on a schedule, releasing old exam data to development and adding new. Time supplies fresh exam data, and the paper period is the last unseen test.
 
-### 4.5 Paper trading
+### 4.5 Paper stage: a forward test
 
-Two scripts on a schedule matching each strategy's bar size. No model is involved. GitHub Actions schedules can start several minutes late, which is acceptable for hourly and daily bars. 15-minute strategies need a punctual scheduler, chosen in build step 6.
+The operator chose a forward test by script over broker paper accounts (17 November 2026). Broker accounts can be added later for order plumbing, and are needed anyway for ETF and FX data.
 
-- **Runner.** Loads each deployed strategy at the exact code version that passed the exam, computes targets, nets them across strategies, and places paper orders. Paper endpoints are hard-coded.
-- **Journal.** Pulls fills, re-prices each one with the engine's cost model, and attributes results to each strategy. Broker paper profit is treated as an upper bound and never reported as the result.
+- **What it is.** Each day the judge's GitHub job (`.github/workflows/c-trading-daily.yml`) downloads yesterday's bars and runs every strategy that passed the exam, at the exact code and parameters that passed (`engine/paper.py`). Only the days after its exam count. Those prices did not exist when the strategy was built, so nothing could have been fitted to them.
+- **Fills and costs** are the engine's own, the same as in the backtest. The paper record and the backtest are therefore directly comparable, and no model is involved.
+- **Output.** `paper/<id>.json`: the daily record of the strategy, the benchmark and the market-adjusted result.
+- **What it does not test.** Real order handling and measured slippage. The cost model stays an assumption until a broker paper account is added.
 
-A strategy that passes the exam goes to paper automatically. Paper costs nothing, so no approval is needed.
+A strategy that passes the exam starts its paper record automatically. It costs nothing, so no approval is needed.
 
 ### 4.6 Maintenance: the self-improving loop
 
 Each paper strategy has a predicted range: the spread of outcomes its backtest implies for the time it has been running.
 
-1. **Watch** (script, every day). Compares each strategy's re-priced paper results, costs and trade frequency with its predicted range. Writes `health/<id>.json`.
+1. **Watch** (script, every day, in the same job). Compares each strategy's market-adjusted paper result with the range its development result predicts for a record that long. Writes `health/<id>.json` with `in_range`, `below_range`, `above_range` or `too_early` (under 30 days).
 2. **Diagnose** (agent, when a strategy leaves its range). Reads the health file, fills and recent market data. Names one cause: implementation fault, higher costs, a regime the strategy was never tested in, or a fading edge. Proposes one action.
 3. **Act.**
    - *Fix* an implementation fault and restart the paper clock.
@@ -154,7 +156,7 @@ Every number in a report is read from a file the engine or a script wrote.
 
 - **Sub-agents:** `idea-scout` (web access, no market data, one output file) and `reviewer` (reads card, code and engine output; can only reject).
 - **Skills:** `ideate`, `build`, `optimise`, `maintain`, `winner-packet`, `weekly-review`.
-- **Scripts:** data snapshots, engine, exam job, paper runner, journal, health watch.
+- **Scripts:** data snapshots, engine, exam, paper stage, health watch.
 - **Schedules:** scripts on GitHub Actions. Skills as Claude Code scheduled tasks, each run by hand three times before it is scheduled.
 
 ## 8. Hard guardrails
@@ -163,12 +165,12 @@ Only these are enforced in code. Everything else is guidance that a run weighs a
 
 | Guardrail | Enforced by |
 |---|---|
-| Paper only | No live keys exist. Paper endpoints are hard-coded in the runner |
+| Paper only | No broker account or key of any kind exists. The paper stage is a calculation |
 | Agents cannot edit the engine, gate rules, trial log or exam results | Path deny rules in `.claude/settings.json`, and the exam job uses `main`'s copy |
 | Agents evaluate strategies only through the engine | The allow list permits `python3 -m engine` and no other program |
-| Held-back data is never where agents work | It is fetched only inside the exam job |
+| Prices after the cutoff are never where agents work | They are fetched only inside the judge's GitHub job |
 | Every trial is counted | The engine logs before it prints, and the exam fails if trials are missing |
-| No model in the order path | Runner and journal are scripts |
+| No model judges a result | The exam, the paper stage and the health watch are scripts |
 | Spend caps and kill switch | `budget.yaml`, run wrapper, `STOP` file |
 
 Known gap: an agent with web access could look up recent prices itself. Deny rules cover the data vendors, and the paper period remains a test nothing can have seen.
@@ -224,14 +226,15 @@ Where research gives no agreed number, such as a pass mark for overfitting proba
 3. Done: one strategy taken by hand from card to local gate (`strategies/crypto-trend-1h/`). It failed the gate narrowly, which is a valid result.
 4. Done: `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, permissions, the `ideate`, `build`, `optimise` and `weekly-review` skills, and both agents.
 5. Done: the exam (`engine/exam.py`) and its GitHub job. The job first runs for real once it is on `main` and a strategy reaches `optimised`.
-6. Paper runner and journal (needs `F-ACC-1`), then the `winner-packet` skill.
-7. Health watch and the `maintain` skill.
+6. Done: the paper stage as a forward test, with the health watch (`engine/paper.py`). Checked end to end on real data by treating the last months of development data as unseen.
+7. The `maintain` and `winner-packet` skills, and the combined book.
 8. Idea scout, then schedules.
 
 ## 12. Open items
 
 - Whether the operator wants a longer paper period before a winner packet than the engine's own judgement.
-- The crypto fee is Alpaca's published taker fee (0.25% a side). Slippage is an assumption until paper fills are measured.
+- The crypto fee is Alpaca's published taker fee (0.25% a side). Slippage is an assumption until a broker paper account measures it.
 - The trial log is committed on `main` under `state/` for now. It moves to the `factory-state` branch when the run wrapper is wired up.
 - Alpaca's free US data covers one exchange with about 4 to 5% of volume, so volume-based hourly signals on ETFs are unreliable until better data is bought.
 - A paper venue for crypto funding carry that is open to Australians has not been confirmed.
+- Paper records are readable by agents and cover days that a later strategy's exam will also cover. An agent could learn a little about recent market direction from them.

@@ -25,7 +25,7 @@ Each run does one stage and exits. You are started by the run wrapper with one s
 
 Run one simple command per Bash call. The engine is the only program you run: `python3 -m engine check|trial|sweep|gate <strategy>`. Use Read, Glob and Grep to look at files, never `ls` or `cat`, and Write and Edit to change them. Stay inside this folder: anything outside it is denied, and a denial fails the run. Do not run `git`: you leave files in the working tree.
 
-Stage order: `ideate`, `build`, `optimise`, then the exam, paper trading and the health watch, which are scripts. `maintain` and `winner-packet` arrive with the paper runner. `weekly-review` runs weekly.
+Stage order: `ideate`, `build`, `optimise`, then the exam, the paper stage and the health watch, which are scripts in a daily GitHub job. Then `maintain` and `winner-packet`. `weekly-review` runs weekly.
 
 ## Hard rules
 
@@ -34,7 +34,7 @@ These protect the judge, the accounts and the count. Everything else in this fac
 1. **Every evaluation goes through the engine.** Never run, estimate, approximate or reason out a backtest any other way, and never write your own script that reads market data. The engine logs each trial before it prints the result. An unlogged test is the worst thing you can do here.
 2. **You do not touch the judge.** `engine/`, `lib/`, `data/`, `tests/`, `state/trials/`, `state/gate/`, `exam/`, `paper/`, `health/`, `budget.yaml`, `requirements.txt`, this file and `ESCALATION.md` are not yours to edit. If you believe the engine is wrong, write the evidence and raise `F-ENG-1`. Use the current engine meanwhile.
 3. **Development data only.** The data under `data/dev/` is the only market data you may use. Do not fetch, look up or recall prices from any other source, and do not try to learn anything about the held-back window beyond the exam's pass or fail.
-4. **Paper only, and no model in the order path.** You never place, change or cancel an order, and you never hold a broker key. Live keys do not exist. Do not ask for them or design around their absence.
+4. **Paper only.** The paper stage is a forward test by script on new prices. No broker account or key exists, paper or live. Do not ask for one or design around its absence.
 5. **Decide before you look.** The card (idea, reason, rules, parameter ranges, what would kill it) is written before the first trial and is not edited after it. A changed idea is a new card and a new item.
 6. **A failed family is closed.** Do not retry a failed gate or exam with small changes, a different window or a narrower universe. Record the reason and move the item to `killed`.
 7. **Numbers come from files the engine or a script wrote.** Copy every figure in a report, item or packet from `state/trials/`, `state/gate/`, `exam/`, `paper/` or `health/`, with the path. Never restate one from memory.
@@ -85,9 +85,9 @@ All numbers are in `budget.yaml`. Read it each run.
 
 | Rule | Mechanism |
 |---|---|
-| Paper only | No live keys exist. Paper endpoints are hard-coded in the runner |
+| Paper only | No broker account or key of any kind exists. The paper stage is a calculation |
 | Judge cannot be edited | Deny rules in `.claude/settings.json`. The exam job uses the engine from `main` |
 | Only the engine reads data | The allow list permits `python3 -m engine` and no other program |
 | Every trial is counted | The engine logs before it prints. The exam fails if a strategy's trials are missing from the log |
-| Held-back data is unseen | It is fetched only inside the exam job |
+| Prices after the cutoff are unseen | They are fetched only inside the judge's GitHub job |
 | Spend caps and kill switch | The run wrapper, `budget.yaml`, `STOP` |

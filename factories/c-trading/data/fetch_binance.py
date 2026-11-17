@@ -27,6 +27,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 URL = "https://data.binance.vision/data/spot/monthly/klines/{s}/15m/{s}-15m-{ym}.zip"
+URL_DAY = "https://data.binance.vision/data/spot/daily/klines/{s}/15m/{s}-15m-{d}.zip"   # published a few hours after each UTC day
 COLS = ["ts", "open", "high", "low", "close", "volume"]
 
 
@@ -38,13 +39,13 @@ def months(start: dt.date, end: dt.date) -> list[str]:
     return out
 
 
-def fetch_month(symbol: str, ym: str) -> pd.DataFrame | None:
+def fetch(url: str) -> pd.DataFrame | None:
     try:
-        with urllib.request.urlopen(URL.format(s=symbol, ym=ym), timeout=120) as r:
+        with urllib.request.urlopen(url, timeout=120) as r:
             raw = r.read()
     except urllib.error.HTTPError as e:
         if e.code == 404:
-            return None  # month not published yet, or symbol not listed
+            return None  # not published yet, or symbol not listed
         raise
     with zipfile.ZipFile(io.BytesIO(raw)) as z:
         df = pd.read_csv(z.open(z.namelist()[0]), header=None, usecols=range(6), names=COLS)
@@ -76,8 +77,12 @@ def main() -> int:
     manifest = {}
     for symbol in args.symbols:
         with cf.ThreadPoolExecutor(8) as pool:
-            parts = list(pool.map(lambda ym: fetch_month(symbol, ym), months(start, end)))
-        df = pd.concat([p for p in parts if p is not None]).drop_duplicates("ts").sort_values("ts")
+            parts = [p for p in pool.map(lambda ym: fetch(URL.format(s=symbol, ym=ym)), months(start, end)) if p is not None]
+            if args.window == "exam":       # days after the last whole month come from the daily files
+                first = max(p["ts"].max() for p in parts).date() + dt.timedelta(days=1) if parts else start
+                days = [first + dt.timedelta(days=i) for i in range((end - first).days)]
+                parts += [p for p in pool.map(lambda d: fetch(URL_DAY.format(s=symbol, d=d)), days) if p is not None]
+        df = pd.concat(parts).drop_duplicates("ts").sort_values("ts")
         lo = pd.Timestamp(start, tz="UTC")
         hi = pd.Timestamp(end, tz="UTC") + pd.Timedelta(days=1)
         df = df[(df["ts"] >= lo) & (df["ts"] < hi)]

@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from engine import CONFIG, backtest, exam, gate, stats, strategy as strat, trials, validate
+from engine import CONFIG, backtest, exam, gate, paper, stats, strategy as strat, trials, validate
 from engine.data import Bars
 
 DATASET = "crypto-1h"
@@ -158,3 +158,10 @@ def test_exam_judges_only_unseen_data_and_publishes_no_numbers(tmp_path, monkeyp
     out = exam.evaluate(bad, dev, bars)
     assert not out["pass"] and out["checks"]["gate_on_development_data"]
     assert not out["checks"]["positive_after_costs_on_unseen_data"]
+
+    # The paper record starts where it is told to, and the health watch flags only the strategy that broke.
+    started = str((dev.close.index[-1] + pd.Timedelta(days=1)).date())
+    record, health = paper.record(good, dev, bars, started)
+    assert record["daily"][0][0] == started and record["days"] == len(record["daily"]) == 365
+    assert health["status"] == "in_range"
+    assert paper.record(bad, dev, bars, started)[1]["status"] == "below_range"
