@@ -9,11 +9,13 @@ Also names the changed files that only the operator may merge (.github/CODEOWNER
 import argparse
 import fnmatch
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
+OPT_OUT = re.compile(r"#\s*pragma:\s*no ?cover")
 CODE_SUFFIXES = {".py", ".js", ".jsx", ".ts", ".tsx", ".swift", ".sh", ".sql"}
 
 
@@ -87,7 +89,7 @@ def coverage_opt_outs(diff: str) -> list[str]:
     """Added lines that hide code from the coverage rule."""
     return [
         line[1:].strip() for line in diff.splitlines()
-        if line.startswith("+") and not line.startswith("+++") and "pragma: no cover" in line
+        if line.startswith("+") and not line.startswith("+++") and OPT_OUT.search(line)
     ]
 
 
