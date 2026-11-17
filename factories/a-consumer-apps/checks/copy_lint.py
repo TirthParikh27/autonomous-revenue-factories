@@ -8,6 +8,7 @@ Exit 0 if every file is clean, 1 otherwise. Each problem is printed with its fil
 from __future__ import annotations
 
 import argparse
+import html
 import re
 import sys
 from pathlib import Path
@@ -27,6 +28,12 @@ AVAILABLE_NOW = r"\b(download (it )?(now|today)|available (now|today)|get it on 
 PRE_BUILD_MARK = r"\bin development\b|\bearly access\b"
 NO_CHARGE_MARK = r"\bnothing is charged today\b|\bno charge today\b|\byou will not be charged\b"
 NUMERIC_CLAIM = r"\b\d+(\.\d+)?\s?(%|x\b|times\b)"
+
+
+def visible_text(text: str) -> str:
+    """For HTML and SVG, keep only what a person reads: drop style and script blocks, then tags."""
+    text = re.sub(r"(?is)<(style|script)\b.*?</\1\s*>", " ", text)
+    return html.unescape(re.sub(r"(?s)<[^>]+>", " ", text)).replace("\xa0", " ")
 
 
 def lint(text: str, pre_build: bool = False, has_price: bool = False, claims: list[str] | None = None) -> list[str]:
@@ -64,7 +71,10 @@ def main(argv: list[str] | None = None) -> int:
         claims = [c if isinstance(c, str) else str(c.get("claim", "")) for c in loaded.get("claims", [])]
     failed = False
     for path in args.files:
-        for problem in lint(path.read_text(), args.pre_build, args.has_price, claims):
+        text = path.read_text()
+        if path.suffix.lower() in (".html", ".htm", ".svg"):
+            text = visible_text(text)
+        for problem in lint(text, args.pre_build, args.has_price, claims):
             failed = True
             print(f"FAIL {path}: {problem}")
     if not failed:

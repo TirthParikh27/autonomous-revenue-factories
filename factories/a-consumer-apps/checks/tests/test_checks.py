@@ -217,3 +217,141 @@ def test_publish_drafts_writes_drafts_and_refuses_bad_copy(tmp_path):
     assert json.loads((tmp_path / "drafts.json").read_text())["drafts"] == [{"post": 1, "id": "dry-1", "state": "draft"}]
     manifest.write_text(json.dumps({"posts": [{"caption": "Users love it. Rated 4.8 out of 5"}]}))
     assert publish.publish_drafts(manifest, [])
+
+
+# ---- page_check.js: walks a test page's funnel in a real browser. Skipped where Node or Playwright is missing.
+
+PAGE = """<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><body>
+<button id="p" data-walk="1">Get early access</button>
+<form id="f" hidden><input type="email" id="e" data-walk="2"><button data-walk="3">Join</button></form>
+<script>
+var C = window.LAUNCH || {};
+function track(n){ if (C.eventEndpoint && navigator.sendBeacon) navigator.sendBeacon(C.eventEndpoint, JSON.stringify({event:n})); }
+track("page_view");
+p.onclick=function(){track("price_click");%s};
+f.onsubmit=function(ev){ev.preventDefault();fetch(C.signupEndpoint,{method:"POST",body:"{}"}).then(function(){track("committed_signup");});};
+</script>"""
+
+
+def run_page_check(tmp_path, page):
+    import shutil, subprocess
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    if not shutil.which("node"):
+        pytest.skip("node not installed")
+    site = tmp_path / "site"
+    site.mkdir()
+    (site / "index.html").write_text(page)
+    proc = subprocess.run(["node", str(root / "page_check.js"), str(site), str(tmp_path / "check")], capture_output=True, text=True, timeout=120)
+    if "Cannot find module 'playwright'" in proc.stderr or "Executable doesn't exist" in proc.stderr:
+        pytest.skip("playwright not installed")
+    return proc
+
+
+def test_page_check_walks_a_working_funnel(tmp_path):
+    proc = run_page_check(tmp_path, PAGE % "f.hidden=false")
+    assert proc.returncode == 0, proc.stderr
+    report = json.loads(proc.stdout)
+    assert report["events"] == ["page_view", "price_click", "committed_signup"]
+    assert report["signup_posted"] and not report["external_requests"]
+    assert all(__import__("os").path.exists(s) for s in report["screenshots"])
+
+
+def test_page_check_fails_when_a_step_cannot_be_used(tmp_path):
+    proc = run_page_check(tmp_path, PAGE % "")   # the button never opens the form
+    assert proc.returncode == 1
+    report = json.loads(proc.stdout)
+    assert "committed_signup" not in report["events"] and not report["signup_posted"]
+
+
+def test_page_check_fails_a_page_that_clicks_fine_but_sends_nothing(tmp_path):
+    silent = '<!doctype html><body><button data-walk="1">Get early access</button>'
+    proc = run_page_check(tmp_path, silent)
+    assert proc.returncode == 1
+    assert "no sign-up was posted" in json.loads(proc.stdout)["problems"]
+
+
+def test_page_check_follows_a_step_that_appears_after_a_click(tmp_path):
+    late = PAGE.replace('<form id="f" hidden><input type="email" id="e" data-walk="2"><button data-walk="3">Join</button></form>', '<div id="slot"></div>') % (
+        "slot.innerHTML='<form id=f><input type=email id=e data-walk=2><button data-walk=3>Join</button></form>';"
+        "f.onsubmit=function(ev){ev.preventDefault();fetch(C.signupEndpoint,{method:'POST',body:'{}'}).then(function(){track('committed_signup');});}")
+    late = late.replace("f.onsubmit=function(ev){ev.preventDefault();fetch(C.signupEndpoint,{method:\"POST\",body:\"{}\"}).then(function(){track(\"committed_signup\");});};", "")
+    proc = run_page_check(tmp_path, late)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert json.loads(proc.stdout)["events"][-1] == "committed_signup"
+
+
+def test_copy_lint_reads_html_as_a_person_would():
+    html = "<style>.a{width:100%}</style><p>In development. Early access.</p><script>var x = 50 % 3;</script>"
+    assert copy_lint.lint(copy_lint.visible_text(html), pre_build=True) == []
+    assert copy_lint.lint(copy_lint.visible_text("<p>In development. Users love it.</p>"), pre_build=True)
+    assert copy_lint.lint(copy_lint.visible_text("<p>In development. Users&nbsp;love it. &#9733;&#9733;</p>"), pre_build=True)
+
+
+def test_page_check_fails_a_page_wider_than_the_phone(tmp_path):
+    proc = run_page_check(tmp_path, (PAGE % "f.hidden=false") + '<div style="width:900px;height:10px"></div>')
+    assert proc.returncode == 1
+    assert json.loads(proc.stdout)["sideways_scroll"]
+
+
+def test_voice_never_prints_or_crashes_on_a_strange_credentials_file(tmp_path, capsys, monkeypatch):
+    voice = _voice()
+    cred = tmp_path / ".heygen" / "credentials"
+    cred.parent.mkdir()
+    for content in ["api_key: SECRETKEY123\nother: x", '{"oauth": "x"}', '{"oauth": {"access_token": "SECRETKEY123", "expires_at": 5}}', "[1]"]:
+        cred.write_text(content)
+        assert voice.heygen_headers({}, tmp_path)[0] is None
+    cred.write_text(json.dumps({"oauth": {"access_token": "t", "expires_at": "2999-01-01T00:00:00.123456789Z"}}))
+    assert voice.heygen_headers({}, tmp_path)[0] is not None                     # long fractions still parse on Python 3.9
+
+    def boom(*a, **k):
+        raise ValueError("Invalid header value b'SECRETKEY123'")
+    monkeypatch.setattr(voice, "heygen_headers", lambda: ({"X-Api-Key": "SECRETKEY123"}, "HeyGen API key"))
+    monkeypatch.setattr(voice, "speak_heygen", boom)
+    monkeypatch.setattr(voice, "speak_local", boom)
+    assert voice.main(["hello", "-o", str(tmp_path / "vo")]) == 1
+    assert "SECRETKEY123" not in capsys.readouterr().out
+
+
+# ---- voice.py: which voice is used, and that a dead login falls back instead of failing or leaking
+
+def _voice():
+    import importlib
+    return importlib.import_module("voice")
+
+
+def test_voice_prefers_key_then_valid_login_and_refuses_an_expired_one(tmp_path):
+    voice = _voice()
+    assert voice.heygen_headers({"HEYGEN_API_KEY": "k"}, tmp_path)[0] == {"X-Api-Key": "k"}
+    assert voice.heygen_headers({}, tmp_path)[0] is None                       # no login at all
+    cred = tmp_path / ".heygen" / "credentials"
+    cred.parent.mkdir()
+    cred.write_text(json.dumps({"oauth": {"access_token": "t", "expires_at": "2999-01-01T00:00:00Z"}}))
+    assert voice.heygen_headers({}, tmp_path)[0]["Authorization"] == "Bearer t"
+    cred.write_text(json.dumps({"oauth": {"access_token": "t", "expires_at": "2020-01-01T00:00:00Z"}}))
+    headers, note = voice.heygen_headers({}, tmp_path)
+    assert headers is None and "expired" in note and "t" not in note.split()   # says why, never the token
+    assert cred.read_text().count("2020-01-01")                                # the login file is never rewritten
+
+
+def test_voice_heygen_writes_audio_and_reports_length(tmp_path):
+    voice = _voice()
+
+    class Resp:
+        def __init__(self, body): self.body = body
+        def read(self): return self.body
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+
+    def opener(req, timeout=0):
+        if req.full_url == voice.HEYGEN_SPEECH_URL:
+            assert json.loads(req.data)["text"] == "hello"
+            return Resp(json.dumps({"data": {"audio_url": "https://cdn.example/a.mp3", "word_timestamps": [{"word": "hello", "start": 0, "end": 0.6}]}}).encode())
+        assert "Authorization" not in req.headers and "X-api-key" not in req.headers   # no credential sent to the file host
+        return Resp(b"mp3-bytes")
+
+    result = voice.speak_heygen("hello", tmp_path / "audio" / "vo-1", "v", {"X-Api-Key": "k"}, opener)
+    assert result["provider"] == "heygen" and result["durationSeconds"] == 0.75
+    assert (tmp_path / "audio" / "vo-1.mp3").read_bytes() == b"mp3-bytes"
+    with pytest.raises(RuntimeError):
+        voice.speak_heygen("hello", tmp_path / "x", "v", {}, lambda req, timeout=0: Resp(b'{"data": {"audio_url": "http://insecure/a.mp3"}}'))

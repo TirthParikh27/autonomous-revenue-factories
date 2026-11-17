@@ -26,12 +26,12 @@ Design consequences:
 
 ## 2. Factory portfolio
 
-Seven factories are blueprinted. The build order is the portfolio ranking in `RESEARCH_REPORT.md`. It is a recommendation for you to overrule. The first revision's lowest-risk order (Apify first) is kept in the report for comparison.
+Seven factories were blueprinted. On 17 November 2026 the operator folded factory G (micro-SaaS and browser extensions) into factory A, which now builds web products as well as iOS apps, so six remain. The build order is the portfolio ranking in `RESEARCH_REPORT.md`. It is a recommendation for you to overrule. The first revision's lowest-risk order (Apify first) is kept in the report for comparison.
 
 | Order | Directory | Model | Default posture |
 |---|---|---|---|
-| 1 | `factories/a-consumer-apps` | Consumer app portfolio, test-first | About 100 ideas tested per cycle with real paid traffic, about 4 built, releases paced at 1 to 2 new apps a month. Operator activates ads and submits to the store. Needs cloud builds because there is no Xcode on your Mac |
-| 2 | `factories/g-marketplace-tools` | Chrome extensions and niche micro-SaaS | Uses the same landing-page test pattern as factory A before building. Human submits to stores. Shopify's 10 November 2026 rules rule out a Shopify app portfolio |
+| 1 | `factories/a-consumer-apps` | Consumer app and web product portfolio, test-first | About 100 ideas tested per cycle with real paid traffic, about 4 built. Each idea is built as an iOS app or a web product, chosen at the spec stage. iOS releases are paced at 1 to 2 new apps a month and the operator submits. Web products have no store cadence: the operator merges the launch and switches Stripe to live. Needs cloud builds for iOS because there is no Xcode on your Mac |
+| folded into 1 | `factories/g-marketplace-tools` | Chrome extensions and niche micro-SaaS | Not built as a separate factory. Web products and micro-SaaS are now part of factory A. A browser extension is allowed only as a companion to a web product, through an account escalation. The blueprint is kept for reference |
 | 3 | `factories/f-apify-actors` | Apify Store actor portfolio (also the practical way to sell to agents) | Build and publish with approval per actor. Lowest risk, small payoff per winner |
 | 4 | `factories/d-directories` | Programmatic SEO and directories, local and transactional intent only | One data-rich site, small verified dataset, indexing canary before scale. Slow to read, and sites fail together |
 | 5 | `factories/e-outbound` | B2B demo-first outbound | Drafts only. Automated sending stays off until you have legal advice on the Australian Spam Act |
@@ -55,7 +55,7 @@ All figures are estimates built from published benchmarks. Sources and the full 
 
 Three limits on that arithmetic. The thresholds are revenue, and revenue bought with ads can be unprofitable, so the factory's winner rule is cost per payer and return on ad spend, not MRR. Independence fails if the developer account is lost, which is why release cadence, per-app listings and code distinctness are script-enforced and any 4.3, spam or fraud citation freezes all submissions. And "100 apps" is achievable as 100 tested ideas a quarter, not as 100 store submissions: many similar apps shipped quickly is the pattern Apple's guideline 4.3 and Google Play's Repetitive Content policy remove accounts for.
 
-The landing-page test stage (page, paused campaigns, operator activation, scripted kill rules) is designed once, and factory G follows the same pattern.
+The landing-page test stage (page, paused campaigns, operator activation, kill calls with evidence) is designed once and serves both platforms in factory A.
 
 Factories are independent. Nothing in one factory imports from another. They share only the conventions in `factories/_shared/`.
 
@@ -248,7 +248,7 @@ Third-party MCP servers outside the Claude connector directory are treated as un
 
 ## 8. Decisions needed from you
 
-1. Which factory to build first. The recommendation is `a-consumer-apps`, run as a test-first portfolio. `g-marketplace-tools` is the close second and `f-apify-actors` is the lowest-risk alternative.
+1. Which factory to build first. The recommendation is `a-consumer-apps`, run as a test-first portfolio. `g-marketplace-tools` was the close second and is now folded into it (web products). `f-apify-actors` is the lowest-risk alternative.
 2. Whether to approve the default toolset in section 6, in particular the new accounts factory A implies: Apple Developer, Meta Ads, RevenueCat, Expo, Cloudflare, a keyword tool, and later Postiz.
 3. Monthly ceilings for tokens, paid APIs and ads. Factory A's ad cap starts at $0 and nothing spends until you raise it. One full cycle needs about $4,400 to $4,700 of ad budget over about ten weeks, released in tranches you approve batch by batch.
 3a. The release cadence for factory A. The blueprint proposes one new app a month until three are approved cleanly, then two a month, with at most 12 in any 12 months. Apple publishes no safe number, so this is a judgement.

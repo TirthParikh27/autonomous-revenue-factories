@@ -11,8 +11,17 @@ categories:
   - Lifestyle
   - Food and Drink
   - Photo and Video
-last_mined: {}   # category: date, filled in by gap-mining runs
+web_categories:      # web products and micro-SaaS. Names follow TrustMRR's categories where they exist
+  - Productivity
+  - Education
+  - Content Creation
+  - Marketing
+  - Sales
+  - E-commerce
+  - Design Tools
+  - Developer Tools
 what_to_prefer:
   - A specific job people already pay a competitor for, where recent reviews show it is done badly
   - A differentiator that is a capability, not a look or a lower price
-  - Something one small app can do well without a network of users or licensed content
+  - Something one small app or web product can do well without a network of users or licensed content
+  - For web: buyers who pay by card without a sales call, such as individuals, freelancers and small businesses

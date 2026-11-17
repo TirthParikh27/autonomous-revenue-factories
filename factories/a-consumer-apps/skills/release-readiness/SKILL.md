@@ -1,6 +1,6 @@
 ---
 name: release-readiness
-description: Stage 6 of Factory A. Use when an item is at `release_candidate`, `submitted` or `rejected` to run the App Review guideline checklist with evidence, assemble the submission packet for the operator, and record outcomes. The operator submits to the store. This skill never does.
+description: Stage 6 of Factory A. Use when an item is at `release_candidate`, `submitted` or `rejected` to run the release checklist with evidence, assemble the submission or launch packet for the operator, and record outcomes. The operator submits to the store or launches the web product. This skill never does.
 ---
 
 # Release readiness
@@ -14,7 +14,9 @@ The developer account is the scarcest asset in this factory. This stage exists t
 - `data/review_checklist.yaml`: the checklist, maintained from the current guideline text.
 - `state/submissions.jsonl`: every submission and outcome on the account.
 
-## Steps for `release_candidate`
+## Steps for `release_candidate` (iOS item)
+
+Read the item's `platform` first. A web item follows the web steps further down and skips `checks/cadence` and the App Review rows.
 
 1. Run `checks/cadence`. It reads `state/submissions.jsonl` and `account_protection` in `budget.yaml`: submissions this month, days since the last new-app submission, new apps in the rolling 12 months, submissions today, live apps. If submissions are frozen by `A-ACCT-1`, stop and report. If the cadence says not yet, finish the checklist, leave the item at `release_candidate` with the earliest allowed date, set its `next_check` to that date, and stop.
 1a. Run `checks/metadata_similarity` on the draft listing (name, subtitle, description, keywords, release notes, screenshot captions) against every other listing on the account. Over the limit in `budget.yaml`, rewrite the listing from the app's own spec and rerun once. A second fail goes back to `building`. Raise `A-CAP-1` only if the evidence is unusually strong.
@@ -30,6 +32,18 @@ The developer account is the scarcest asset in this factory. This stage exists t
 4. Confirm every row has evidence that exists on disk or in CI, and none is a fail.
 5. On pass: write the store listing copy and privacy answers to `apps/<id>/store/`, open a pull request from `app/<id>` to `main`, and raise `A-SUB-1`. The operator merges, builds from that commit, submits, and appends the submission id and date to `state/submissions.jsonl`. When that line exists, move the item to `submitted`.
 6. On fail: return the item to `building` with the failed rows listed, unless the failure is differentiation, in which case raise `GEN-1` with a kill recommendation.
+
+## Steps for `release_candidate` (web item)
+
+1. Delegate the checklist to the `release-verifier` agent, with evidence per row, written to `state/release/<id>/checklist.json`:
+   - **Substance:** the core job works end to end without placeholder content, and a visitor sees it before being asked to pay.
+   - **Billing honesty:** price, billing period and trial terms are visible before Checkout. The scripted test-mode purchase and cancel pass in CI. Cancelling works inside the product.
+   - **Legal pages:** terms, privacy policy and refund policy exist and match what the product does. The refund policy does not exclude consumer guarantees.
+   - **Privacy:** only PostHog and Stripe scripts are present, and the privacy policy lists them. Account deletion is available.
+   - **Differentiation:** one-minute test against the 5 nearest competitors. `checks/overlap` under the cap.
+   - **Listing honesty:** every claim on the site and its search pages is in `claims.yaml` with evidence. Screenshots are from this build. No testimonial, rating or user count.
+2. Confirm every row has evidence on disk or in CI, and none is a fail. On fail, return the item to `building` with the failed rows.
+3. On pass: raise `A-SUB-1` as a web launch packet. It lists what the operator does: open and merge the pull request from `app/<id>`, create the live Stripe product and price, set the live keys in the hosting settings, and append the launch date and public URL to `state/launches.jsonl`. When that line exists, fetch the public URL, confirm it returns the product, and move the item to `live`.
 
 ## Steps for `submitted` and `rejected`
 
@@ -60,7 +74,8 @@ Read, Write, Bash for check scripts and for reading CI simulator results (no loc
 - Never submit, upload a build to a store, or use a store credential or a community App Store Connect tool.
 - Never mark a row as passed on reasoning alone.
 - Never change app code in this stage.
-- Never write to `state/submissions.jsonl`. Only the operator records submissions and outcomes.
+- Never write to `state/submissions.jsonl` or `state/launches.jsonl`. Only the operator records submissions, launches and outcomes.
+- Never count a web launch against the store cadence, and never use a web launch to get round a store freeze for the same product without saying so in the packet.
 - Never propose submitting two apps close together to catch up, or another account as a way around a freeze.
 - Never propose resubmitting unchanged, or more than `max_resubmissions_per_app` times.
 
