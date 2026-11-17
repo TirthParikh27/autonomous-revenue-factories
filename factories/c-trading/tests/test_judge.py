@@ -49,6 +49,9 @@ def test_backtest_matches_an_independent_reference():
     assert np.allclose(ours, ref, rtol=1e-3)
     # Costs bite: the same weights with costs doubled must do worse.
     assert backtest.run(weights, bars, DATASET, 2.0).returns.sum() < result.returns.sum()
+    wiggly = weights + 0.005 * (np.arange(len(weights)) % 2)[:, None] * (weights > 0)    # changes under the default band
+    assert backtest.run(wiggly, bars, DATASET).orders == result.orders
+    assert backtest.run(wiggly, bars, DATASET, band=0.0).orders > result.orders        # a strategy may set its own band
 
 
 def test_backtest_refuses_leverage_and_shorts():

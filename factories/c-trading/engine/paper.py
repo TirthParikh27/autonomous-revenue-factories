@@ -37,7 +37,7 @@ def _dir(name: str):
 def record(s: strat.Strategy, dev_bars: Bars, all_bars: Bars, started: str) -> tuple[dict, dict]:
     """The paper record from `started` (the first day the exam did not see), and its health."""
     cutoff = dev_bars.close.index[-1].normalize()
-    full = backtest.run(strat.compute(s, all_bars, s.chosen), all_bars, s.dataset).daily
+    full = backtest.run(strat.compute(s, all_bars, s.chosen), all_bars, s.dataset, band=s.band).daily
     bench = backtest.buy_and_hold(all_bars, s.dataset).daily
     seen = full.index <= cutoff
     dev_alpha, beta = stats.market_adjusted(full[seen].to_numpy(), bench[seen].to_numpy())

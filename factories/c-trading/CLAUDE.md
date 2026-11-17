@@ -62,6 +62,7 @@ Weigh these and say in the run report what you relied on.
 - `strategy.py` has one function, `weights(bars, params)`, returning the target weight of every symbol at every bar from data up to and including that bar. The engine trades it at the next bar's open. Long only, weights summing to at most 1.
 - It may import only `numpy`, `pandas`, `math` and `lib.indicators`. No files, network, clock or randomness. The engine's lint refuses anything else.
 - Every number that changes behaviour is a parameter in `params.yaml` with a declared range. No constants hidden in code.
+- The engine ignores weight changes smaller than a no-trade band per symbol (2% by default), so drift does not pay fees. A strategy whose card needs a different band sets `rebalance_band` in `params.yaml`, fixed before the first trial.
 - `lib/indicators.py` is shared and protected, so that one strategy's change cannot alter another's behaviour. When a strategy needs a calculation it lacks, write it as a helper function inside that strategy's own `strategy.py` with numpy and pandas. The strategy's code hash then covers it.
 - `python3 -m engine check <id>` must pass before any trial.
 

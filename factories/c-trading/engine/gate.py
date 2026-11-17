@@ -38,7 +38,7 @@ def evaluate(strategy: str | strat.Strategy, bars: Bars | None = None) -> dict:
     var_sharpe = float(cluster_sharpes.var(ddof=1)) if n_eff > 1 else 0.0
     dsr = stats.deflated_sharpe(cluster_alpha, n_eff, var_sharpe)
 
-    stressed = backtest.run(strat.compute(s, bars, s.chosen), bars, s.dataset, GATE["cost_stress_multiplier"])
+    stressed = backtest.run(strat.compute(s, bars, s.chosen), bars, s.dataset, GATE["cost_stress_multiplier"], band=s.band)
     stressed_alpha = stats.market_adjusted(stressed.daily.to_numpy(), bench)[0]
     sr, bench_sr = stats.annual_sharpe(daily, ppy), stats.annual_sharpe(bench, ppy)
 

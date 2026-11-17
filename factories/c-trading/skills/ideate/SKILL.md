@@ -25,7 +25,7 @@ You are a fresh session with no memory. Read `CLAUDE.md` and `budget.yaml` first
    - it can be tested honestly on bar data that exists in `engine/config.yaml`, long only, at the costs listed there;
    - it is a different mechanism from every existing and killed card, not a variant of one;
    - its expected trading frequency leaves room for costs on its timeframe.
-   - its rules do not re-implement what the engine already does. The engine fills at the next bar's open, charges fees and slippage, and ignores weight changes smaller than `execution.rebalance_band` per symbol. A card parameter that fights one of these (for example its own no-trade band) will be rejected at build.
+   - its rules do not re-implement what the engine already does. The engine fills at the next bar's open and charges fees and slippage. It also ignores weight changes smaller than a no-trade band per symbol, which a card may set to its own fixed value (`rebalance_band` in `params.yaml`, declared on the card, not swept).
 5. For each one kept, up to `pipeline.max_new_cards_per_run`, write `strategies/<id>/card.md` in the shape of `strategies/crypto-trend-1h/card.md`: idea, why someone would pay, rules in words, parameters with ranges, what would kill it, and expected behaviour if real. Cite the scout's sources. Choose ranges from the mechanism (for example a trend horizon the literature supports), wide enough that a stable region can show itself, and before any test.
 6. Create `state/items/<id>.json` at `proposed` in the shared format, with the card path and sources in `evidence`.
 7. Record each candidate you dropped and why in `state/scout/rejected.jsonl`, so it is not proposed again.

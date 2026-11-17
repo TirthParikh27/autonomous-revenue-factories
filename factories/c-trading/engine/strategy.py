@@ -36,6 +36,7 @@ class Strategy:
     ranges: dict
     chosen: dict | None
     code_hash: str
+    band: float | None = None      # the strategy's own no-trade band; None means the engine default
 
 
 def lint(source: str) -> list[str]:
@@ -72,7 +73,14 @@ def load(strategy_id: str, root: Path | None = None) -> Strategy:
         id=strategy_id, fn=module.weights, dataset=cfg["dataset"], symbols=cfg.get("symbols"),
         ranges=cfg.get("ranges") or {}, chosen=cfg.get("chosen"),
         code_hash=hashlib.sha256(source.encode()).hexdigest()[:16],
+        band=_band(cfg.get("rebalance_band")),
     )
+
+
+def _band(value) -> float | None:
+    if value is not None and not 0.0 <= float(value) <= 1.0:
+        raise ValueError("rebalance_band must be between 0 and 1")
+    return None if value is None else float(value)
 
 
 def check_params(strategy: Strategy, params: dict) -> None:

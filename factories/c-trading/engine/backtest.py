@@ -54,13 +54,15 @@ def check_weights(weights: pd.DataFrame, bars: Bars, market: str) -> None:
         raise ValueError("gross exposure above the limit (no leverage)")
 
 
-def run(weights: pd.DataFrame, bars: Bars, dataset: str, cost_multiplier: float = 1.0) -> Result:
+def run(weights: pd.DataFrame, bars: Bars, dataset: str, cost_multiplier: float = 1.0,
+        band: float | None = None) -> Result:
     spec = CONFIG["datasets"][dataset]
     costs = CONFIG["costs"][spec["market"]]
     check_weights(weights, bars, spec["market"])
 
     # Decision at close of t, fill at open of t+1.
-    target = _band(weights.shift(1).fillna(0.0).to_numpy(dtype=float), CONFIG["execution"]["rebalance_band"])
+    band = CONFIG["execution"]["rebalance_band"] if band is None else float(band)
+    target = _band(weights.shift(1).fillna(0.0).to_numpy(dtype=float), band)
     size = pd.DataFrame(target, index=weights.index, columns=weights.columns)
     pf = vbt.Portfolio.from_orders(
         bars.close, size=size, size_type="targetpercent", price=bars.open,

@@ -28,4 +28,5 @@ costs:
 
 execution:
   max_gross_exposure: 1.0   # no leverage
-  rebalance_band: 0.02      # ignore target changes smaller than this, so drift does not pay costs
+  rebalance_band: 0.02      # default: ignore target changes smaller than this, so drift does not pay costs.
+                            # A strategy may set its own with `rebalance_band` in params.yaml

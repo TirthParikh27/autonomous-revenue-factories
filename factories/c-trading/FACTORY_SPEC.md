@@ -52,7 +52,7 @@ A strategy is one folder, `strategies/<id>/`:
 
 - `card.md`: the idea, the reason someone pays for this edge, the markets, the parameter ranges, and what result would kill it. Written before the first test.
 - `strategy.py`: one function, `weights(bars, params)`. It returns the target weight of every symbol at every bar, decided with data up to and including that bar. It may import only numpy, pandas and the shared indicator library. It has no file, network or clock access, which a lint step enforces.
-- `params.yaml`: the dataset, the declared parameter ranges, and the chosen parameters.
+- `params.yaml`: the dataset, the declared parameter ranges, the chosen parameters, and optionally the strategy's own no-trade band.
 
 The engine trades a target at the next bar's open, so a strategy cannot trade on a price it has just seen. The function sees the whole history at once for speed, so the leak test (4.2) proves it only used the past.
 
