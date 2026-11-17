@@ -3,6 +3,8 @@ source = .
 omit =
     */tests/*
     */conftest.py
+    # Measured by the c-trading workflow, which installs that factory's own requirements.
+    factories/c-trading/*
 
 [report]
 # Count code files that no test imports, so a new untested file shows as uncovered.

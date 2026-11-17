@@ -18,7 +18,7 @@ The `checks` workflow fails a pull request when:
 - code changed but no test did, or the change adds `pragma: no cover` (`tools/pr_gate.py`);
 - fewer than 80% of the changed Python lines are run by the tests (`diff-cover`). A new file that no test imports counts as uncovered.
 
-A factory whose tests need their own requirements is not covered by this job. The pull request that adds such tests also adds a test job for that factory with the same two steps, and only then leaves the factory's folder out in `.coveragerc`.
+The trading factory's tests need its own requirements, so the `c-trading` workflow measures `factories/c-trading/` with the same 80% rule. Any other factory that needs its own requirements gets the same: its own test job, and only then its folder left out of the root `.coveragerc`.
 
 These rules are easy to satisfy on paper: any test file anywhere counts as "a test changed", code placed under a `tests/` folder or in a `conftest.py` is not measured, and only Python lines are measured. The reviewer checks that the tests really exercise the change.
 

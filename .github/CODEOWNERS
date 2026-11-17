@@ -8,6 +8,11 @@
 /factories/*/checks/                @TirthParikh27
 /factories/*/publish.py             @TirthParikh27
 /factories/*/fetch_reviews.py       @TirthParikh27
+# Scripts at the top of a factory folder are the ones its runs are allowed to execute.
+/factories/*/*.py                   @TirthParikh27
+/factories/*/*.js                   @TirthParikh27
+/factories/*/*.sh                   @TirthParikh27
+/factories/*/.coveragerc            @TirthParikh27
 /factories/*/.claude/               @TirthParikh27
 /factories/*/.mcp.json              @TirthParikh27
 /factories/*/tools/                 @TirthParikh27

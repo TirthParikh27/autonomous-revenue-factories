@@ -46,6 +46,13 @@ def test_new_coverage_opt_out_is_reported():
     ]
 
 
+def test_star_stays_inside_one_folder():
+    patterns = pr_gate.protected_patterns("/factories/*/*.py @op\n/factories/*/tools/ @op\n/STOP @op\n")
+    protected = ["factories/a/voice.py", "factories/a/tools/x/gate.py", "STOP"]
+    free = ["factories/a/app/src/pay.py", "factories/a/skills/tools/x.md", "factories/a/STOP", "docs/STOP"]
+    assert [p for p in protected + free if pr_gate.is_protected(p, patterns)] == protected
+
+
 def test_docs_only_change_passes():
     assert pr_gate.judge([("M", "README.md"), ("A", "factories/x/skills/a/SKILL.md")], PATTERNS) == ([], [])
 

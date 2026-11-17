@@ -7,7 +7,6 @@ Also names the changed files that only the operator may merge (.github/CODEOWNER
     python tools/pr_gate.py [--base origin/main]
 """
 import argparse
-import fnmatch
 import os
 import re
 import subprocess
@@ -44,11 +43,11 @@ def protected_patterns(codeowners: str) -> list[str]:
 
 
 def is_protected(path: str, patterns: list[str]) -> bool:
+    """CODEOWNERS matching for paths written from the root: * stays inside one folder, ** does not."""
     for pattern in patterns:
-        pattern = pattern.lstrip("/")
-        if pattern.endswith("/"):
-            pattern += "*"
-        if fnmatch.fnmatchcase(path, pattern):
+        parts = re.split(r"(\*\*|\*)", pattern.strip("/"))
+        body = "".join({"**": ".*", "*": "[^/]*"}.get(part, re.escape(part)) for part in parts)
+        if re.fullmatch(body + "(/.*)?", path):
             return True
     return False
 

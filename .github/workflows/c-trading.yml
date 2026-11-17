@@ -10,13 +10,18 @@ permissions:
 jobs:
   judge:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: factories/c-trading
+    env:
+      BASE: origin/${{ github.base_ref }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - run: pip install -r requirements.txt
-      - run: python -m pytest -q
+      - run: pip install -r factories/c-trading/requirements.txt pytest-cov diff-cover
+      - run: python -m pytest factories/c-trading -q --cov --cov-config=factories/c-trading/.coveragerc --cov-report=xml
+      # REVIEW.md, "What CI enforces". The test-change rule runs in the checks workflow.
+      - name: Changed lines are covered by tests
+        if: github.event_name == 'pull_request'
+        run: diff-cover coverage.xml --compare-branch "$BASE" --fail-under 80
