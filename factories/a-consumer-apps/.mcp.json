@@ -2,7 +2,7 @@
   "mcpServers": {
     "trustmrr": {
       "type": "http",
-      "url": "https://trustmrr.com/api/mcp/discovery"
+      "url": "https://trustmrr.com/api/mcp"
     }
   }
 }

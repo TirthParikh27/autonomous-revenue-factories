@@ -26,7 +26,7 @@ The wrapper refuses to start if a `STOP` file exists or the month's budget in `b
 
 ## Network
 
-Idea mining reads Apple's search and review feeds, so the machine running it must be able to reach `itunes.apple.com` and `apps.apple.com`. The scout can also read verified revenue from TrustMRR (`trustmrr.com`), declared in `.mcp.json`. It works without an account; set a free API key there to unlock filtering.
+Idea mining reads Apple's search and review feeds, so the machine running it must be able to reach `itunes.apple.com` and `apps.apple.com`. The scout can also read verified revenue from TrustMRR (`trustmrr.com`), declared in `.mcp.json`. It works without an account. To unlock filtering, store a free API key as a network secret on the environment (host `trustmrr.com`, header `Authorization`, value `Bearer <key>`), never in the repo.
 
 ## To go live later
 
