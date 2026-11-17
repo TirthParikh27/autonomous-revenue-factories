@@ -298,3 +298,42 @@ def test_a_non_ascii_test_path_is_named_plainly(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])
     pr_gate.main()
     assert "Check: tests/test_caf\u00e9.py: test_one removed" in capsys.readouterr().out
+
+
+def test_a_test_removed_in_one_file_is_named_even_if_another_file_adds_one_with_its_name():
+    diff = (
+        "diff --git a/a/test_x.py b/a/test_x.py\n--- a/a/test_x.py\n+++ b/a/test_x.py\n-def test_pay():\n"
+        "diff --git a/b/test_y.py b/b/test_y.py\n--- a/b/test_y.py\n+++ b/b/test_y.py\n+def test_pay():\n"
+    )
+    assert pr_gate.weakened_tests(diff) == ["a/test_x.py: test_pay removed"]
+
+
+def test_a_very_deep_expression_counts_as_a_change():
+    deep = "x = " + " + ".join(["1"] * 50000) + "\n"
+    assert not pr_gate.same_python(deep, deep + "# note\n")
+
+
+def test_gitattributes_cannot_hide_a_diff(tmp_path, monkeypatch, capsys):
+    import subprocess
+
+    def git(*args):
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                       cwd=tmp_path, check=True, capture_output=True)
+
+    (tmp_path / "test_pay.py").write_text("def test_one():\n    assert True\n\n\ndef test_two():\n    assert True\n")
+    git("init", "-q", "-b", "main")
+    git("add", "-A")
+    git("commit", "-q", "-m", "base")
+    git("checkout", "-q", "-b", "change")
+    (tmp_path / ".gitattributes").write_text("*.py -diff\n")
+    (tmp_path / "test_pay.py").write_text("def test_one():\n    assert True\n")
+    (tmp_path / "pay.py").write_text("def pay():  # pragma: no cover\n    return 1\n")
+    git("add", "-A")
+    git("commit", "-q", "-m", "hide it")
+
+    monkeypatch.setattr(pr_gate, "ROOT", tmp_path)
+    monkeypatch.setattr(sys, "argv", ["pr_gate.py", "--base", "main"])
+    assert pr_gate.main() == 1
+    out = capsys.readouterr().out
+    assert "test_pay.py: test_two removed" in out
+    assert "hides code from the coverage rule: def pay():  # pragma: no cover" in out

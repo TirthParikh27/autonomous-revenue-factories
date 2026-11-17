@@ -109,7 +109,7 @@ def same_python(old: str | bytes, new: str | bytes) -> bool:
     """
     try:
         return ast.dump(ast.parse(old)) == ast.dump(ast.parse(new))
-    except (SyntaxError, ValueError):
+    except (SyntaxError, ValueError, RecursionError):
         return False
 
 
@@ -134,13 +134,13 @@ def weakened_tests(diff: str) -> list[str]:
         elif not is_test(path) or line.startswith(("+++", "---")):
             continue
         elif line.startswith("-") and (match := TEST_DEF.match(line[1:])):
-            removed.setdefault(match.group(1), path)
+            removed.setdefault((path, match.group(1)), None)
         elif line.startswith("+"):
             if match := TEST_DEF.match(line[1:]):
-                added.add(match.group(1))
+                added.add((path, match.group(1)))
             if TEST_SKIP.match(line[1:].lstrip()):
                 skips.append(f"{path}: {line[1:].strip()}")
-    gone = [f"{path}: {name} removed" for name, path in removed.items() if name not in added]
+    gone = [f"{path}: {name} removed" for path, name in removed if (path, name) not in added]
     return gone + skips
 
 
@@ -161,7 +161,8 @@ def parse_name_status(raw: str) -> list[tuple[str, str]]:
 
 def git_diff(base: str, *args: str, paths: tuple[str, ...] = ()) -> str:
     return subprocess.run(
-        ["git", "-c", "core.quotePath=false", "diff", *args, f"{base}...HEAD", "--", *paths],
+        # --text: a .gitattributes "-diff" line must not hide what changed.
+        ["git", "-c", "core.quotePath=false", "diff", "--text", *args, f"{base}...HEAD", "--", *paths],
         cwd=ROOT, check=True, capture_output=True, text=True, errors="replace",
     ).stdout
 

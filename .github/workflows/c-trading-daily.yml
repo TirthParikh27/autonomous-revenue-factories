@@ -106,10 +106,10 @@ jobs:
       # Start from the exact state the judge read, so that anything pushed to factory-state while it ran
       # is kept by the rebase below and not overwritten by the judge's older copy.
       # This job pushes, so it keeps the token. It runs no strategy code and uploads no artifact.
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0  # zizmor: ignore[artipacked]
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ needs.judge.outputs.sha }}
-          fetch-depth: 0
+          fetch-depth: 0  # zizmor: ignore[artipacked] (on its own line, so Dependabot's version bumps keep it)
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: judge-results

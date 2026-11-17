@@ -29,9 +29,10 @@ jobs:
         if: github.event_name == 'pull_request'
         run: diff-cover coverage.xml --compare-branch "$BASE" --fail-under 80
       # Runs the base branch's copy of the gate, so a pull request cannot change the check that judges it.
-      # Last, because it replaces the file in the checkout.
+      # Last, because it replaces the file in the checkout. -I keeps a module the pull request adds
+      # under tools/ from being imported in place of the standard library.
       - name: Code changes come with tests
         if: always() && github.event_name == 'pull_request'
         run: |
           git show "$BASE:tools/pr_gate.py" > tools/pr_gate.py
-          python tools/pr_gate.py --base "$BASE"
+          python -I tools/pr_gate.py --base "$BASE"

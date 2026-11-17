@@ -20,7 +20,7 @@ The `checks` workflow fails a pull request when:
 - `ruff check .` finds a fault: an undefined name, an unused import or variable, or a likely bug. The rules are in [`ruff.toml`](ruff.toml) and cover faults only, not style;
 - `zizmor` finds a security fault in a workflow or the Dependabot file.
 
-CI runs the base branch's copy of `tools/pr_gate.py`, so a pull request cannot change the gate script that judges it. It can change the workflows, which is why they are protected files. A `.py` edit that only changes comments or layout needs no test, but a protected file is named however small the edit. The gate also names every test a pull request removes or skips. That does not fail CI, because a test can go with the code it tested, but the reviewer checks each one.
+CI runs the base branch's copy of `tools/pr_gate.py`, so a pull request cannot change the gate script that judges it. It can change the workflows, which is why they are protected files. A `.py` edit that only changes comments or layout needs no test, but a protected file is named however small the edit. The gate also names the Python test functions a pull request removes or moves, and the skip markers it adds. That does not fail CI, because a test can go with the code it tested, but the reviewer checks each one.
 
 The trading factory's tests need its own requirements, so the `c-trading` workflow measures `factories/c-trading/` with the same 80% rule. Any other factory that needs its own requirements gets the same: its own test job, and only then its folder left out of the root `.coveragerc`.
 
