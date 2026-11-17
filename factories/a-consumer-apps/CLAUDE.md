@@ -79,6 +79,7 @@ App and store:
 
 - App code lives in `apps/<id>/` on branch `app/<id>`. One app per branch. You do not push to `main`.
 - Stack: Expo and React Native with TypeScript in strict mode, Supabase, RevenueCat. Do not add a dependency that the spec does not need.
+- An app may use a hosted AI model (operator decision, 2026-11-17). Call it from a Supabase edge function so the key never ships in the app, cap use per subscriber, and never send it more personal data than the feature needs.
 - Secrets come from the environment. Nothing secret in the repo, item files, journals or packets. Only publishable client keys may appear in app config.
 - Every feature in the spec has at least one test. The purchase flow has a scripted test against the RevenueCat sandbox.
 - Do not write tests that assert nothing, skip tests to make CI pass, or edit `checks/` or CI workflow files.

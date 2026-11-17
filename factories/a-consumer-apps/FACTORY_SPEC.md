@@ -173,6 +173,7 @@ Factory-level numbers tracked weekly: ideas killed per stage and cost per kill, 
 | GitHub, GitHub Actions, Slack | Source control, CI and page deploys, notifications | Already available |
 | Prelaunch.com | Reservation-deposit tests | Not used by default. Plans from $279 a month (secondary source), built mainly for physical products. An `A-MCP-1` escalation if wanted |
 | Apple pre-orders, Play pre-registration | Launch warm-up | Not a pre-build test. Apple pre-orders need the app submitted and reviewed first, and Play pre-registration needs an uploaded app bundle (both read on the vendors' pages) |
+| Hosted AI model API | In-app AI features, called from a Supabase edge function | Allowed by the operator on 2026-11-17. Needs an API key with a spend limit before the first build that uses it |
 
 ## 8. Known failure modes and design responses
 
