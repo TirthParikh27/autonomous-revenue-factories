@@ -24,6 +24,10 @@ The wrapper refuses to start if a `STOP` file exists or the month's budget in `b
 | Content | Writes drafts. `publish.py drafts` runs dry and writes `drafts.json` |
 | Telemetry, paid test | Need real numbers, so they wait for accounts |
 
+## Network
+
+Idea mining reads Apple's search and review feeds, so the machine running it must be able to reach `itunes.apple.com` and `apps.apple.com`.
+
 ## To go live later
 
 1. Approvals: the factory writes a packet to `escalations/open/`. You approve by moving it to `escalations/approved/` in a commit.
