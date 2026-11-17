@@ -1,0 +1,10 @@
+# Used by the c-trading workflow, run from the repository root (REVIEW.md, "What CI enforces").
+[run]
+source = factories/c-trading
+omit =
+    */tests/*
+    */conftest.py
+    */design/*
+
+[report]
+include_namespace_packages = true

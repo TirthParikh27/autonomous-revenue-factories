@@ -2,7 +2,9 @@ name: c-trading-daily
 # The judge's daily job for the trading factory (factories/c-trading/FACTORY_SPEC.md sections 4.4 to 4.6).
 #   1. Final exam for every strategy waiting at `optimised`.
 #   2. Paper stage and health watch for every strategy that passed, and for near misses on watch.
-# A schedule always runs the copy of this file on main, with the engine from main.
+# Started by hand for now (Actions tab, "Run workflow"): no factory runs on a timer until Tirth says so.
+# To make it daily again, add under `on:`   schedule: [{cron: "23 5 * * *"}]   (bars are published about
+# three hours after midnight UTC). A schedule always runs the copy of this file on main, with the engine from main.
 # From the factory-state branch come each strategy's strategy.py and params.yaml and the run state
 # (items, trial log, gate files).
 # Two jobs. `judge` runs strategy code and can only read the repository. `record` holds the write
@@ -10,8 +12,6 @@ name: c-trading-daily
 # Prices after the development cutoff are downloaded here and nowhere else.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "23 5 * * *"     # yesterday's bars are published about three hours after midnight UTC
 permissions:
   contents: read
 concurrency: c-trading-daily
