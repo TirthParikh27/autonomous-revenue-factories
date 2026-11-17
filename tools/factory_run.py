@@ -89,8 +89,19 @@ def preflight(repo_root: Path, factory_dir: Path, state_dir: Path, budget: dict,
     return caps
 
 
-def build_command(stage: str, caps: dict, run_id: str) -> list[str]:
-    """The Claude command line. FACTORY_CLAUDE_CMD replaces the binary in tests."""
+def build_command(stage: str, caps: dict, run_id: str, factory_dir: Path | None = None) -> list[str]:
+    """The Claude command line. FACTORY_CLAUDE_CMD replaces the binary in tests.
+
+    The factory's allow and deny lists are passed as flags, because a headless run in a
+    directory nobody has opened interactively ignores the allow list in .claude/settings.json.
+    """
+    settings = (factory_dir / ".claude" / "settings.json") if factory_dir else None
+    perms = json.loads(settings.read_text()).get("permissions", {}) if settings and settings.exists() else {}
+    tools = []
+    if perms.get("allow"):
+        tools += ["--allowedTools", *perms["allow"]]
+    if perms.get("deny"):
+        tools += ["--disallowedTools", *perms["deny"]]
     binary = os.environ.get("FACTORY_CLAUDE_CMD", "claude").split()
     prompt = (
         f"You are run {run_id}. Do exactly one stage: {stage}. Read CLAUDE.md, then follow "
@@ -102,7 +113,7 @@ def build_command(stage: str, caps: dict, run_id: str) -> list[str]:
         "--max-turns", str(caps["max_turns"]),
         "--max-budget-usd", str(caps["max_budget_usd"]),
         "--permission-prompts", "none",
-    ]
+    ] + tools
 
 
 def evidence_ok(report: Path) -> bool:
@@ -182,7 +193,7 @@ def run(factory: str, stage: str, repo_root: Path = REPO_ROOT, state_root: Path 
 
     try:
         try:
-            proc = subprocess.run(build_command(stage, caps, run_id), cwd=factory_dir, timeout=timeout_s,
+            proc = subprocess.run(build_command(stage, caps, run_id, factory_dir), cwd=factory_dir, timeout=timeout_s,
                                   capture_output=True, text=True, env={**os.environ, "FACTORY_RUN_ID": run_id})
             returncode, stdout = proc.returncode, proc.stdout
         except subprocess.TimeoutExpired:

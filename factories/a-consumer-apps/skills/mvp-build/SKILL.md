@@ -19,7 +19,7 @@ Runs as a cloud scheduled task with GitHub Actions for CI. The operator's Mac ha
 
 1. Preconditions. Confirm the item's stage. Run `checks/cadence`. If submissions are frozen, or `max_concurrent_builds` or `max_live_apps` is reached, do not start. A build may start while the next submission date is still ahead, since a finished app can wait at `release_candidate`. Leave the item at `demand_validated` and report.
 2. If the item is new to this stage: create branch `app/<id>`, move the item to `building`, record the start date, and write `state/build/<id>/plan.md` with one task per spec feature, each with its acceptance test.
-3. Delegate implementation to the `app-builder` agent, one task from the plan per call. It works in `apps/<id>/` only.
+3. Implement one task from the plan at a time, working in `apps/<id>/` only.
 4. Stack rules:
    - Expo and React Native, TypeScript strict. Use the Expo CLI from the project's own dependencies. Build with EAS cloud builds. The official Expo MCP at `mcp.expo.dev/mcp` is verified (2026-11-16) and may be used once listed in `FACTORY_SPEC.md` section 6.
    - Supabase for data and auth through the Supabase CLI against the app's own project. Row level security on every table.

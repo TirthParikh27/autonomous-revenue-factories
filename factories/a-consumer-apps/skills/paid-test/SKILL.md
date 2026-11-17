@@ -19,7 +19,7 @@ The demand test showed that people click and commit. This stage finds out whethe
 2. Write three creatives to `ads/<id>/paid/`. Use real screenshots and screen recordings from the shipped build. Remove the "in development" wording. Run `checks/copy_lint`.
 3. Write `ads/<id>/paid/plan.json`: one campaign optimised for trial start, lifetime budget and duration for tranche 1, the tranche 2 budget that follows if tranche 1 passes, and the reference points telemetry will weigh, from `budget.yaml`.
 4. Raise `A-AD-2` for the item. It covers both tranches, up to $600 in total. Move the item to `awaiting_human`.
-5. When the packet is in `approved/`, have the `ads-publisher` agent create the tranche 1 campaign, paused. Run `checks/ads_paused`.
+5. When the packet is in `approved/`, run `python3 publish.py ads ads/<id>/paid/plan.json --packet A-AD-2`. It creates the tranche 1 campaign paused and reads it back. Until ad credentials exist it runs dry and writes `readback.json` without contacting Meta.
 6. The operator activates and writes `paid_test.activated` into the item file. Move the item to `paid_t1`.
 7. When telemetry moves the item to `paid_t2`, create the tranche 2 campaign the same way. The operator activates.
 8. When telemetry judges the item a winner, it moves to `winner` and telemetry raises `A-WIN-1`. When it calls a kill, `A-SUN-1` is raised. In both cases the running campaign ends at its lifetime budget. Ask the operator in the packet to pause it sooner if the kill was on zero trials.

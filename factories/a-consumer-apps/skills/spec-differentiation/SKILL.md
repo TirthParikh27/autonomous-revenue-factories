@@ -16,7 +16,7 @@ You are a fresh session. Read `CLAUDE.md` and `budget.yaml` first. You work only
 
 ## Steps
 
-1. For each item, have the `app-builder` agent write `state/specs/<id>.md` from the template. It is one short page with these sections:
+1. For each item, write `state/specs/<id>.md` from the template. It is one short page with these sections:
    - **Job:** the single job the app does, for whom, in one sentence.
    - **Differentiation statement:** "Unlike <named competitors>, this app <capability>, which matters because <sourced complaint pattern>."
    - **Competitor table:** the nearest named apps with store URLs taken from the scout file, and what each lacks.

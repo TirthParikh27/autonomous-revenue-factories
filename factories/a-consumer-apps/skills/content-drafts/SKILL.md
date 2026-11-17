@@ -28,17 +28,17 @@ Generative video and realistic AI people or scenes are disabled in `budget.yaml`
 
 1. Count drafts already created for this app this week. Do not exceed `content.max_drafts_per_app_per_week`.
 2. Choose angles: keep the top angle by signups or downloads per published post, drop the bottom one, add one new one. Views alone do not count.
-3. Have the `app-builder` agent write scripts and captions, then render assets into `content/<id>/<batch>/`. Check the ElevenLabs price against the ledger before any voiceover call.
+3. Write scripts and captions, then render assets into `content/<id>/<batch>/`. Check the ElevenLabs price against the ledger before any voiceover call.
 4. Write `manifest.json`: for each post the format, asset paths, caption, hashtags, source screenshot hashes, claims used, `concept`, `ai_generated_elements` (for example synthetic voice), and `ai_label_required`.
 5. Set `ai_label_required: true` if any realistic AI-generated person or scene is present. For synthetic voiceover only, set `ai_label_review: true` so the operator decides at publish time. TikTok's rule for voice was not confirmed from a primary source.
 6. Run `checks/copy_lint --claims` with the item's `claims.yaml` on every caption and overlay. Confirm every live-mode frame has a source hash in `screenshots.json`, every concept frame carries the concept wording, and every post has its label fields.
 7. If this is the first batch for the app, a new format, or any post has `ai_label_required: true`: raise `A-CNT-1` and stop before Postiz.
-8. Otherwise hand the manifest to the `draft-publisher` agent. It creates each post in Postiz as a draft and reads it back.
+8. Otherwise run `python3 publish.py drafts content/<id>/<batch>/manifest.json --claims <claims.yaml>`. It creates each post as a draft and reads it back. Until Postiz credentials exist it runs dry and writes `drafts.json` without contacting Postiz.
 9. Post one Slack message: number of drafts, the app, and anything the operator must decide when publishing (audio, label).
 
 ## Tools
 
-Simulator recording from CI artefacts, HeyGen CLI and HyperFrames skills as installed locally (verified 2026-11-16; run HyperFrames with `npx hyperframes`), ffmpeg, ElevenLabs API, Postiz through `draft-publisher`, Read, Write, Bash.
+Simulator recording from CI artefacts, HeyGen CLI and HyperFrames skills as installed locally (verified 2026-11-16; run HyperFrames with `npx hyperframes`), ffmpeg, ElevenLabs API, `publish.py drafts`, Read, Write, Bash.
 
 ## Hard check
 
