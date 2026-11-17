@@ -15,16 +15,18 @@ Stress testing counts only when someone else can check it.
 The `checks` workflow fails a pull request when:
 
 - any test fails;
-- code changed but no test did (`tools/pr_gate.py`);
+- code changed but no test did, or the change adds `pragma: no cover` (`tools/pr_gate.py`);
 - fewer than 80% of the changed Python lines are run by the tests (`diff-cover`). A new file that no test imports counts as uncovered.
 
-A factory with its own `requirements.txt` has its own test job and runs the same two steps there.
+A factory whose tests need their own requirements is not covered by this job. The pull request that adds such tests also adds a test job for that factory with the same two steps, and only then leaves the factory's folder out in `.coveragerc`.
+
+These rules are easy to satisfy on paper: any test file anywhere counts as "a test changed", code placed under a `tests/` folder is not measured, and only Python lines are measured. The reviewer checks that the tests really exercise the change.
 
 ## What the reviewer checks
 
 | | Question | What to look for | Blocks the merge |
 |---|---|---|---|
-| 1 | Does it work? | Bugs, untested paths, tests that cannot fail, evidence that does not reproduce. | Yes |
+| 1 | Does it work? | Bugs, untested paths, tests that cannot fail or do not touch the change, evidence that does not reproduce. | Yes |
 | 2 | Does it do what was asked? | Nothing missing, nothing extra. | No |
 | 3 | Is it simple? | A library where one fits, plain code where it does not, no needless layers. | No |
 | 4 | Is it safe? | No keys in code, logs or test data. Paid, live and publishing actions stay in dry run unless turned on deliberately. Spending caps and guard checks are not weakened. | Yes |
@@ -53,7 +55,7 @@ The author's session merges its own pull request once CI is green and the verdic
 - places or enables live trades;
 - publishes, launches or submits anything outside the repository (ads, store releases, posts, emails);
 - adds, reads or changes how keys and credentials are handled;
-- changes a file listed in [`.github/CODEOWNERS`](.github/CODEOWNERS). These are the budgets, guard checks, publishers, CI and these review rules. `python tools/pr_gate.py` names them.
+- changes a file listed in [`.github/CODEOWNERS`](.github/CODEOWNERS). These are each factory's rules and budgets, guard checks, publishers, CI and these review rules. `python tools/pr_gate.py` names them.
 
 When in doubt, it waits.
 

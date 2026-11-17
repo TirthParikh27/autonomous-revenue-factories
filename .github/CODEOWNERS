@@ -2,9 +2,11 @@
 # A pull request that changes any of them waits for the operator to merge (REVIEW.md).
 # tools/pr_gate.py reads this list.
 /factories/*/budget.yaml            @TirthParikh27
+/factories/*/CLAUDE.md              @TirthParikh27
 /factories/*/ESCALATION.md          @TirthParikh27
 /factories/*/checks/                @TirthParikh27
 /factories/*/publish.py             @TirthParikh27
+/factories/*/fetch_reviews.py       @TirthParikh27
 /factories/*/.claude/               @TirthParikh27
 /factories/*/escalations/approved/  @TirthParikh27
 /factories/*/escalations/rejected/  @TirthParikh27

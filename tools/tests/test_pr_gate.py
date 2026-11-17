@@ -25,6 +25,19 @@ def test_deleting_a_test_does_not_count_as_adding_one():
     assert pr_gate.judge(changes, PATTERNS)[0] == ["tools/factory_run.py"]
 
 
+def test_a_file_moved_without_edits_needs_no_test_and_is_not_one():
+    moved = pr_gate.parse_name_status("R100\0fetch.py\0fetch_reviews.py\0")
+    assert moved == [("D", "fetch.py"), ("R", "fetch_reviews.py")]
+    assert pr_gate.judge(moved, PATTERNS)[0] == []
+    moved_test = pr_gate.parse_name_status("M\0run.py\0R100\0tests/test_a.py\0tests/test_b.py\0")
+    assert pr_gate.judge(moved_test, PATTERNS)[0] == ["run.py"]
+
+
+def test_new_coverage_opt_out_is_reported():
+    diff = "+++ b/run.py\n+def pay():  # pragma: no cover\n+    return 1\n-old  # pragma: no cover\n"
+    assert pr_gate.coverage_opt_outs(diff) == ["def pay():  # pragma: no cover"]
+
+
 def test_docs_only_change_passes():
     assert pr_gate.judge([("M", "README.md"), ("A", "factories/x/skills/a/SKILL.md")], PATTERNS) == ([], [])
 
@@ -59,7 +72,10 @@ def test_end_to_end_in_a_real_repository(tmp_path, monkeypatch, capsys):
     git("checkout", "-q", "-b", "change")
     (tmp_path / "factories" / "x").mkdir(parents=True)
     (tmp_path / "factories" / "x" / "budget.yaml").write_text("cap: 1\n")
+    (tmp_path / "factories" / "caf\u00e9").mkdir()
+    (tmp_path / "factories" / "caf\u00e9" / "budget.yaml").write_text("cap: 1\n")
     (tmp_path / "run.py").write_text("print('hi')\n")
+    (tmp_path / "na\u00efve.py").write_text("def f():  # pragma: no cover\n    return 1\n")
     git("add", "-A")
     git("commit", "-q", "-m", "code only")
 
@@ -68,10 +84,13 @@ def test_end_to_end_in_a_real_repository(tmp_path, monkeypatch, capsys):
     monkeypatch.setenv("GITHUB_ACTIONS", "true")
     assert pr_gate.main() == 1
     out = capsys.readouterr().out
-    assert "Add a test for: run.py" in out
-    assert "::notice::Waits for the operator to merge. Protected files changed: factories/x/budget.yaml" in out
+    assert "Add a test for: na\u00efve.py, run.py" in out
+    assert "hides code from the coverage rule: def f():  # pragma: no cover" in out
+    assert ("::notice::Waits for the operator to merge. Protected files changed: "
+            "factories/caf\u00e9/budget.yaml, factories/x/budget.yaml") in out
 
     (tmp_path / "test_run.py").write_text("def test_run():\n    assert True\n")
+    (tmp_path / "na\u00efve.py").write_text("def f():\n    return 1\n")
     git("add", "-A")
     git("commit", "-q", "-m", "with test")
     assert pr_gate.main() == 0
