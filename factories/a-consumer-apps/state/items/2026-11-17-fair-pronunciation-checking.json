@@ -1,6 +1,9 @@
 {
   "id": "2026-11-17-fair-pronunciation-checking",
-  "stage": "discovered",
+  "stage": "killed",
+  "killed_reason": "spec gate: capability needs a speech-assessment service or model the factory does not hold; complaints contradict each other; accuracy cannot be shown in an ad",
+  "spec": "state/specs/2026-11-17-fair-pronunciation-checking.md",
+  "screen_notes": "Median rank 5 of 6 (close call, survives). Hard to show accuracy in an ad; large incumbents hold trust.",
   "created": "2026-11-17",
   "updated": "2026-11-17",
   "summary": "Language learners practising speaking want pronunciation judged correctly: accept right speech, reject wrong speech, and say what to fix.",
@@ -11,7 +14,7 @@
   "scores": {"complaints": 10, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured"},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: capability gap across 5 apps. Spec stage must check it is not the same job as the earlier language-gamification candidate"}],
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: capability gap across 5 apps. Spec stage must check it is not the same job as the earlier language-gamification candidate"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T073615Z-synthetic-screen-95523b", "note": "median rank 5 of 6, close call survives"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "killed", "run": "20261117T073740Z-spec-differentiation-c1e9cc", "note": "killed at step 2 after one revision (on-device only gives no distinct capability); not sent to verifier"}],
   "blocked_by": null,
   "next_check": null
 }

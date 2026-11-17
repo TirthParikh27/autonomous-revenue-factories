@@ -1,0 +1,12 @@
+{
+  "batch": "2026-11-17-a",
+  "run": "20261117T073615Z-synthetic-screen-95523b",
+  "runs": 3,
+  "id_map": {"A": "exact-manual-nutrient-tracking", "B": "portable-flashcard-decks", "C": "fair-pronunciation-checking", "D": "source-faithful-ai-study-material", "E": "watch-strength-logging-that-syncs", "F": "lecture-recording-never-lost"},
+  "ranks_by_run": {"F": [1,4,1], "D": [6,1,2], "E": [3,2,3], "B": [2,3,4], "C": [4,5,6], "A": [5,6,5]},
+  "median_rank": {"F": 1, "D": 2, "E": 3, "B": 3, "C": 5, "A": 5},
+  "mean_rank": {"F": 2.0, "D": 3.0, "E": 2.67, "B": 3.0, "C": 5.0, "A": 5.33},
+  "killed": ["A"],
+  "survived": ["F", "D", "E", "B", "C"],
+  "rationale": "Six ideas only. A ties C on median (5) but is last on mean, ranked 5,6,5, and every run cites crowded incumbents. C's range (4 to 6) overlaps B's (2 to 4), so it is a close call and survives. Nothing here is demand evidence."
+}

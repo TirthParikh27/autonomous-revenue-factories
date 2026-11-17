@@ -1,6 +1,8 @@
 {
   "id": "2026-11-17-source-faithful-ai-study-material",
-  "stage": "discovered",
+  "stage": "specced",
+  "spec": "state/specs/2026-11-17-source-faithful-ai-study-material.md",
+  "screen_notes": "Median rank 2 of 6 (ranks 6,1,2, high variance). Easy-to-grasp promise with frequent need; free general LLMs weaken the pull.",
   "created": "2026-11-17",
   "updated": "2026-11-17",
   "summary": "Students who upload their own notes or PDFs want AI summaries, flashcards and quizzes that stay within that material and have correct answer keys.",
@@ -8,10 +10,10 @@
   "evidence": [
     {"claim": "12 dated complaints (Feb to Nov 2026) of AI study tools adding outside content, errors and wrong answer keys across 6 apps (Turbolearn, StudyFetch, Studley, Noji, Quizlet, Knowt). Substitute pressure from NotebookLM and ChatGPT noted by reviewers.", "source": "state/scout/2026-11-17-education-b.json (edu-b2; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
   ],
-  "scores": {"complaints": 12, "apps_with_complaints": 6, "keyword_popularity": null, "keyword_source": "none configured", "risk": "general-purpose LLM substitutes"},
+  "scores": {"verifier_distinguishable_in_1min": "yes (source passage shown on every card)", "verifier_capability_not_look_or_price": "yes", "verifier_stack_gap": "needs PDF parser (native or WebView); no credential. Listing must not say AI: design uses no model", "complaints": 12, "apps_with_complaints": 6, "keyword_popularity": null, "keyword_source": "none configured", "risk": "general-purpose LLM substitutes"},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: capability gap (source fidelity) across 6 apps"}],
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: capability gap (source fidelity) across 6 apps"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T073615Z-synthetic-screen-95523b", "note": "median rank 2 of 6"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "specced", "run": "20261117T073740Z-spec-differentiation-c1e9cc", "note": "spec rewritten without a hosted LLM; verifier yes/yes, claims corrected"}],
   "blocked_by": null,
   "next_check": null
 }

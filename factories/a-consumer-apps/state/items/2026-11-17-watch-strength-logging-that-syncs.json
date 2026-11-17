@@ -1,6 +1,9 @@
 {
   "id": "2026-11-17-watch-strength-logging-that-syncs",
-  "stage": "discovered",
+  "stage": "killed",
+  "killed_reason": "spec gate: core feature is a watchOS app, outside Expo/React Native stack and the operator's Mac has no Xcode; Strong, Fitbod and Hevy already ship Watch apps so verifier could not tell it apart in a minute",
+  "spec": "state/specs/2026-11-17-watch-strength-logging-that-syncs.md",
+  "screen_notes": "Median rank 3 of 6. Failure is felt mid-workout so a Watch-specific fix is a credible ad; audience narrower, competitors exist.",
   "created": "2026-11-17",
   "updated": "2026-11-17",
   "summary": "Log a strength workout from the Apple Watch alone or with the phone without lost sets, missing history or the watch jumping to the wrong exercise.",
@@ -11,7 +14,7 @@
   "scores": {"complaints": 11, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured", "note": "folds in the history-safety job (c3) and custom exercises (c7); those were not made separate items to avoid a shared core job"},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: capability gap across 5 apps"}],
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: capability gap across 5 apps"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T073615Z-synthetic-screen-95523b", "note": "median rank 3 of 6"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "killed", "run": "20261117T073740Z-spec-differentiation-c1e9cc", "note": "verifier: not distinguishable, stack cannot do watchOS. No revision removes the watch dependency"}],
   "blocked_by": null,
   "next_check": null
 }

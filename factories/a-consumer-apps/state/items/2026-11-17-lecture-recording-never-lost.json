@@ -1,6 +1,8 @@
 {
   "id": "2026-11-17-lecture-recording-never-lost",
-  "stage": "discovered",
+  "stage": "specced",
+  "spec": "state/specs/2026-11-17-lecture-recording-never-lost.md",
+  "screen_notes": "Median rank 1 of 6 (ranks 1,4,1). Acute, easy-to-state fear of losing a recording; built-in phone recorders cover part of the need.",
   "created": "2026-11-17",
   "updated": "2026-11-17",
   "summary": "Students who record whole lectures want audio and transcript kept safely on the phone so a recording is never lost before notes are made.",
@@ -8,10 +10,10 @@
   "evidence": [
     {"claim": "10 dated 2026 complaints of lost lecture recordings or transcripts across 5 apps (Knowt, StudyFetch, Turbolearn, Studley, Quizlet), Jan to Nov 2026", "source": "state/scout/2026-11-17-education-b.json (edu-b1; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
   ],
-  "scores": {"complaints": 10, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured"},
+  "scores": {"verifier_distinguishable_in_1min": "borderline (looks like a plain recorder; onboarding interrupt-and-recover demo must ship)", "verifier_capability_not_look_or_price": "yes", "verifier_stack_gap": "needs custom native module for chunked recording and on-device transcription, no credential", "complaints": 10, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured"},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: recent complaints about one capability across 5 competing apps"}],
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: recent complaints about one capability across 5 competing apps"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T073615Z-synthetic-screen-95523b", "note": "median rank 1 of 6"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "specced", "run": "20261117T073740Z-spec-differentiation-c1e9cc", "note": "spec written, verifier borderline on distinguishability, claims corrected"}],
   "blocked_by": null,
   "next_check": null
 }

@@ -1,6 +1,9 @@
 {
   "id": "2026-11-17-portable-flashcard-decks",
-  "stage": "discovered",
+  "stage": "killed",
+  "killed_reason": "spec gate: verifier could not tell it from Anki and other flashcard apps in a minute; free export is a price position; evidence is 3 apps, mostly Noji",
+  "spec": "state/specs/2026-11-17-portable-flashcard-decks.md",
+  "screen_notes": "Median rank 3 of 6. Data loss is a concrete, costly failure; Anki as a free incumbent limits switching.",
   "created": "2026-11-17",
   "updated": "2026-11-17",
   "summary": "Flashcard users lose decks or cannot move them between apps; they want decks that are never deleted and import and export cleanly.",
@@ -11,7 +14,7 @@
   "scores": {"complaints": 10, "apps_with_complaints": 3, "keyword_popularity": null, "keyword_source": "none configured", "note": "weakest of the kept set: 3 apps; Anki is a strong free incumbent"},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept, marginal: 3 apps, data-loss not price"}],
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept, marginal: 3 apps, data-loss not price"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T073615Z-synthetic-screen-95523b", "note": "median rank 3 of 6"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "killed", "run": "20261117T073740Z-spec-differentiation-c1e9cc", "note": "verifier: not distinguishable, capability borderline, free-tier contradiction. Revising would leave only price and breadth of format"}],
   "blocked_by": null,
   "next_check": null
 }
