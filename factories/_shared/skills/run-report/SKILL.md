@@ -7,6 +7,8 @@ description: Write the mandatory evidence-first report at the end of every facto
 
 Write `journal/<date>/<run id>.md` in the format in `factories/_shared/CONVENTIONS.md`. The run wrapper fails any run whose report is missing or has no evidence block.
 
+The report must have a section headed exactly `## Evidence`, plus `## Not done` and `## Denied or blocked`. The wrapper checks for them.
+
 ## Rules
 
 1. **Evidence means output you actually saw in this run.** Paste the command or check and its trimmed real output: a test summary line, an HTTP status and body excerpt, a row count, a file hash, a marketplace URL that you fetched and that returned the listing. "Tests pass" with no output is not evidence.

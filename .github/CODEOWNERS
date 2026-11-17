@@ -4,6 +4,7 @@
 /factories/*/ESCALATION.md          @TirthParikh27
 /factories/*/checks/                @TirthParikh27
 /factories/*/publish.py             @TirthParikh27
+/factories/*/fetch_reviews.py       @TirthParikh27
 /factories/*/.claude/               @TirthParikh27
 /factories/*/escalations/approved/  @TirthParikh27
 /factories/*/escalations/rejected/  @TirthParikh27

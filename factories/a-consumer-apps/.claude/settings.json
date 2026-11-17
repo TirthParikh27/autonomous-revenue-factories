@@ -3,13 +3,15 @@
     "allow": [
       "Read", "Glob", "Grep", "Write", "Edit", "Agent", "WebSearch", "WebFetch",
       "Bash(python3 checks/*)",
-      "Bash(python3 publish.py *)"
+      "Bash(python3 publish.py *)",
+      "Bash(python3 fetch_reviews.py *)"
     ],
     "deny": [
       "Edit(budget.yaml)", "Write(budget.yaml)",
       "Edit(CLAUDE.md)", "Write(CLAUDE.md)",
       "Edit(ESCALATION.md)", "Write(ESCALATION.md)",
       "Edit(publish.py)", "Write(publish.py)",
+      "Edit(fetch_reviews.py)", "Write(fetch_reviews.py)",
       "Edit(checks/**)", "Write(checks/**)",
       "Edit(.claude/**)", "Write(.claude/**)",
       "Edit(escalations/approved/**)", "Write(escalations/approved/**)",
