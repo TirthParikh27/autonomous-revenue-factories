@@ -1,0 +1,9 @@
+# Claims are in the brand's voice. Evidence is from the shipped build, which does not exist yet: every row is pending.
+claims:
+  - claim: "Every card links to the passage it came from."
+    evidence: "pending build: all cards have a source span that matches the text"
+  - claim: "Never adds information that is not in your file."
+    evidence: "pending build: by construction plus string-match test"
+  - claim: "Works offline."
+    evidence: "pending build: airplane-mode test"
+not_claimed: ["better grades", "accurate in a general sense", "AI of any kind"]

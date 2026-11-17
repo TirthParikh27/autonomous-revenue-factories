@@ -1,0 +1,17 @@
+{
+  "idea": "2026-11-17-private-journal-that-never-loses-entries",
+  "note": "Creatives are typographic concept cards (SVG). Export to PNG at upload. Each carries a visible 'Concept. In development.' label. No app screens are shown. No mention of competitors or of mental health.",
+  "creatives": [
+    {"file": "creative-1.svg", "angle": "new phone, where did my journal go",
+     "primary_text": "A private journal in development that keeps entries on your phone and writes a backup file you choose. The concept: test that the backup opens before you need it. Early access, nothing is charged today.",
+     "headline": "A backup you can actually open"},
+    {"file": "creative-2.svg", "angle": "no AI, ever",
+     "primary_text": "A journal concept with no AI and no account. Entries stay on your phone behind a lock. In development. Join the early-access list, nothing is charged today.",
+     "headline": "A journal with no AI"},
+    {"file": "creative-3.svg", "angle": "lock it, nothing leaves the phone",
+     "primary_text": "Lock your journal and keep it on the device. A concept in development, with a backup that restores on a new phone. Early access, nothing is charged today.",
+     "headline": "Your entries stay on your phone"}
+  ],
+  "cta": "Learn more",
+  "link": "https://TO-BE-SET-AFTER-DEPLOY/?utm_source=meta&utm_medium=paid&utm_campaign=2026-11-17-private-journal-that-never-loses-entries&utm_content={creative}"
+}

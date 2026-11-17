@@ -1,6 +1,6 @@
 {
   "id": "2026-11-17-lecture-recording-never-lost",
-  "stage": "specced",
+  "stage": "awaiting_human",
   "spec": "state/specs/2026-11-17-lecture-recording-never-lost.md",
   "screen_notes": "Median rank 1 of 6 (ranks 1,4,1). Acute, easy-to-state fear of losing a recording; built-in phone recorders cover part of the need.",
   "created": "2026-11-17",
@@ -13,7 +13,7 @@
   "scores": {"verifier_distinguishable_in_1min": "borderline (looks like a plain recorder; onboarding interrupt-and-recover demo must ship)", "verifier_capability_not_look_or_price": "yes", "verifier_stack_gap": "needs custom native module for chunked recording and on-device transcription, no credential", "complaints": 10, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured"},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: recent complaints about one capability across 5 competing apps"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T073615Z-synthetic-screen-95523b", "note": "median rank 1 of 6"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "specced", "run": "20261117T073740Z-spec-differentiation-c1e9cc", "note": "spec written, verifier borderline on distinguishability, claims corrected"}],
-  "blocked_by": null,
-  "next_check": null
+  "history": [{"at": "2026-11-17T07:55:00Z", "from": null, "to": "discovered", "run": "20261117T072756Z-gap-mining-b18d5b", "note": "kept: recent complaints about one capability across 5 competing apps"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T073615Z-synthetic-screen-95523b", "note": "median rank 1 of 6"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "specced", "run": "20261117T073740Z-spec-differentiation-c1e9cc", "note": "spec written, verifier borderline on distinguishability, claims corrected"}, {"at": "2026-11-17T09:00:00Z", "from": "specced", "to": "awaiting_human", "run": "20261117T075608Z-demand-test-dce705", "note": "batch 2026-11-17-b1 prepared (page, 3 creatives, claims, plan); A-AD-1 raised, also PII-1 and ACC-1; copy_lint OK; ads_paused fails on ads cap 0"}],
+  "blocked_by": "escalations/open/A-AD-1-20261117-demand-test-dce705.md",
+  "next_check": "2026-11-24"
 }

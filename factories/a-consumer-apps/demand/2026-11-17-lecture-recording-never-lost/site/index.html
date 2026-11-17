@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LectureSafe (working name): concept, early access</title>
+<meta name="description" content="Concept page. A lecture recorder in development that saves audio as you record. Not available yet.">
+<style>
+  :root { --bg:#fafaf7; --fg:#1b1b18; --muted:#5b5b54; --accent:#0b57d0; --line:#dcdcd2; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#151513; --fg:#f2f2ec; --muted:#a9a9a0; --accent:#8ab4f8; --line:#34342f; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.5 system-ui, sans-serif; }
+  main { max-width:620px; margin:0 auto; padding:24px 16px 48px; }
+  .badge { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:2px 12px; font-size:14px; color:var(--muted); }
+  h1 { font-size:2rem; line-height:1.15; margin:16px 0 8px; }
+  ul { padding-left:20px; } li { margin:6px 0; }
+  button { font:inherit; font-weight:600; background:var(--accent); color:var(--bg); border:0; border-radius:10px; padding:14px 18px; display:block; inline-size:stretch; cursor:pointer; }
+  .note { color:var(--muted); font-size:15px; }
+  form { display:none; border:1px solid var(--line); border-radius:12px; padding:16px; margin-top:16px; }
+  form.open { display:block; }
+  input[type=email] { font:inherit; display:block; inline-size:stretch; box-sizing:border-box; padding:10px; margin:8px 0; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--fg); }
+  label.consent { display:flex; gap:8px; font-size:15px; margin:8px 0 12px; }
+  #msg { margin-top:10px; font-size:15px; }
+  footer { margin-top:32px; font-size:14px; color:var(--muted); }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <span class="badge">Concept &middot; In development &middot; Early access</span>
+  <h1>Record the whole lecture. Never lose it.</h1>
+  <p>LectureSafe is a lecture recorder for your iPhone. It saves your audio to the phone in short pieces while you record, and brings back an interrupted recording the next time you open it.</p>
+  <ul>
+    <li>Saves your recording as you record.</li>
+    <li>Recovers an interrupted recording on next launch.</li>
+    <li>Shows how much is saved while you record, and checks storage before a long lecture.</li>
+  </ul>
+  <p class="note"><strong>This app is in development.</strong> It is not on the App Store yet, and the screens in our ads are concept art, not the app.</p>
+  <button id="price" type="button">Get early access at $4.99 a month</button>
+  <p class="note">Planned price. Nothing is charged today. No payment details are asked for.</p>
+
+  <form id="signup" novalidate>
+    <strong>Join the early-access list</strong>
+    <p class="note">The app is not available yet. Nothing is charged today, and we do not take payment or a deposit. Planned price: $4.99 a month.</p>
+    <input id="email" type="email" autocomplete="email" placeholder="Your email address" required aria-label="Email address">
+    <label class="consent"><input id="consent" type="checkbox"> <span>Keep my email address on the early-access list for this app. It is stored for that purpose only.</span></label>
+    <button type="submit">Join the list</button>
+    <div id="msg" role="status"></div>
+  </form>
+
+  <footer><a href="privacy.html">Privacy</a></footer>
+</main>
+<script>
+// Operator fills these in after PII-1 and ACC-1 are approved. Empty means the feature is off.
+var CONFIG = { idea: "2026-11-17-lecture-recording-never-lost", pixelId: "", signupEndpoint: "", signupKey: "", eventEndpoint: "" };
+
+if (CONFIG.pixelId) {
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', CONFIG.pixelId); fbq('track', 'PageView');
+}
+function track(name) {
+  var p = new URLSearchParams(location.search);
+  var detail = { event: name, idea: CONFIG.idea, utm_content: p.get("utm_content"), utm_campaign: p.get("utm_campaign") };
+  (window.dataLayer = window.dataLayer || []).push(detail);
+  if (window.fbq) window.fbq("trackCustom", name, { idea: CONFIG.idea });
+  if (CONFIG.eventEndpoint && navigator.sendBeacon) navigator.sendBeacon(CONFIG.eventEndpoint, JSON.stringify(detail));
+}
+track("page_view");
+var form = document.getElementById("signup"), msg = document.getElementById("msg");
+document.getElementById("price").addEventListener("click", function () {
+  track("price_click"); form.className = "open"; document.getElementById("email").focus();
+});
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  var email = document.getElementById("email").value.trim();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.textContent = "Please enter a valid email address."; return; }
+  if (!document.getElementById("consent").checked) { msg.textContent = "Please tick the box to join the list."; return; }
+  if (!CONFIG.signupEndpoint) { msg.textContent = "Sign-ups are not open yet. Nothing was saved."; return; }
+  fetch(CONFIG.signupEndpoint, { method: "POST", headers: { "Content-Type": "application/json", "apikey": CONFIG.signupKey },
+    body: JSON.stringify({ idea: CONFIG.idea, email: email, consent_at: new Date().toISOString() }) })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); track("committed_signup"); msg.textContent = "You are on the list. Nothing was charged."; form.querySelector("button").disabled = true; })
+    .catch(function () { msg.textContent = "Something went wrong. Nothing was saved or charged."; });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "idea": "2026-11-17-source-faithful-ai-study-material",
+  "note": "Creatives are typographic concept cards (SVG). Export to PNG at upload. Each carries a visible 'Concept. In development.' label. No app screens are shown. The copy never calls the app AI. Audience is adult and university learners; the platform's own targeting is set to 18 and over.",
+  "creatives": [
+    {"file": "creative-1.svg", "angle": "your definitions, not reworded ones",
+     "primary_text": "A study app in development that builds flashcards only from your own notes, in your own words, and shows the source for each card. Early access, nothing is charged today.",
+     "headline": "Cards made only from your notes"},
+    {"file": "creative-2.svg", "angle": "tap a card, see the page",
+     "primary_text": "Every card in this concept links to the passage it came from. Import a text PDF or paste notes. In development. Join the early-access list, nothing is charged today.",
+     "headline": "Every card shows its source"},
+    {"file": "creative-3.svg", "angle": "answer key from your text",
+     "primary_text": "Quiz answers that come from your own file, not from somewhere else. A concept that works offline. In development. Early access, nothing is charged today.",
+     "headline": "An answer key from your own text"}
+  ],
+  "cta": "Learn more",
+  "link": "https://TO-BE-SET-AFTER-DEPLOY/?utm_source=meta&utm_medium=paid&utm_campaign=2026-11-17-source-faithful-ai-study-material&utm_content={creative}"
+}

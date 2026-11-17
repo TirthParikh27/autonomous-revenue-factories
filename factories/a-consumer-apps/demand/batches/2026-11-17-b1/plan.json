@@ -1,0 +1,21 @@
+{
+  "batch": "2026-11-17-b1",
+  "tranche": "demand_t1",
+  "campaigns": [
+    {"ref": "2026-11-17-lecture-recording-never-lost", "page": "demand/2026-11-17-lecture-recording-never-lost/site/",
+     "creatives": ["demand/2026-11-17-lecture-recording-never-lost/ads/creative-1.svg", "demand/2026-11-17-lecture-recording-never-lost/ads/creative-2.svg", "demand/2026-11-17-lecture-recording-never-lost/ads/creative-3.svg"],
+     "copy": "demand/2026-11-17-lecture-recording-never-lost/ads/ads.json", "price_shown": "$4.99 a month",
+     "lifetime_budget_usd": 30, "days": 3, "country": "US", "audience": "broad, platform targeting, age 18 and over",
+     "tracking": "utm_source=meta&utm_medium=paid&utm_campaign=2026-11-17-lecture-recording-never-lost&utm_content=creative-N"},
+    {"ref": "2026-11-17-private-journal-that-never-loses-entries", "page": "demand/2026-11-17-private-journal-that-never-loses-entries/site/",
+     "creatives": ["demand/2026-11-17-private-journal-that-never-loses-entries/ads/creative-1.svg", "demand/2026-11-17-private-journal-that-never-loses-entries/ads/creative-2.svg", "demand/2026-11-17-private-journal-that-never-loses-entries/ads/creative-3.svg"],
+     "copy": "demand/2026-11-17-private-journal-that-never-loses-entries/ads/ads.json", "price_shown": "$3.99 a month",
+     "lifetime_budget_usd": 30, "days": 3, "country": "US", "audience": "broad, platform targeting, age 18 and over",
+     "tracking": "utm_source=meta&utm_medium=paid&utm_campaign=2026-11-17-private-journal-that-never-loses-entries&utm_content=creative-N"},
+    {"ref": "2026-11-17-source-faithful-ai-study-material", "page": "demand/2026-11-17-source-faithful-ai-study-material/site/",
+     "creatives": ["demand/2026-11-17-source-faithful-ai-study-material/ads/creative-1.svg", "demand/2026-11-17-source-faithful-ai-study-material/ads/creative-2.svg", "demand/2026-11-17-source-faithful-ai-study-material/ads/creative-3.svg"],
+     "copy": "demand/2026-11-17-source-faithful-ai-study-material/ads/ads.json", "price_shown": "$5.99 a month",
+     "lifetime_budget_usd": 30, "days": 3, "country": "US", "audience": "broad, platform targeting, age 18 and over",
+     "tracking": "utm_source=meta&utm_medium=paid&utm_campaign=2026-11-17-source-faithful-ai-study-material&utm_content=creative-N"}
+  ]
+}

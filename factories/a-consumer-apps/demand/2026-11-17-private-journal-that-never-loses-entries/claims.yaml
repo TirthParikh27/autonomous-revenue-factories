@@ -1,0 +1,9 @@
+# Claims are in the brand's voice. Evidence is from the shipped build, which does not exist yet: every row is pending.
+claims:
+  - claim: "Your entries stay on your phone."
+    evidence: "pending build: network inspection shows no requests carrying entry data"
+  - claim: "No AI."
+    evidence: "pending build: code and dependency review"
+  - claim: "Backup file restores on a new phone."
+    evidence: "pending build: test restore on a clean install"
+not_claimed: ["never loses data", "anything about mental health", "anything about competitors' practices"]

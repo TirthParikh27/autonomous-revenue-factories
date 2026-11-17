@@ -1,0 +1,9 @@
+# Claims are in the brand's voice. Evidence is from the shipped build, which does not exist yet: every row is pending.
+claims:
+  - claim: "Saves your recording as you record."
+    evidence: "pending build: kill the app mid-recording, confirm recovered audio length"
+  - claim: "Recovers an interrupted recording on next launch."
+    evidence: "pending build: same test"
+  - claim: "Shows how much is saved while you record, and checks storage before a long lecture."
+    evidence: "pending build: UI test of the saved-minutes indicator and the storage check"
+not_claimed: ["never fails as an absolute guarantee", "anything about competitors"]

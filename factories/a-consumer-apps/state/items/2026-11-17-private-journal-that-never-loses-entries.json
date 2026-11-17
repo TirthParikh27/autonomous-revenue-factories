@@ -1,6 +1,6 @@
 {
   "id": "2026-11-17-private-journal-that-never-loses-entries",
-  "stage": "specced",
+  "stage": "awaiting_human",
   "created": "2026-11-17",
   "updated": "2026-11-17",
   "screen_notes": ["Specific, emotionally charged pains (lost years of entries, no app lock, forced AI) that an ad can name in one line.", "Crowded by built-in and established journal apps (Apple Journal, Day One, Daylio)."],
@@ -14,7 +14,7 @@
   "scores_spec": {"verifier_distinguishable": "borderline", "verifier_capability": "yes, partly (verified backup/restore)", "verifier_stack_gap": "no"},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept: 16 complaints across two clusters, 5 apps; j1 and j2 merged"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T074933Z-synthetic-screen-f03ada", "note": "synthetic screen, median rank 1 of 3 (ranks 1,1,2); not demand evidence"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "specced", "run": "20261117T075047Z-spec-differentiation-3e521d", "note": "verifier: distinguishable borderline, capability yes (backup+restore check; no-AI/local are omissions), stack no gap. Spec corrected after verifier (passphrase key, counts). Spec: state/specs/2026-11-17-private-journal-that-never-loses-entries.md"}],
-  "blocked_by": null,
-  "next_check": null
+  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept: 16 complaints across two clusters, 5 apps; j1 and j2 merged"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T074933Z-synthetic-screen-f03ada", "note": "synthetic screen, median rank 1 of 3 (ranks 1,1,2); not demand evidence"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "specced", "run": "20261117T075047Z-spec-differentiation-3e521d", "note": "verifier: distinguishable borderline, capability yes (backup+restore check; no-AI/local are omissions), stack no gap. Spec corrected after verifier (passphrase key, counts). Spec: state/specs/2026-11-17-private-journal-that-never-loses-entries.md"}, {"at": "2026-11-17T09:00:00Z", "from": "specced", "to": "awaiting_human", "run": "20261117T075608Z-demand-test-dce705", "note": "batch 2026-11-17-b1 prepared (page, 3 creatives, claims, plan); A-AD-1 raised, also PII-1 and ACC-1; copy_lint OK; ads_paused fails on ads cap 0"}],
+  "blocked_by": "escalations/open/A-AD-1-20261117-demand-test-dce705.md",
+  "next_check": "2026-11-24"
 }

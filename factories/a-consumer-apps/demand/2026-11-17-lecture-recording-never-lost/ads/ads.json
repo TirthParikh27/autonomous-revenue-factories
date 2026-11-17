@@ -1,0 +1,17 @@
+{
+  "idea": "2026-11-17-lecture-recording-never-lost",
+  "note": "Creatives are typographic concept cards (SVG). Export to PNG at upload. Each carries a visible 'Concept. In development.' label. No app screens are shown.",
+  "creatives": [
+    {"file": "creative-1.svg", "angle": "the recording that stops at minute 55",
+     "primary_text": "A lecture recorder in development for students. It saves your audio to your phone as you record, so a crash or a phone call does not take the whole lecture. Early access, nothing is charged today.",
+     "headline": "Record the whole lecture. Never lose it."},
+    {"file": "creative-2.svg", "angle": "interrupted recording comes back",
+     "primary_text": "Phone call mid-lecture? Full storage? The concept: your interrupted recording is recovered the next time you open the app. In development. Join the early-access list, nothing is charged today.",
+     "headline": "Get the interrupted recording back"},
+    {"file": "creative-3.svg", "angle": "see it saved",
+     "primary_text": "See how much of your lecture is saved while you record, and check storage before it starts. A concept in development. Early access, nothing is charged today.",
+     "headline": "See your lecture being saved"}
+  ],
+  "cta": "Learn more",
+  "link": "https://TO-BE-SET-AFTER-DEPLOY/?utm_source=meta&utm_medium=paid&utm_campaign=2026-11-17-lecture-recording-never-lost&utm_content={creative}"
+}
