@@ -38,6 +38,10 @@ Idea mining reads Apple's search and review feeds, so the machine running it mus
 
 Live mode for `publish.py` is added when the first two exist.
 
+## Known limit
+
+Mining web categories directly is weak: search results give complaints without dates and review sites are not reachable, so the first test run kept none. Web products still appear, because the spec stage picks the platform for jobs found in app reviews.
+
 ## Not built yet, on purpose
 
 These are in the architecture and wait until they are needed:
