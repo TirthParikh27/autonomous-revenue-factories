@@ -1,0 +1,22 @@
+name: c-trading
+on:
+  pull_request:
+    paths: ["factories/c-trading/**"]
+  push:
+    branches: [main]
+    paths: ["factories/c-trading/**"]
+permissions:
+  contents: read
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: factories/c-trading
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q

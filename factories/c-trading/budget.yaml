@@ -1,97 +1,41 @@
-# Superseded in part: describes the 16 November blueprint. See FACTORY_SPEC.md revision 2; rewritten in its build step 1.
-# Factory C (c-trading) budget and risk limits.
-# Read by the run wrapper, by CI gate scripts and by every skill.
-# Proposed conservative defaults. Only the operator changes this file (CODEOWNERS, deny rule).
-# Source tags: [playbook] = one practitioner playbook read in the research (AI Fin Hub),
-# a rule of thumb from a single source, not a standard. [proposed] = this blueprint's own default.
+# Factory C: trading strategy factory. Read by the run wrapper and by every skill.
+# Only the operator edits this file (deny rule). A wish to change it is escalation GEN-1.
+# All USD. Paper only: no live limits exist because no live trading exists.
+#
+# Hard limits: monthly_caps_usd, per_run, run_timeout_minutes, escalation.
+# Pass rules for strategies are not here. They are in engine/gate.yaml, and the bar rises
+# with the number of trials on its own. "Reference points" are guidance, not gates.
 
 factory: c-trading
-currency: USD
 
-monthly_caps:
-  tokens_usd: 60            # Claude usage across all scheduled runs
-  paid_api_usd: 0           # no paid data or platform by default; raising it is F-ACC-2
-  github_actions_minutes: 1500   # backtests, runner, journal [proposed; check plan allowance]
+monthly_caps_usd:
+  tokens: 150            # Claude usage at API-rate accounting, from total_cost_usd per run
+  paid_api: 0            # no paid data or platform. Raising it is F-ACC-2
+  total: 150
 
-per_run:                    # passed by the wrapper as --max-turns and --max-budget-usd
-  hypothesize:       {max_turns: 25, max_budget_usd: 1.50}
-  implement:         {max_turns: 60, max_budget_usd: 4.00}
-  backtest-validate: {max_turns: 20, max_budget_usd: 1.00}
-  paper-trade:       {max_turns: 20, max_budget_usd: 1.00}
-  evolve:            {max_turns: 30, max_budget_usd: 2.00}
-  capital-gate:      {max_turns: 30, max_budget_usd: 3.00}
-  weekly-review:     {max_turns: 40, max_budget_usd: 4.00}
+model: sonnet            # default for every stage. A stage may name its own under per_run
+run_timeout_minutes: 60
 
-validation:                 # ARCHITECTURE.md 5.3 portfolio rule; exhausting any one raises F-VAL-1
-  budget_usd: 200
-  window_days: 120
-  max_trials: 150           # every backtest of any kind counts
-  max_holdout_evaluations: 6
+per_run:                 # passed by the wrapper as --max-turns and --max-budget-usd
+  ideate:        {max_turns: 40,  max_budget_usd: 3.00}
+  build:         {max_turns: 60,  max_budget_usd: 5.00, model: opus}
+  optimise:      {max_turns: 60,  max_budget_usd: 5.00, model: opus}
+  weekly-review: {max_turns: 40,  max_budget_usd: 4.00, model: opus}
+  maintain:      {max_turns: 40,  max_budget_usd: 4.00, model: opus}
+  winner-packet: {max_turns: 40,  max_budget_usd: 4.00, model: opus}
+
+pipeline:
+  max_new_cards_per_run: 3
+  max_items_awaiting_build: 6        # ideate does nothing above this
+  max_trials_per_run: 120            # spend guard on one optimise run, not a target
+
+escalation:
+  default_packet_expiry_days: 7
+  winner_packet_expiry_days: 14
+  consecutive_failures_before_stop: 3
+
+# Reference points: guidance for judgement. The run states what it relied on.
 
 research:
-  max_cards_per_run: 3
-  max_cards_per_mechanism_per_run: 1
-  max_mechanism_share: 0.30         # of all cards ever written [proposed]
-  max_free_parameters: 4            # [proposed]
-  card_text_similarity_max: 0.80    # metric defined by engine/similarity_check [proposed]
-  trials_per_family: 10             # first trial plus evolved variants [proposed]
-  holdout_evaluations_per_cluster: 1
-
-backtest_gates:
-  cost_bps_per_side: 10             # [proposed]; no venue figures were found in the research
-  cost_stress_multiplier: 2         # net result must stay positive at 2x costs [proposed]
-  min_trades: 100                   # [proposed]
-  benchmark: SPY_buy_and_hold       # net Sharpe must exceed it over the same window [proposed]
-  oos_to_is_sharpe_min: 0.80        # [playbook]
-  pbo_clean_below: 0.30             # [playbook]
-  pbo_fail_at_or_above: 0.50        # [playbook]; 0.30 to 0.50 needs walk-forward confirmation
-  deflated_sharpe_min: 0.50         # [playbook]; trial count = all registry lines
-  cluster_return_correlation: 0.70  # same cluster at or above this [proposed]
-  lookahead_audit_required: true    # [playbook]; item list to be taken from the source at build time
-
-paper_gates:
-  enabled: false                    # stays false until F-ACC-1 is approved
-  starting_equity_usd: 10000        # notional paper money, not real [proposed]
-  max_strategies_on_paper: 3
-  max_position_pct_of_equity: 20
-  leverage: 1.0
-  shorting: false
-  min_calendar_days: 30             # [playbook]
-  min_filled_trades: 30             # [proposed]; the playbook gives none
-  max_days_to_reach_min_trades: 120 # [proposed]
-  fill_divergence_bps_max: 10       # mean absolute, paper fill vs market print [playbook]
-  heartbeat_gap_restarts_clock: true  # [playbook]
-  max_clock_restarts: 1             # [proposed]
-  rate_limit_headroom: 2            # stay at half the broker limit or less [playbook]
-  max_drawdown_pct: 15              # kill on paper [proposed]
-  paper_to_oos_sharpe_min: 0.50     # [proposed]
-
-live:                               # nothing below is active; live keys do not exist
-  enabled: false
-  max_allocation_usd: 0             # first live allocation cap; operator raises it after F-CAP-1
-  max_position_usd: 0
-  max_strategies_live: 1
-  min_days_before_increase: 60      # trading days before F-CAP-2 may be raised [proposed]
-  auto_pause:                       # any one halts new entries; resume is manual (F-LIVE-1)
-    max_drawdown_pct: 10                        # absolute backstop [proposed]
-    max_daily_loss_pct: 2                       # absolute backstop [proposed]
-    daily_pnl_below_backtest_percentile: 2      # [playbook]
-    five_day_pnl_below_backtest_percentile: 5   # [playbook]
-    twenty_day_sharpe_min_ratio_to_paper: 0.50  # [playbook]
-    drawdown_multiple_of_backtest_p95: 2        # [playbook]
-    slippage_multiple_of_paper_last_50_orders: 1.5  # [playbook]
-    broker_error_rate_pct_per_hour: 2           # [playbook]
-  kill_switch:                      # [playbook]
-    flag_file_checked_before_every_order: true
-    watchdog_interval_seconds: 60
-    broker_side_close_on_disconnect: true       # availability at the broker unverified
-
-venues:
-  allowed: [alpaca_paper_us_equities_etf]
-  never: [polymarket, kalshi, any_prediction_market, any_venue_reached_by_vpn]
-  needs_escalation: [crypto_perps, single_stocks, options, margin, shorting, intraday, live_any]
-
-failure_policy:
-  consecutive_stage_failures_before_stop: 3
-  escalation_expiry_days: 7
-  capital_packet_expiry_days: 14
+  typical_sweep_trials: 40           # enough to see whether a region is stable
+  typical_parameters: 3

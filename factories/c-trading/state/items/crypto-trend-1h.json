@@ -1,0 +1,52 @@
+{
+  "id": "crypto-trend-1h",
+  "stage": "killed",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Hourly crypto trend following, long only, inverse-volatility weights. Failed the local gate.",
+  "evidence": [
+    {
+      "claim": "Card written before the first trial",
+      "source": "strategies/crypto-trend-1h/card.md",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "Deflated Sharpe ratio 0.929 against a pass mark of 0.95; the other three checks passed",
+      "source": "state/gate/crypto-trend-1h.json",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "41 trials on crypto-1h, forming one idea",
+      "source": "state/trials/crypto-1h.jsonl",
+      "checked": "2026-11-17"
+    }
+  ],
+  "scores": {},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [
+    {
+      "at": "2026-11-17T07:00:00Z",
+      "from": null,
+      "to": "proposed",
+      "run": "by hand",
+      "note": "first strategy, taken through by hand to prove the path"
+    },
+    {
+      "at": "2026-11-17T07:30:00Z",
+      "from": "proposed",
+      "to": "built",
+      "run": "by hand",
+      "note": "lint and leak test passed"
+    },
+    {
+      "at": "2026-11-17T08:00:00Z",
+      "from": "built",
+      "to": "killed",
+      "run": "by hand",
+      "note": "failed the deflated Sharpe check after market adjustment; family closed. See strategies/crypto-trend-1h/result.md"
+    }
+  ],
+  "blocked_by": null,
+  "next_check": null
+}

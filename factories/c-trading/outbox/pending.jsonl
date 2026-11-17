@@ -1,0 +1,4 @@
+{"at": "2026-11-17T08:40:53.534626+00:00", "id": "o-000001", "link": "journal/2026-11-17/20261117T084053Z-ideate-b169cc.md", "priority": "digest", "run": "20261117T084053Z-ideate-b169cc", "text": "ideate passed ($1.08)"}
+{"at": "2026-11-17T08:45:19.327275+00:00", "id": "o-000002", "link": "journal/2026-11-17/20261117T084519Z-build-f98666.md", "priority": "digest", "run": "20261117T084519Z-build-f98666", "text": "build passed ($1.05)"}
+{"at": "2026-11-17T08:48:44.747234+00:00", "id": "o-000003", "link": null, "priority": "digest", "run": "20261117T084844Z-build-43482e", "text": "build failed: 1 permission denial(s)"}
+{"at": "2026-11-17T08:50:52.736079+00:00", "id": "o-000004", "link": null, "priority": "digest", "run": "20261117T085052Z-optimise-f81ecb", "text": "optimise failed: 1 permission denial(s)"}
