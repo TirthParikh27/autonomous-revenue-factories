@@ -1,9 +1,9 @@
 # Factory C: Trading strategy factory
 
-Status: architecture, revision 2 (17 November 2026). Nothing is built or run.
+Status: architecture, revision 2 (17 November 2026). The engine is built and tested on crypto data (build steps 2 to 4). Nothing is scheduled, and no paper trading exists yet.
 Nothing in this factory is financial advice. It is a research harness on paper accounts.
 
-This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md). The other files in this folder (`CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, `skills/`, `agents/`) still describe the earlier blueprint and are rewritten in build step 1.
+This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md). The other files in this folder (`CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, `skills/`, `agents/`) still describe the earlier blueprint and are rewritten in a later build step.
 
 ## 1. Purpose
 
@@ -51,34 +51,43 @@ Left of the line, agents work in seconds on development data. Right of the line,
 A strategy is one folder, `strategies/<id>/`:
 
 - `card.md`: the idea, the reason someone pays for this edge, the markets, the parameter ranges, and what result would kill it. Written before the first test.
-- `strategy.py`: one function. It receives price history up to the current bar and the parameters, and returns target positions. It has no file, network or clock access.
-- `params.yaml`: the chosen parameters, inside the card's ranges.
+- `strategy.py`: one function, `weights(bars, params)`. It returns the target weight of every symbol at every bar, decided with data up to and including that bar. It may import only numpy, pandas and the shared indicator library. It has no file, network or clock access, which a lint step enforces.
+- `params.yaml`: the dataset, the declared parameter ranges, and the chosen parameters.
 
-The engine acts on a target at the next bar. A strategy cannot trade on a price it has just seen, which blocks the commonest look-ahead by construction.
+The engine trades a target at the next bar's open, so a strategy cannot trade on a price it has just seen. The function sees the whole history at once for speed, so the leak test (4.2) proves it only used the past.
 
 ### 4.2 Engine
 
-`engine/` is a small Python package in the repo. Agents can run it and read it. They cannot edit it.
+`engine/` is a small Python package in the repo. Agents can run it and read it. They cannot edit it. It uses established libraries where they met the requirements in a trial ([results](design/library-trial/RESULTS.md)) and its own code where none did.
 
-- **Backtester.** Positions lagged one bar, costs charged on every change in position, returns recorded per bar. A few hundred readable lines, cross-checked against vectorbt on a reference case.
-- **Cost model.** Fees, half the spread, slippage that grows with order size, and funding where it applies. One table per market, sourced from venue fee pages. Every result is also produced at raised costs.
-- **Leak test.** Changes data after a date and checks that decisions before that date do not move. Run on every candidate.
-- **Statistics.** Deflated Sharpe ratio using the effective number of trials, probability of backtest overfitting across a parameter sweep, sub-period stability, parameter-neighbourhood stability, comparison with buy-and-hold. Implemented from the primary papers and cross-checked against skfolio and purgedcv.
-- **Similarity check.** Compares a new strategy with every earlier one by rules and by return correlation, so a copy is not counted as a new idea.
-- **Trial log.** `trials/<dataset>.jsonl`, append-only. The engine writes the line before it prints a result. The run wrapper commits it.
+| Part | Built on | Notes |
+|---|---|---|
+| Backtester | vectorbt (pinned) | A wrapper fixes next-bar fills, fees, slippage, no leverage, and a rebalance band so drift does not pay costs. Checked against a hand-written reference in tests |
+| Indicators | TA-Lib | `lib/indicators.py`. Outside the protected engine, so agents can add indicators |
+| Parameter search | Optuna | Searches only inside the card's declared ranges. Every run is a counted trial |
+| Cost model | Own | One table per market in `engine/config.yaml`, sourced from venue fee pages. Every result is also produced at raised costs |
+| Leak test | Own | Removes the future and checks that past decisions do not change. Run on every candidate |
+| Statistics | Own, from the primary papers | Deflated Sharpe ratio, overfitting probability, trial clustering. Checked against purgedcv in tests |
+| Trial log | Own | `state/trials/<dataset>.jsonl` plus each trial's daily returns. Written before a result is returned. An identical re-run is not counted twice |
+
+Commands: `python -m engine check|trial|sweep|gate <strategy>`, and `python -m engine.validate` for the judge's own tests.
 
 ### 4.3 The gate
 
 The engine decides pass or fail. Its rules sit in `engine/gate.yaml`, which only the operator changes.
 
-A strategy passes when, on net-of-cost returns:
+A strategy passes when all four hold:
 
-1. The deflated Sharpe ratio shows the result is unlikely to be the best of that many lucky trials. The trial count is every logged trial on the same dataset, grouped by how correlated their returns are.
-2. It stays positive at raised costs.
-3. It beats buy-and-hold of the same markets after costs.
-4. The leak test passes.
+1. **Leak test.** Past decisions do not change when later data is removed.
+2. **Deflated Sharpe ratio.** The result is unlikely to be luck, given every trial logged on the same dataset. Two adjustments make this honest:
+   - It is measured on returns after removing market exposure. A long-only strategy in a rising market earns a good Sharpe just by being invested, and that is not skill.
+   - Trials whose returns move together count as one idea, and the idea is judged on the average of its variants. Picking the luckiest of forty near-identical parameter sets gains nothing.
+3. **Costs.** The market-adjusted return stays positive with fees and slippage doubled.
+4. **Benchmark.** Net Sharpe beats buy-and-hold of the same markets.
 
-These four are coded. The remaining evidence is reported for judgement, not coded as thresholds: overfitting probability of the sweep, stability across sub-periods and neighbouring parameters, and trade count. The reviewer weighs it and can reject, with reasons written to the item file.
+The remaining evidence is reported for judgement, not coded as thresholds: overfitting probability of the sweep, spread of results across the sweep, stability across sub-periods, drawdown, turnover and cost share. The reviewer weighs it and can reject, with reasons written to the item file.
+
+What the gate can and cannot see is measured in section 9. In short, on five years of data it finds strong edges and cannot tell a modest real edge from luck.
 
 ### 4.4 Development data and the final exam
 
@@ -165,13 +174,18 @@ Known gap: an agent with web access could look up recent prices itself. Deny rul
 
 ## 9. Trusting the judge
 
-Before any strategy is mined, the engine must:
+The judge is tested before any strategy is mined, and again after every engine change. Results are in `engine/VALIDATION.json`.
 
-1. Reproduce a known published result (time-series momentum across markets) to within reason.
-2. Find an edge planted in synthetic data.
-3. Reject pure noise, at the rate the gate claims, when fed hundreds of random strategies.
+| Test | Result (17 Nov 2026, engine version 1) |
+|---|---|
+| Matches an independent backtest | The engine's equity curve matches a hand-written loop to within 0.1% (`tests/test_judge.py`) |
+| Catches look-ahead | A strategy using the next bar, and one normalising with the full-sample mean, both fail the leak test |
+| Rejects noise | 200 random strategies on real crypto data. The best had a raw Sharpe of 1.33 from market exposure alone. None of the top 25 passed |
+| Finds a planted edge | In a synthetic market, a planted edge with Sharpe 2 or 3 before costs passed. Sharpe 1 and 0.5 did not |
 
-These are the factory's essential tests. They are re-run after every engine change, and earlier survivors are re-examined.
+The last row is the gate's honest limit. Five years of data cannot separate a real Sharpe-1 edge from luck, which matches the research. Modest real edges will be rejected. That is the price of rejecting noise, and it eases only with more history, more markets, or time on paper.
+
+Not yet done: reproducing a published result (time-series momentum across asset classes). It needs daily data for ETFs or futures, which needs the Alpaca account.
 
 ## 10. Standards the engine follows
 
@@ -180,12 +194,13 @@ Each part of the judge is taken from published research or established practice,
 | Part | Standard | Source |
 |---|---|---|
 | Is the result luck, given the number of trials | Deflated Sharpe ratio | Bailey and López de Prado (2014) |
-| Counting trials that are really the same idea | Effective number of trials by clustering return correlations | López de Prado (2019) |
+| Counting trials that are really the same idea | Cluster trials by return correlation, judge each cluster on its average | López de Prado (2019), with hierarchical clustering in place of his ONC algorithm |
+| Skill versus market exposure | Judge returns after removing the benchmark's contribution | The 2026 audit finding that apparent LLM-strategy skill was net long exposure |
 | Is the optimisation overfit | Probability of backtest overfitting by combinatorial cross-validation | Bailey, Borwein, López de Prado and Zhu |
 | How much testing a dataset can bear | Minimum backtest length | Bailey et al. |
 | Evidence bar for a new idea | t-statistic above 3 as a reference point | Harvey, Liu and Zhu (2016) |
 | Held-back data, looked at once | Single-use holdout | Masters; López de Prado's embargo stage |
-| Costs | Fees, half spread, square-root impact, results at raised costs, costs no more than a third of gross return | Venue fee pages; Carver's speed limit; QuantConnect's volume cap |
+| Costs | Fees and slippage on every trade from venue fee pages, results at doubled costs. Market impact is left out while positions are small | Venue fee pages; Carver's speed limit |
 | Optimisation | Few parameters, ranges fixed in advance, stable regions over single best points, fit across markets | Carver |
 | Idea quality | A stated reason someone pays for the edge | Carver; AQR factor research |
 | Novelty | Reject returns too correlated with existing strategies | WorldQuant BRAIN |
@@ -199,10 +214,10 @@ Where research gives no agreed number, such as a pass mark for overfitting proba
 
 ## 11. Build order
 
-1. Rewrite `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, skills and agents to match this spec.
-2. Engine, cost model, statistics and the three judge tests.
-3. Data snapshot scripts and the development cutoff.
-4. One strategy taken by hand from card to local gate.
+1. Done: engine, cost model, statistics and the judge's tests.
+2. Done for crypto: data snapshot script and the development cutoff. ETFs and FX need account keys.
+3. Done: one strategy taken by hand from card to local gate (`strategies/crypto-trend-1h/`). It failed the gate narrowly, which is a valid result.
+4. Rewrite `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, skills and agents to match this spec.
 5. The exam job.
 6. Paper runner and journal (needs `F-ACC-1`).
 7. Health watch and the `maintain` skill.
@@ -211,6 +226,7 @@ Where research gives no agreed number, such as a pass mark for overfitting proba
 ## 12. Open items
 
 - Whether the operator wants a longer paper period before a winner packet than the engine's own judgement.
-- Cost tables need a fresh read of each venue's fee page at build time.
+- The crypto fee is Alpaca's published taker fee (0.25% a side). Slippage is an assumption until paper fills are measured.
+- The trial log is committed on `main` under `state/` for now. It moves to the `factory-state` branch when the run wrapper is wired up.
 - Alpaca's free US data covers one exchange with about 4 to 5% of volume, so volume-based hourly signals on ETFs are unreliable until better data is bought.
 - A paper venue for crypto funding carry that is open to Australians has not been confirmed.

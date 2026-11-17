@@ -1,0 +1,31 @@
+# Engine configuration. Only the operator changes this file (F-ENG-1).
+
+engine_version: 1
+
+# Development data ends here. Later bars are the held-back window and exist
+# only inside the final exam job.
+dev_start: "2021-01-01"
+dev_cutoff: "2025-12-31"
+
+datasets:
+  # A dataset is one market at one bar size. Trials are counted per dataset.
+  crypto-15m: {market: crypto, bar: 15min, bars_per_year: 35040, days_per_year: 365}
+  crypto-1h:  {market: crypto, bar: 1h,    bars_per_year: 8760,  days_per_year: 365}
+  crypto-1d:  {market: crypto, bar: 1D,    bars_per_year: 365,   days_per_year: 365}
+
+universe:
+  # Chosen on 17 Nov 2026 as large, liquid coins with history back to 2021.
+  # Choosing today's survivors biases results upward. Every report says so.
+  crypto: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, AVAXUSDT]
+
+costs:
+  # Charged on every change in position, per side, as a fraction of traded value.
+  crypto:
+    fee: 0.0025        # Alpaca crypto taker fee, lowest volume tier (alpaca.markets/support/crypto-maker-taker-gmt-faq, read 17 Nov 2026)
+    slippage: 0.0005   # assumed half spread plus slippage; replace with measured paper costs
+    financing_per_day: 0.0   # spot, long only
+    allow_short: false
+
+execution:
+  max_gross_exposure: 1.0   # no leverage
+  rebalance_band: 0.02      # ignore target changes smaller than this, so drift does not pay costs

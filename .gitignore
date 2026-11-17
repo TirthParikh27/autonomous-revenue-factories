@@ -1,3 +1,5 @@
 __pycache__/
 .pytest_cache/
 *.pyc
+# Factory C market data snapshots (rebuilt by data/fetch_binance.py; the manifest pins them)
+factories/c-trading/data/*/*/*.csv.gz

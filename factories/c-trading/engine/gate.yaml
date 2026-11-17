@@ -1,0 +1,8 @@
+# Pass rules for the four coded checks. Only the operator changes this file (F-ENG-1).
+# Everything else the gate reports is evidence for judgement, not a threshold.
+
+deflated_sharpe_min: 0.95     # one-sided 5% level, the convention in Bailey and Lopez de Prado (2014)
+cost_stress_multiplier: 2.0   # the result must stay positive with fees and slippage doubled
+trial_cluster_correlation: 0.5   # trials whose daily returns correlate above this count as one idea
+leak_cut_points: 4            # how many truncation points the leak test checks
+pbo_blocks: 16                # blocks for the overfitting-probability estimate (the paper's default)
