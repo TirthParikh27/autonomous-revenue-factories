@@ -1,0 +1,67 @@
+{
+  "id": "crypto-lowrisk-tilt-1d",
+  "stage": "killed",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Daily crypto selection of the lowest-volatility coins, long only, rebalanced every few weeks. Literature sign is disputed.",
+  "evidence": [
+    {
+      "claim": "Card written before any trial",
+      "source": "strategies/crypto-lowrisk-tilt-1d/card.md",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "Mechanism: lottery preference / low-risk anomaly; two crypto papers support, at least three find the opposite sign. Abstract-level reading only.",
+      "source": "state/scout/2026-11-17-crypto-daily-nontrend.json",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "Code written; `python3 -m engine check crypto-lowrisk-tilt-1d` printed 'lint: pass' and 'leak test: pass'",
+      "source": "strategies/crypto-lowrisk-tilt-1d/strategy.py",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "Reviewer (task code) did not reject: code matches card, all behaviour numbers are declared parameters, no leak path found. Noted: held coins drift unrebalanced so a new entry may only partly fill 1/k; check the 'mostly BTC' kill condition in results.",
+      "source": "strategies/crypto-lowrisk-tilt-1d/review-code.md",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "41 trials on crypto-1d (1 start, 40 sweep, 1 gate); raw Sharpe 0.36 to 1.14, all positive",
+      "source": "state/trials/crypto-1d.jsonl",
+      "checked": "2026-11-17"
+    },
+    {
+      "claim": "Gate fail: deflated Sharpe 0.22 vs min 0.95 (market-adjusted Sharpe of alike trials -0.1, beta 0.53); beats_buy_and_hold fail 0.9 vs 1.03; leak test and stressed costs pass",
+      "source": "state/gate/crypto-lowrisk-tilt-1d.json",
+      "checked": "2026-11-17"
+    }
+  ],
+  "scores": {},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [
+    {
+      "at": "2026-11-17T08:55:00Z",
+      "from": null,
+      "to": "proposed",
+      "run": "20261117T084053Z-ideate-b169cc",
+      "note": "card written from scout candidate; no engine run"
+    },
+    {
+      "at": "2026-11-17T09:10:00Z",
+      "from": "proposed",
+      "to": "built",
+      "run": "20261117T084844Z-build-43482e",
+      "note": "params.yaml and strategy.py written; engine check passed lint and leak test; reviewer did not reject. No trials run."
+    },
+    {
+      "at": "2026-11-17T08:52:00Z",
+      "from": "built",
+      "to": "killed",
+      "run": "20261117T085052Z-optimise-f81ecb",
+      "note": "failed the local gate on deflated Sharpe and beats-buy-and-hold; apparent Sharpe was market exposure. Family closed. See strategies/crypto-lowrisk-tilt-1d/result.md"
+    }
+  ],
+  "blocked_by": null,
+  "next_check": null
+}

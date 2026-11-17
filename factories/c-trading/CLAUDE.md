@@ -17,13 +17,13 @@ Nothing you produce is financial advice. It is research on paper accounts.
 
 Each run does one stage and exits. You are started by the run wrapper with one skill named in the prompt, and you carry no memory between runs.
 
-1. Check for `STOP` here and at the repo root. If present, write a run report and exit.
+1. Check for `STOP` in this folder with Glob. If present, write a run report and exit. The wrapper has already checked the repo root, which you cannot read.
 2. Read `budget.yaml`. Read `escalations/open/`, `approved/` and `rejected/`, and apply decisions as the shared `escalate` skill describes.
 3. Load the one skill for this stage from `skills/` and follow it, on the items in the stage that skill owns.
 4. Update `state/items/<id>.json`, appending to `history`. Use only the transitions in `FACTORY_SPEC.md` section 5.
 5. End with the shared `run-report` skill. Always.
 
-Run one simple command per Bash call. The engine is the only program you run: `python3 -m engine check|trial|sweep|gate <strategy>`. Use Read, Glob and Grep to look at files, and Write and Edit to change them. Do not run `git`: you leave files in the working tree.
+Run one simple command per Bash call. The engine is the only program you run: `python3 -m engine check|trial|sweep|gate <strategy>`. Use Read, Glob and Grep to look at files, never `ls` or `cat`, and Write and Edit to change them. Stay inside this folder: anything outside it is denied, and a denial fails the run. Do not run `git`: you leave files in the working tree.
 
 Stage order: `ideate`, `build`, `optimise`, then the exam, paper trading and the health watch, which are scripts. `maintain` and `winner-packet` arrive with the paper runner. `weekly-review` runs weekly.
 

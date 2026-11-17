@@ -88,6 +88,8 @@ def evaluate(strategy: str | strat.Strategy, bars: Bars | None = None) -> dict:
             "max_drawdown": trial["max_drawdown"], "total_return": trial["total_return"],
             "orders": trial["orders"], "turnover_per_year": trial["turnover_per_year"],
             "cost_per_year": trial["cost_per_year"], "exposure": trial["exposure"],
+            "average_weight_by_symbol": {k: round(float(v), 3) for k, v in
+                                         strat.compute(s, bars, s.chosen).fillna(0.0).mean().items()},
             "closest_other_strategy": closest,
             "known_biases": "universe chosen with hindsight; cost model is assumed, not measured",
         },

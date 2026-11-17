@@ -1,0 +1,6 @@
+dataset: crypto-1d
+ranges:
+  risk_lookback: {low: 21, high: 90, step: 3}   # days, trailing window for each coin's volatility
+  bottom_k: {low: 2, high: 5, step: 1}          # number of lowest-volatility coins held
+  rebalance: {low: 7, high: 30, step: 1}        # days between selections
+chosen: {risk_lookback: 27, bottom_k: 3, rebalance: 25}
