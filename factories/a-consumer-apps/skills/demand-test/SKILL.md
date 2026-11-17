@@ -15,7 +15,8 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 
 - Items at `specced`, up to `ads.max_ideas_per_batch` and the free slots under `pipeline.max_concurrent_demand_tests`.
 - `state/specs/<id>.md`, including the proposed price.
-- `data/landing_template/`, `data/privacy_notice.md` (operator-approved text).
+- `data/privacy_notice.md` if it exists (operator-approved text). If it does not, write a draft privacy page, mark it DRAFT, and ask for approval of the text in the `PII-1` packet. Pages are written per idea; there is no template.
+- Competitor prices come from the scout file and the spec. Do not fetch competitor pages.
 - The `ads` and `demand_test` sections of `budget.yaml`.
 
 ## Steps: preparing a batch
@@ -26,7 +27,7 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 4. For each idea, write three ad creatives to `demand/<id>/ads/` (image or short motion from designed mock-ups labelled as concept, primary text, headline) and `demand/<id>/claims.yaml`.
 5. Check each idea: the site builds, all three events fire, the price matches the spec, the "in development" and "nothing is charged today" lines and the privacy link are present, and no creative shows a mock-up as a shipping app. Run `checks/copy_lint --pre-build --has-price` on the page and ads. Drop ideas you cannot get right.
 6. Write `demand/batches/<batch>/plan.json`: per idea, the page path, the three creatives, the tranche 1 lifetime budget and duration from `budget.yaml`, the audience (broad, one country, the platform's own targeting), and the tracking parameters.
-7. Open one pull request with the batch's pages and raise one `A-AD-1` packet for the whole batch. Move the items to `awaiting_human`.
+7. Raise one `A-AD-1` packet for the whole batch, listing the files to review. The operator commits them and opens the pull request. Move the items to `awaiting_human`.
 
 ## Steps: after approval
 
@@ -43,7 +44,7 @@ Strangers who see an ad owe the idea nothing. What they click and whether they l
 ## Outputs
 
 - `demand/<id>/site/`, `demand/<id>/ads/`, `demand/<id>/claims.yaml`, `demand/batches/<batch>/plan.json`.
-- One pull request and one `A-AD-1` packet per batch.
+- One `A-AD-1` packet per batch.
 - Items at `awaiting_human`, then `demand_t1`, `demand_t2`.
 
 ## Stop conditions
