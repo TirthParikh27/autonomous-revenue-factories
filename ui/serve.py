@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Serves the factory UI on this computer only.
+"""Serves Keiretsu, the factory console, on this computer only.
 
     python ui/serve.py [--root PATH] [--port 8765]     then open http://127.0.0.1:8765
     python ui/serve.py --dump [--root PATH]            print what the pages would show, and exit
@@ -114,7 +114,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(data.build(args.root), indent=1))
         return 0
     httpd = server(args.root, args.port)
-    print(f"Factory UI: http://127.0.0.1:{httpd.server_address[1]}  (reading {args.root})")
+    print(f"Keiretsu: http://127.0.0.1:{httpd.server_address[1]}  (reading {args.root})")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

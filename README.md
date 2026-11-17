@@ -1,10 +1,12 @@
-# Autonomous Revenue Factories
+# Keiretsu
 
-Autonomous factories that turn AI work into revenue, with a human holding the keys.
+**Factories that run themselves. One person holds the switch.**
 
-[![Demo of the factory console: click to play](ui/demo/factory-console.jpg)](ui/demo/factory-console.mp4)
+A keiretsu is a family of businesses in different industries run as one group. This one is a set of autonomous factories that turn AI work into revenue, with a human holding the keys.
 
-*45-second tour of the console ([`ui/demo/factory-console.mp4`](ui/demo/factory-console.mp4)).*
+[![What a factory did before breakfast: click to play](ui/demo/keiretsu.jpg)](ui/demo/keiretsu.mp4)
+
+*One idea's morning, from a complaint in an app review to a decision waiting on you, in 54 seconds ([`ui/demo/keiretsu.mp4`](ui/demo/keiretsu.mp4)).*
 
 ## How it works
 
@@ -41,7 +43,7 @@ Micro-SaaS and browser extensions ([`g-marketplace-tools`](factories/g-marketpla
 
 ## The console
 
-[`ui/`](ui/) is a local page over the factories' files. It reads them and changes nothing except a factory's off switch.
+[`ui/`](ui/) is the Keiretsu console, a local page over the factories' files. It reads them and changes nothing except a factory's off switch.
 
 - **Board**: what needs you, spend against budget, and one column per stage with every idea in it.
 - **Live**: all factories on one screen around you. An amber line means a factory is waiting on you. Click a factory to zoom into its line.
@@ -63,6 +65,6 @@ python3 tools/factory_run.py --factory a-consumer-apps --stage gap-mining
 
 The stages and what each needs are in [`factories/a-consumer-apps/README.md`](factories/a-consumer-apps/README.md). The trading factory's daily job is started by hand from the Actions tab.
 
-**Add a factory.** Create `factories/<name>/` with the files in the shared conventions (`FACTORY_SPEC.md`, `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, `skills/`). It shows up in the console as soon as it has items. Name and order its stages in [`ui/factories.yaml`](ui/factories.yaml).
+**Add a factory.** Create `factories/<name>/` with the files in the shared conventions (`FACTORY_SPEC.md`, `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, `skills/`). It shows up in the console at once, as planned until it has items or runs. Name and order its stages in [`ui/factories.yaml`](ui/factories.yaml).
 
 **Change the code.** Read [`CLAUDE.md`](CLAUDE.md) and [`REVIEW.md`](REVIEW.md) first.

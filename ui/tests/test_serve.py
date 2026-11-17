@@ -137,7 +137,7 @@ def test_main_serves_until_interrupted(root, monkeypatch, capsys):
 
     monkeypatch.setattr(serve.ThreadingHTTPServer, "serve_forever", interrupted)
     assert serve.main(["--root", str(root), "--port", "0"]) == 0
-    assert "Factory UI: http://127.0.0.1:" in capsys.readouterr().out
+    assert "Keiretsu: http://127.0.0.1:" in capsys.readouterr().out
 
 
 def test_the_switch_still_answers_when_a_state_file_is_broken(root, call):

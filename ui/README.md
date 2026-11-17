@@ -1,4 +1,4 @@
-# Factory UI
+# Keiretsu, the factory console
 
 Two pages over the factories' own files. Nothing here runs a factory.
 
