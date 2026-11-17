@@ -20,6 +20,8 @@ The `checks` workflow fails a pull request when:
 
 The trading factory's tests need its own requirements, so the `c-trading` workflow measures `factories/c-trading/` with the same 80% rule. Any other factory that needs its own requirements gets the same: its own test job, and only then its folder left out of the root `.coveragerc`.
 
+Python under `factories/c-trading/design/` holds one-off trials and is not measured.
+
 These rules are easy to satisfy on paper: any test file anywhere counts as "a test changed", code placed under a `tests/` folder or in a `conftest.py` is not measured, and only Python lines are measured. The reviewer checks that the tests really exercise the change.
 
 ## What the reviewer checks
@@ -57,7 +59,7 @@ The author's session merges its own pull request once CI is green and the verdic
 - adds, reads or changes how keys and credentials are handled;
 - was opened by a factory run;
 - removes a stop or freeze file, or otherwise restarts something Tirth stopped;
-- changes a file listed in [`.github/CODEOWNERS`](.github/CODEOWNERS) on the base branch or in the pull request. These are each factory's rules and budgets, guard checks, publishers, CI and these review rules. `python tools/pr_gate.py` names them.
+- changes a file listed in [`.github/CODEOWNERS`](.github/CODEOWNERS) or on a factory's own deny list (`factories/<name>/.claude/settings.json`), on the base branch or in the pull request. These are each factory's rules and budgets, guard checks, publishers, CI and these review rules. `python tools/pr_gate.py` names them.
 
 When in doubt, it waits.
 

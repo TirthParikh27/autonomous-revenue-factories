@@ -2,11 +2,13 @@
 """Pull request gate (REVIEW.md, "What CI enforces").
 
 Fails when a pull request changes code but no test, or adds a coverage opt-out.
-Also names the changed files that only the operator may merge (.github/CODEOWNERS).
+Also names the changed files that only the operator may merge: .github/CODEOWNERS and each
+factory's deny list in factories/<name>/.claude/settings.json.
 
     python tools/pr_gate.py [--base origin/main]
 """
 import argparse
+import json
 import os
 import re
 import subprocess
@@ -50,6 +52,29 @@ def is_protected(path: str, patterns: list[str]) -> bool:
         if re.fullmatch(body + "(/.*)?", path):
             return True
     return False
+
+
+def deny_patterns(settings_path: str, settings_text: str) -> list[str]:
+    """A factory's own deny list: what its runs may not edit, a session may not merge either."""
+    factory = settings_path.split("/.claude/")[0]
+    try:
+        deny = json.loads(settings_text).get("permissions", {}).get("deny", [])
+    except (ValueError, AttributeError):
+        return []
+    found = (re.fullmatch(r"(?:Edit|Write)\((.+)\)", str(rule)) for rule in deny)
+    return sorted({f"/{factory}/{match.group(1).lstrip('/')}" for match in found if match})
+
+
+def factory_settings(base: str) -> list[tuple[str, str]]:
+    """Every factories/<name>/.claude/settings.json, on the base and in the checkout."""
+    show = lambda *args: subprocess.run(  # noqa: E731
+        ["git", *args], cwd=ROOT, capture_output=True, text=True, errors="replace",
+    ).stdout
+    listed = show("ls-tree", "-r", "--name-only", base, "--", "factories").splitlines()
+    files = [(path, show("show", f"{base}:{path}")) for path in listed if path.endswith("/.claude/settings.json")]
+    for here in sorted(ROOT.glob("factories/*/.claude/settings.json")):
+        files.append((here.relative_to(ROOT).as_posix(), here.read_text(errors="replace")))
+    return files
 
 
 def judge(changes: list[tuple[str, str]], patterns: list[str]) -> tuple[list[str], list[str]]:
@@ -107,6 +132,8 @@ def main() -> int:
     ).stdout
     here = ROOT / ".github" / "CODEOWNERS"
     patterns = protected_patterns(on_base + "\n" + (here.read_text() if here.exists() else ""))
+    for path, text in factory_settings(args.base):
+        patterns += deny_patterns(path, text)
     changes = parse_name_status(git_diff(args.base, "-z", "--name-status", "-M100%"))
     untested, protected = judge(changes, patterns)
     opt_outs = coverage_opt_outs(git_diff(

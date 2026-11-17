@@ -1,6 +1,7 @@
 # Files that guard money, accounts, keys, publishing and the review rules.
 # A pull request that changes any of them waits for the operator to merge (REVIEW.md).
 # tools/pr_gate.py reads this list, from the base branch and from the pull request.
+# It also treats every Edit and Write deny rule in factories/<name>/.claude/settings.json as protected.
 # Start every path with /, because the gate matches paths from the repository root only.
 /factories/*/budget.yaml            @TirthParikh27
 /factories/*/CLAUDE.md              @TirthParikh27
