@@ -14,7 +14,7 @@ The caller gives you a category, the excluded category list, and an output path 
 
 ## Where to read
 
-Use the factory's script for Apple's public search and review feeds. It saves the raw review text, so your quotes are exact. Run one command per Bash call, with nothing chained to it.
+Use the factory's script for Apple's public search and review feeds. It saves the raw review text, so your quotes are exact. Run one command per Bash call, with nothing chained to it. These two commands are the only shell commands you may run. Do not run `--help`, a validator or anything else.
 
 - Find apps: `python3 fetch_reviews.py search "<words>"`.
 - Save recent low-rated reviews: `python3 fetch_reviews.py reviews <app id> --pages 3`, then Read the file it names under `state/scout/reviews/`.

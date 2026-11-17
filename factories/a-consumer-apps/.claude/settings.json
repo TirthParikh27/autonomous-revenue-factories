@@ -4,7 +4,10 @@
       "Read", "Glob", "Grep", "Write", "Edit", "Agent", "WebSearch", "WebFetch",
       "Bash(python3 checks/*)",
       "Bash(python3 publish.py *)",
-      "Bash(python3 fetch_reviews.py *)"
+      "Bash(python3 fetch_reviews.py *)",
+      "Bash(python3 */fetch_reviews.py *)",
+      "Bash(python3 */publish.py *)",
+      "Bash(python3 */checks/*)"
     ],
     "deny": [
       "Edit(budget.yaml)", "Write(budget.yaml)",
