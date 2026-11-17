@@ -21,6 +21,7 @@ You are a fresh session. Read `CLAUDE.md` and `budget.yaml` first. You work only
    - **Competitor table:** the nearest named apps with store URLs taken from the scout file, and what each lacks.
    - **Core features:** at most 3, each tied to the job.
    - **Not building:** what is deliberately left out.
+   - **Running cost:** if a feature needs a hosted AI model or another paid service, estimate the cost per active subscriber per month and show that the price covers it with room to spare. Hosted AI is allowed. A native Apple Watch app is not buildable on this stack.
    - **Monetisation:** hard paywall after onboarding that shows the core job working, trial length, intended price points marked as intentions.
    - **Target market:** note that median payer value is higher in North America than elsewhere in the RevenueCat data.
    - **Demand test plan:** the page promise and 6 concept post angles.
