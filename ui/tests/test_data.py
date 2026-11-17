@@ -4,6 +4,7 @@ import json
 import time
 
 import pytest
+import yaml
 
 from ui import data
 
@@ -122,6 +123,19 @@ def test_a_packet_that_blocks_no_item_sits_at_the_stage_whose_run_raised_it(root
     # no run is named anywhere, so the packet and its item stay where the item last was
     assert stage["Pick a niche"] == "mine"
     assert by_id(built["items"])["2026-11-17-odd"]["stage"] == "mine"
+
+
+def test_a_killed_item_sits_at_the_stage_whose_run_killed_it(root):
+    apps = root / "factories" / "a-consumer-apps"
+    item(apps, "screened-out", "killed", ["discovered", "killed"], run="20261117T081000Z-synthetic-screen-aa11bb")
+    item(apps, "by-hand", "killed", ["discovered", "killed"], run="by hand")
+    items = by_id(by_id(data.build(root, NOW)["factories"])["a-consumer-apps"]["items"])
+    assert (items["screened-out"]["stage"], items["by-hand"]["stage"]) == ("screen", "mine")
+
+
+def test_a_gate_label_with_a_comma_is_read_whole():
+    stages = {stage["id"]: stage for stage in yaml.safe_load(data.CONFIG.read_text())["c-trading"]["stages"]}
+    assert stages["exam"]["gate"] == "Runs once, in CI"
 
 
 def test_a_factory_with_no_entry_gets_its_columns_from_its_items(root):

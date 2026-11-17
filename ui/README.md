@@ -33,7 +33,7 @@ The pages load fonts and three.js from a CDN. Offline, the Live view falls back 
 
 ## The demo video
 
-`demo/keiretsu.mp4` is a recording of the real console, following one idea through its morning. To remake it:
+`demo/keiretsu.mp4` is a recording of the real console. It follows one app idea through its morning, then one trading strategy, the second entirely in the Live view. The app factory's files come from the `factory-state` branch and the trading factory's from `main`. To remake it:
 
 - Script the clicks with Playwright and record the page, with the voice's real line lengths setting how long each step lasts. Draw a visible cursor in the page, because recordings have none.
 - Record larger than the frame so the camera has real pixels to move into: a 2400 by 1350 viewport with the page zoomed to 1.5 lays out like 1600 by 900. A canvas-drawn page will not take the zoom, so record it at its own size and move in less.

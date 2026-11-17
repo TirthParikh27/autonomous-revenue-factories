@@ -154,9 +154,9 @@ def factory(folder: Path, root: Path, shown: dict, now: dt.datetime) -> dict:
         waiting = item["stage"] == "awaiting_human"
         history = item.get("history") or []
         scores = item.get("scores") or {}
-        # an item waiting on a decision sits at the stage whose run asked for it
-        asked_by = next((skill_of(step.get("run")) for step in reversed(history) if step.get("to") == "awaiting_human"), None)
-        stage = (waiting and col_of_skill.get(asked_by)) or (col_of_stage[stages[-1]] if stages else None)
+        # an item that is waiting or killed sits at the stage whose run parked it there
+        parked_by = next((skill_of(step.get("run")) for step in reversed(history) if step.get("to") == item["stage"]), None)
+        stage = ((waiting or killed) and col_of_skill.get(parked_by)) or (col_of_stage[stages[-1]] if stages else None)
         if packet:
             packet["items"].append(item["id"])
             packet["stage"] = packet["stage"] or stage

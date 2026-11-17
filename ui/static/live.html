@@ -92,6 +92,8 @@ header>*{pointer-events:auto}
 .hist li{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}
 .hist time{font:11px var(--mono);color:var(--ink2);padding-top:2px}
 .hist b{display:block;font-weight:500;color:var(--ink)}
+.hist .open{display:block;font:inherit;font-weight:500;color:var(--ink);text-align:left;padding:0;text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px}
+.hist .open:hover{color:var(--cyan)}
 .hist span{color:var(--ink2)}
 .btn{border:1px solid var(--amber);border-radius:7px;padding:8px 14px;font:600 13px var(--body);justify-self:start;background:var(--amber);color:#201400}
 .btn:hover{filter:brightness(1.08)}
@@ -182,7 +184,8 @@ body.zoomed #readout{opacity:1;visibility:visible}
 .steps span.cur.wait{color:var(--amber)}.steps span.cur.wait::before{background:var(--amber);box-shadow:0 0 8px var(--amber)}
 .dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px;margin:0}
 .dl dt{font:500 10px var(--hud);letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);padding-top:3px}
-.dl dd{margin:0;color:var(--ink)}
+.dl dd{grid-column:2;margin:0;color:var(--ink)}
+.dl dd+dd{margin-top:8px}
 .killbox{border:1px solid var(--red);border-radius:8px;padding:10px 12px;color:var(--ink)}
 /* phone */
 @media (max-width:760px){
@@ -250,6 +253,7 @@ body.zoomed #readout{opacity:1;visibility:visible}
 <script src="app.js"></script>
 <script type="module">
 const D = await loadData().catch(err => { showError(err); throw err; });
+const LOADED = structuredClone(D);   // as the server sent it: the layout below adds its own fields to D
 const FS = D.factories;
 const $ = id => document.getElementById(id);
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1033,7 +1037,8 @@ function openStage(id) {
 function openRejects() {
   const f = st.fac, ks = killed(f); st.sel = null; st.hl = null; buildLabels(); hud();
   show(`<div class="eyebrow">${esc(f.short)} · rejected</div><h2>${ks.length} rejected</h2><p>Each one records where it stopped and why.</p>
-    <ul class="hist">${ks.map(i => `<li><time>${esc((f.stages.find(s => s.id === i.stage) || {name: "–"}).name)}</time><div><b>${esc(i.name)}</b><span>${esc(i.killed)}</span></div></li>`).join("")}</ul>`);
+    <ul class="hist">${ks.map(i => `<li><time>${esc((f.stages.find(s => s.id === i.stage) || {name: "–"}).name)}</time><div><button class="open" type="button" data-i="${esc(i.id)}">${esc(i.name)}</button><span>${esc(i.killed)}</span></div></li>`).join("")}</ul>`);
+  $("detail").querySelectorAll(".open").forEach(b => { b.onclick = () => openItem(b.dataset.i); });
 }
 function openApproval(fid, aid) {
   const f = FS.find(x => x.id === fid), a = f.approvals.find(x => x.id === aid);
@@ -1092,7 +1097,7 @@ $("rhead").onclick = () => { if (phone) $("rail").classList.toggle("closed"); };
 
 // a switch or new runs change what every label and machine shows, so start again from the new files
 onPower(() => FS, () => location.reload());
-watch(() => D, () => location.reload());
+watch(() => LOADED, () => location.reload());
 measure(); if (phone) $("rail").classList.add("closed");
 hud(); measure(); buildLabels(); draw(); placeLabels(); kick();
 if (location.hash.length > 1 && FS.some(f => f.id === location.hash.slice(1))) { st.t = RM ? 1 : .999; zoomTo(location.hash.slice(1)); }

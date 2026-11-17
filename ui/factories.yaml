@@ -26,7 +26,7 @@ c-trading:
     - {id: idea, name: Idea, from: [proposed], runs: [ideate]}
     - {id: code, name: Code, from: [built], runs: [build]}
     - {id: backtest, name: Backtest gate, short: Backtest, from: [optimised], runs: [optimise]}
-    - {id: exam, name: Final exam, short: Exam, from: [exam], gate: Runs once, in CI}
+    - {id: exam, name: Final exam, short: Exam, from: [exam], gate: "Runs once, in CI"}
     - {id: paper, name: Paper trade, short: Paper, from: [paper, paused], runs: [maintain]}
     - {id: watch, name: Watch, from: [watch, confirmed], runs: [winner-packet], gate: Real money needs your approval}
 

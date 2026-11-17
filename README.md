@@ -4,9 +4,9 @@
 
 A keiretsu is a family of businesses in different industries run as one group. This one is a set of autonomous factories that turn AI work into revenue, with a human holding the keys.
 
-[![What a factory did before breakfast: click to play](ui/demo/keiretsu.jpg)](ui/demo/keiretsu.mp4)
+[![What the factories did before breakfast: click to play](ui/demo/keiretsu.jpg)](ui/demo/keiretsu.mp4)
 
-*One idea's morning, from a complaint in an app review to a decision waiting on you, in under a minute ([`ui/demo/keiretsu.mp4`](ui/demo/keiretsu.mp4)).*
+*Two factories, one morning: an app idea that goes from a complaint in a review to a decision waiting on you, and a trading strategy that looks profitable until the gate rejects it. Under two minutes ([`ui/demo/keiretsu.mp4`](ui/demo/keiretsu.mp4)).*
 
 ## How it works
 
