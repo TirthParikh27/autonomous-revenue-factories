@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-old-photo-restoration-that-keeps-faces",
+  "stage": "specced",
+  "platform": "web",
+  "screen_notes": "Median rank 1 of 3 (ranks 1,1,1). Emotional stakes, easy before/after promise. Copy idea only, not evidence.",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "People restoring old family photos want faces to stay recognisable instead of being replaced by AI-invented faces.",
+  "category": "Photo and Video",
+  "evidence": [
+    {"claim": "12 dated complaints across 3 apps (FixMyPics, RetroFix, Photo Scan Plus) about restoration changing or distorting faces", "source": "state/scout/2026-11-17-photo-video.json (pv-c1; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 12, "apps_with_complaints": 3, "keyword_popularity": null, "keyword_source": "none configured", "verifier": {"distinguishable_in_one_minute": "Borderline (web competitors unsourced, free chat-AI substitutes; demand test decides)", "capability_not_look": "Yes (face regions composited from original, structural)", "stack_fit": "Borderline (restoration vendor, price and resolution unconfirmed; no account)"}, "proposed_price_usd_month": 7.99, "risk_note": "depends on model quality; spec must show a capability (e.g. restoration that is verifiably faithful) not a look"},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T08:50:00Z", "from": null, "to": "discovered", "run": "20261117T082434Z-gap-mining-7704e7", "note": "kept: one capability complaint across 3 apps; marginal on model-quality dependence"}, {"at": "2026-11-17T09:00:00Z", "from": "discovered", "to": "screened", "run": "20261117T082903Z-synthetic-screen-ad6785", "note": "synthetic screen, rank 1 of 3 (ranks 1,1,1); survives"}, {"at": "2026-11-17T08:50:00Z", "from": "screened", "to": "specced", "run": "20261117T083004Z-spec-differentiation-920f14", "note": "web spec after one revision. Verifier found: 'faces exactly as original' claim contradicted by cleanup in face boxes, 'face data never leaves browser' false as drafted, seam risk. Fixed: faces blanked before upload, original pixels composited, seam test required, vendor unconfirmed stated. Q1 and Q3 stay borderline; demand test is the real gate."}]
+}

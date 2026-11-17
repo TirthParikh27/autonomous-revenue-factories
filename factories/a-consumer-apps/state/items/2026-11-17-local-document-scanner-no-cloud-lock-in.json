@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-local-document-scanner-no-cloud-lock-in",
+  "stage": "killed",
+  "platform": "ios",
+  "screen_notes": "Median rank 2 of 3 (ranks 2,3,2). Broad audience, but crowded and the hook is an absence (no cloud, no subscription), weaker than a positive outcome. Copy idea only, not evidence.",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "People who scan documents want scans kept locally, safe across a phone change, and exportable without a forced cloud account or subscription.",
+  "category": "Utilities",
+  "evidence": [
+    {"claim": "11 dated complaints across 3 scanner apps (Adobe Scan, Genius Scan, iScanner): forced cloud, lost scans on phone change, export behind subscription", "source": "state/scout/2026-11-17-utilities.json (util-c1; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 11, "apps_with_complaints": 3, "keyword_popularity": null, "keyword_source": "none configured", "verifier": {"distinguishable_in_one_minute": "No (Apple's free built-in scanner unsourced and not distinguishable)", "capability_not_look": "Yes, weakly", "stack_fit": "Yes (needs custom native scan module)"}},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T08:50:00Z", "from": null, "to": "discovered", "run": "20261117T082434Z-gap-mining-7704e7", "note": "kept: capability complaints (local storage, data safety, export) across 3 apps; crowded category, spec must differentiate"}, {"at": "2026-11-17T09:00:00Z", "from": "discovered", "to": "screened", "run": "20261117T082903Z-synthetic-screen-ad6785", "note": "synthetic screen, rank 2 of 3 (ranks 2,3,2); survives"}, {"at": "2026-11-17T08:50:00Z", "from": "screened", "to": "killed", "run": "20261117T083004Z-spec-differentiation-920f14", "note": "spec written; verifier: not distinguishable from Apple's free built-in scanner in one minute, hook is absences, spec contradictions (folder lost on app deletion, hard paywall vs export-without-subscription complaint), iOS 4.3(b) risk. Revision would not change Q1, so killed. See state/specs/ file."}]
+}

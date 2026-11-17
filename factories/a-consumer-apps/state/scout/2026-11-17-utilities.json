@@ -1,0 +1,214 @@
+{
+  "category": "Utilities",
+  "store": "App Store, iOS, US",
+  "date": "2026-11-17",
+  "method": "fetch_reviews.py search and reviews (Apple public search and customer review RSS), reviews rated 3 stars or under, 3 pages per app. Raw files in state/scout/reviews/<app id>.json. TrustMRR discover_startups called once (no key needed). No WebFetch, no Reddit, no logins. Caller-listed covered jobs (lecture recording, flashcards, bill lists, spend tracking, journaling, strength logging, nutrient tracking, pronunciation) were not searched.",
+  "apps_read": [
+    {"id": 1199564834, "name": "Adobe Scan: PDF & Doc Scanner", "url": "https://apps.apple.com/us/app/adobe-scan-pdf-doc-scanner/id1199564834"},
+    {"id": 377672876, "name": "Scanner App: Genius Scan", "url": "https://apps.apple.com/us/app/scanner-app-genius-scan/id377672876"},
+    {"id": 1040093707, "name": "iScanner: PDF Document Scanner", "url": "https://apps.apple.com/us/app/iscanner-pdf-document-scanner/id1040093707"},
+    {"id": 388627783, "name": "CamScanner - PDF Scanner App", "url": "https://apps.apple.com/us/app/camscanner-pdf-scanner-app/id388627783"},
+    {"id": 717884032, "name": "Contact Cleanup", "url": "https://apps.apple.com/us/app/contact-cleanup/id717884032"},
+    {"id": 513670485, "name": "Cleanup Duplicate Contacts!", "url": "https://apps.apple.com/us/app/cleanup-duplicate-contacts/id513670485"},
+    {"id": 1463756032, "name": "Cleaner Neat: Clean Up Storage", "url": "https://apps.apple.com/us/app/cleaner-neat-clean-up-storage/id1463756032"},
+    {"id": 1137397744, "name": "Bitwarden Password Manager", "url": "https://apps.apple.com/us/app/bitwarden-password-manager/id1137397744"},
+    {"id": 6443490629, "name": "Proton Pass - Password Manager", "url": "https://apps.apple.com/us/app/proton-pass-password-manager/id6443490629"},
+    {"id": 517914548, "name": "Dashlane Password Manager", "url": "https://apps.apple.com/us/app/dashlane-password-manager/id517914548"},
+    {"id": 1200318119, "name": "QR Code Reader", "url": "https://apps.apple.com/us/app/qr-code-reader/id1200318119"},
+    {"id": 1013912824, "name": "QR Pro - Code Reader & Creator", "url": "https://apps.apple.com/us/app/qr-pro-code-reader-creator/id1013912824"},
+    {"id": 1524540481, "name": "Widgy Widgets: Home/Lock/Watch", "url": "https://apps.apple.com/us/app/widgy-widgets-home-lock-watch/id1524540481"},
+    {"id": 1523682319, "name": "Widgetsmith", "url": "https://apps.apple.com/us/app/widgetsmith/id1523682319"},
+    {"id": 413971331, "name": "iZip - Zip Unzip Unrar", "url": "https://apps.apple.com/us/app/izip-zip-unzip-unrar/id413971331"},
+    {"id": 1281374098, "name": "Unzip - zip,rar,7z file opener", "url": "https://apps.apple.com/us/app/unzip-zip-rar-7z-file-opener/id1281374098"},
+    {"id": 623691968, "name": "Unit Converter - Best Unit App", "url": "https://apps.apple.com/us/app/unit-converter-best-unit-app/id623691968"},
+    {"id": 478222820, "name": "Convert Any Unit Lite", "url": "https://apps.apple.com/us/app/convert-any-unit-lite/id478222820"}
+  ],
+  "candidates": [
+    {
+      "id": "util-c1",
+      "unmet_job": "Scan documents and keep them on the phone only: no forced account or cloud upload, scans that survive a phone change, reset or app offload, and export or email that works without a subscription.",
+      "competing_apps": [
+        {"name": "Adobe Scan: PDF & Doc Scanner", "url": "https://apps.apple.com/us/app/adobe-scan-pdf-doc-scanner/id1199564834"},
+        {"name": "Scanner App: Genius Scan", "url": "https://apps.apple.com/us/app/scanner-app-genius-scan/id377672876"},
+        {"name": "iScanner: PDF Document Scanner", "url": "https://apps.apple.com/us/app/iscanner-pdf-document-scanner/id1040093707"}
+      ],
+      "complaints": [
+        {"quote": "uploading to adobe cloud THAT I DO NOT WANT I HAVE 1TB PHONE STORAGE WHY WOULD I NEED U???", "app": "Adobe Scan: PDF & Doc Scanner", "date": "2026-10-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1199564834/sortBy=mostRecent/json"},
+        {"quote": "Must give up personal email, data, to use.", "app": "Adobe Scan: PDF & Doc Scanner", "date": "2026-10-21", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1199564834/sortBy=mostRecent/json"},
+        {"quote": "Adobe Scan automatically uploads personal documents to its servers and may analyze their contents unless you opt out.", "app": "Adobe Scan: PDF & Doc Scanner", "date": "2026-10-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1199564834/sortBy=mostRecent/json"},
+        {"quote": "I changed phones and now nothing is available.", "app": "Adobe Scan: PDF & Doc Scanner", "date": "2026-10-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1199564834/sortBy=mostRecent/json"},
+        {"quote": "It keeps asking you to subscribe for their cloud. I don’t want that and if you don’t subscribe, the app becomes useless", "app": "Adobe Scan: PDF & Doc Scanner", "date": "2026-10-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1199564834/sortBy=mostRecent/json"},
+        {"quote": "Offloaded the app for an iOS update and when put back on the phone, 9 years of documents gone.", "app": "Scanner App: Genius Scan", "date": "2026-11-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=377672876/sortBy=mostRecent/json"},
+        {"quote": "only works with ios mail which I dont use. Please add gmail as a default", "app": "Scanner App: Genius Scan", "date": "2026-10-19", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=377672876/sortBy=mostRecent/json"},
+        {"quote": "Product wouldnt restore after reloading app.", "app": "iScanner: PDF Document Scanner", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1040093707/sortBy=mostRecent/json"},
+        {"quote": "No ability to verify where documents are stored", "app": "iScanner: PDF Document Scanner", "date": "2026-11-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1040093707/sortBy=mostRecent/json"},
+        {"quote": "iScanner is not allowing me to email the file.", "app": "iScanner: PDF Document Scanner", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1040093707/sortBy=mostRecent/json"},
+        {"quote": "Can’t see files on desktop after upload, can’t upload to usb or computer without hoops", "app": "iScanner: PDF Document Scanner", "date": "2026-11-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1040093707/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Subscription price, weekly billing and ad volume are the most common complaints on all four scanner apps (hundreds seen); they were left out as price-only. The data-loss reports on Genius Scan and iScanner are single reports each; cause (iOS offload behaviour, app bug) is not verified. A privacy-first scanner is a crowded space (at least 9 scanner apps returned by one search). No TrustMRR product matched."
+    },
+    {
+      "id": "util-c2",
+      "unmet_job": "Scan long, multi-page or handwritten documents (books, forms) without crashes, with accurate text recognition, correct exposure on white paper and fine control over brightness and contrast.",
+      "competing_apps": [
+        {"name": "Adobe Scan: PDF & Doc Scanner", "url": "https://apps.apple.com/us/app/adobe-scan-pdf-doc-scanner/id1199564834"},
+        {"name": "Scanner App: Genius Scan", "url": "https://apps.apple.com/us/app/scanner-app-genius-scan/id377672876"},
+        {"name": "iScanner: PDF Document Scanner", "url": "https://apps.apple.com/us/app/iscanner-pdf-document-scanner/id1040093707"},
+        {"name": "CamScanner - PDF Scanner App", "url": "https://apps.apple.com/us/app/camscanner-pdf-scanner-app/id388627783"}
+      ],
+      "complaints": [
+        {"quote": "I find with handwritten books it frequently crashes when scanning much more than 20 pages.", "app": "Adobe Scan: PDF & Doc Scanner", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1199564834/sortBy=mostRecent/json"},
+        {"quote": "It also has a poor OCR (by today’s standards) esp with older typeset books", "app": "Adobe Scan: PDF & Doc Scanner", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1199564834/sortBy=mostRecent/json"},
+        {"quote": "even with it the app crashes when scanning a large pdf (it was around 90 pages)", "app": "Adobe Scan: PDF & Doc Scanner", "date": "2026-10-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1199564834/sortBy=mostRecent/json"},
+        {"quote": "documents are white but cameras look at white and think it’s overexposed so you get grey paper", "app": "Adobe Scan: PDF & Doc Scanner", "date": "2026-11-09", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1199564834/sortBy=mostRecent/json"},
+        {"quote": "I’ve been asking for more granular control over brightness and contrast for years.", "app": "Scanner App: Genius Scan", "date": "2026-11-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=377672876/sortBy=mostRecent/json"},
+        {"quote": "It does not respect the limits of the document. The scans come out very blurry.", "app": "iScanner: PDF Document Scanner", "date": "2026-10-26", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1040093707/sortBy=mostRecent/json"},
+        {"quote": "the handwritten portions of my documents disappear despite paying premium", "app": "CamScanner - PDF Scanner App", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=388627783/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "About 20 Adobe Scan reviews dated 2026-10-15 to 2026-10-20 report crashes after a 10-15-26 update (a single release bug, not counted here as a capability gap). Large-document crash complaints may partly belong to that release. Quality complaints are 1 or 2 per app, so evidence on breadth is thin."
+    },
+    {
+      "id": "util-c3",
+      "unmet_job": "Merge duplicate contacts without losing names, notes or photos, with a choice of which record to keep, and handle large address books and same-email or shared-number cases.",
+      "competing_apps": [
+        {"name": "Contact Cleanup", "url": "https://apps.apple.com/us/app/contact-cleanup/id717884032"},
+        {"name": "Cleanup Duplicate Contacts!", "url": "https://apps.apple.com/us/app/cleanup-duplicate-contacts/id513670485"},
+        {"name": "Cleaner Neat: Clean Up Storage", "url": "https://apps.apple.com/us/app/cleaner-neat-clean-up-storage/id1463756032"}
+      ],
+      "complaints": [
+        {"quote": "Constantly deleting my contacts, even after adding them back in the phone, whatever bug the app has will delete them again.", "app": "Contact Cleanup", "date": "2026-07-26", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=717884032/sortBy=mostRecent/json"},
+        {"quote": "went from 5900 contacts to 790 then to over 27k contacts!!!", "app": "Contact Cleanup", "date": "2026-07-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=717884032/sortBy=mostRecent/json"},
+        {"quote": "Many of my contacts merged together. Could not figure out what number goes to who.", "app": "Contact Cleanup", "date": "2025-06-26", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=717884032/sortBy=mostRecent/json"},
+        {"quote": "The merge would be ok if I could choose which one to keep as the merge result but that seems impossible.", "app": "Contact Cleanup", "date": "2024-10-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=717884032/sortBy=mostRecent/json"},
+        {"quote": "All I can see in my messages are phone numbers for many people.", "app": "Cleanup Duplicate Contacts!", "date": "2025-12-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=513670485/sortBy=mostRecent/json"},
+        {"quote": "it will add a bunch of * stars in each contacts note!", "app": "Cleanup Duplicate Contacts!", "date": "2026-06-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=513670485/sortBy=mostRecent/json"},
+        {"quote": "this won't let me merge them except one at a time", "app": "Cleanup Duplicate Contacts!", "date": "2025-04-21", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=513670485/sortBy=mostRecent/json"},
+        {"quote": "it erased the names and data leaving only unidentified phone numbers.", "app": "Cleaner Neat: Clean Up Storage", "date": "2026-10-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1463756032/sortBy=mostRecent/json"},
+        {"quote": "I picked all my contacts to merge together and now it deleted every contact I had in my system", "app": "Cleaner Neat: Clean Up Storage", "date": "2026-06-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1463756032/sortBy=mostRecent/json"},
+        {"quote": "it said it merged them but when I went into my contacts they were not merged", "app": "Cleaner Neat: Clean Up Storage", "date": "2026-05-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1463756032/sortBy=mostRecent/json"},
+        {"quote": "was left with all my contacts without a name and only 1532 contacts without names only numbers.", "app": "Cleaner Neat: Clean Up Storage", "date": "2026-07-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1463756032/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Only the newest Contact Cleanup reviews are 2026; most of its 3-star-or-under feed is 2022 to 2024, so two quotes above are older and dated. Cleaner Neat is a general storage cleaner; only its contact-merge reviews are counted. Whether iOS lets a third-party app safely edit contacts at scale was not checked. Four other duplicate-contact apps from the search (Duplicate Contacts Manager, Easy Cleaner, Cleaner: Merge Contact & Photo, Duplicate Contacts Fixer) were not read."
+    },
+    {
+      "id": "util-c4",
+      "unmet_job": "Autofill and save logins reliably on iPhone, including choosing whether a site uses username or email, saving new logins from inside apps, and not asking for the master password on every autofill.",
+      "competing_apps": [
+        {"name": "Proton Pass - Password Manager", "url": "https://apps.apple.com/us/app/proton-pass-password-manager/id6443490629"},
+        {"name": "Bitwarden Password Manager", "url": "https://apps.apple.com/us/app/bitwarden-password-manager/id1137397744"},
+        {"name": "Dashlane Password Manager", "url": "https://apps.apple.com/us/app/dashlane-password-manager/id517914548"}
+      ],
+      "complaints": [
+        {"quote": "I’d like to be able to designate username or password for individual website logins instead of having the app default to username", "app": "Proton Pass - Password Manager", "date": "2026-11-09", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6443490629/sortBy=mostRecent/json"},
+        {"quote": "this password manager stopped being able to differentiate between a username and an email address quite a long time ago", "app": "Proton Pass - Password Manager", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6443490629/sortBy=mostRecent/json"},
+        {"quote": "The browser extension duplicates entries.", "app": "Proton Pass - Password Manager", "date": "2026-11-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6443490629/sortBy=mostRecent/json"},
+        {"quote": "It doesn’t autofill on my phone.", "app": "Proton Pass - Password Manager", "date": "2026-11-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6443490629/sortBy=mostRecent/json"},
+        {"quote": "I have to be really careful to manually store new logins ( copy and paste passwords etc from the form into Bitwarden).", "app": "Bitwarden Password Manager", "date": "2026-10-19", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"},
+        {"quote": "The app often has poor field detection which means manually exiting the another app to fetch whats in here.", "app": "Bitwarden Password Manager", "date": "2026-10-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"},
+        {"quote": "In the past three days the app has completely stopped autofilling.", "app": "Bitwarden Password Manager", "date": "2026-09-20", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"},
+        {"quote": "the app prompts for the master password with every single autofill unless the timeout is set to ‘never’", "app": "Bitwarden Password Manager", "date": "2026-07-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"},
+        {"quote": "When I want to use it on my phone or iPad, it’s the pits.", "app": "Dashlane Password Manager", "date": "2026-11-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=517914548/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Apple's own Passwords app (815k ratings) is the incumbent and was not read; one Proton Pass reviewer says Apple's feature works better. Autofill depends on iOS credential-provider APIs, so whether a new app could do better than three funded teams is unknown. Several reviews cluster around iOS 27 and iPhone Duo updates (Oct to Nov 2026) and may be release bugs. Dashlane returned only 8 low-rated reviews, so it is thin."
+    },
+    {
+      "id": "util-c5",
+      "unmet_job": "Recover access to a password vault on a new or reset phone without needing a computer, and move existing logins in from Apple Passwords or Safari on iPhone alone.",
+      "competing_apps": [
+        {"name": "Proton Pass - Password Manager", "url": "https://apps.apple.com/us/app/proton-pass-password-manager/id6443490629"},
+        {"name": "Bitwarden Password Manager", "url": "https://apps.apple.com/us/app/bitwarden-password-manager/id1137397744"},
+        {"name": "Dashlane Password Manager", "url": "https://apps.apple.com/us/app/dashlane-password-manager/id517914548"}
+      ],
+      "complaints": [
+        {"quote": "I’ve ended up with two accounts that will let you log in but not view passwords.", "app": "Proton Pass - Password Manager", "date": "2026-10-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6443490629/sortBy=mostRecent/json"},
+        {"quote": "I can’t find anywhere to type in my recovery phrase to try to unlock one of my previous vaults after a password reset. You have to have a computer to do it!!!!", "app": "Proton Pass - Password Manager", "date": "2025-12-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=6443490629/sortBy=mostRecent/json"},
+        {"quote": "This app provides no way to import passwords from an iOS device.", "app": "Proton Pass - Password Manager", "date": "2026-01-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=6443490629/sortBy=mostRecent/json"},
+        {"quote": "the app straight up refuses to accept your master password, it even being copy pasted but somehow “invalid”.", "app": "Bitwarden Password Manager", "date": "2026-10-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"},
+        {"quote": "This app has locked me out and says my account doesn’t exist.", "app": "Bitwarden Password Manager", "date": "2026-09-18", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"},
+        {"quote": "Cannot log in on other devices and no fricken help!!", "app": "Dashlane Password Manager", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=517914548/sortBy=mostRecent/json"},
+        {"quote": "the emails sent do not show up in my Inbox until hours later.", "app": "Dashlane Password Manager", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=517914548/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Lockout complaints are partly service and support failures, not a missing capability, and several follow app updates. The import gap comes from one Proton Pass review; Bitwarden and Dashlane import was not checked. Recovery by design (no vendor reset) is a security property, so some of these may not be fixable by any app."
+    },
+    {
+      "id": "util-c6",
+      "unmet_job": "Keep home and lock screen widgets that show live data (calendar events, health stats, music, custom JSON feeds) up to date, and let users edit a widget whose data source has gone offline.",
+      "competing_apps": [
+        {"name": "Widgy Widgets: Home/Lock/Watch", "url": "https://apps.apple.com/us/app/widgy-widgets-home-lock-watch/id1524540481"},
+        {"name": "Widgetsmith", "url": "https://apps.apple.com/us/app/widgetsmith/id1523682319"}
+      ],
+      "complaints": [
+        {"quote": "When a JSON or CSV Endpoint goes down, your widgets no longer load, and you cannot edit them until the domain is reinstated.", "app": "Widgy Widgets: Home/Lock/Watch", "date": "2026-03-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1524540481/sortBy=mostRecent/json"},
+        {"quote": "Widget refresh rate is too slow to be useful.", "app": "Widgy Widgets: Home/Lock/Watch", "date": "2026-10-18", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1524540481/sortBy=mostRecent/json"},
+        {"quote": "doesn’t background refresh nearly frequently enough", "app": "Widgy Widgets: Home/Lock/Watch", "date": "2026-08-28", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1524540481/sortBy=mostRecent/json"},
+        {"quote": "My calendars, reminders, and Health stats dont update", "app": "Widgy Widgets: Home/Lock/Watch", "date": "2026-09-27", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1524540481/sortBy=mostRecent/json"},
+        {"quote": "The interactive weather widgets always lag and take 7-10 seconds to register a touch/swipe.", "app": "Widgetsmith", "date": "2026-10-17", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1523682319/sortBy=mostRecent/json"},
+        {"quote": "only displayed some of the meetings while randomly admitting others", "app": "Widgetsmith", "date": "2026-11-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1523682319/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "iOS limits how often widgets refresh; whether any third-party app can refresh faster was not checked. The category sits next to widget and wallpaper theme apps (the wallpaper line is on the excluded list); this candidate concerns data accuracy, not themes, but the adjacency is noted for the caller. Two apps only, and the endpoint complaint is one job for a technical audience. Many other reviews on both apps are price, paywall or navigation complaints and were not counted. Widget apps found: Color Widgets, iScreen, Mico, Widgetable, Themify, Photo Widget, Locket Widget (not read)."
+    },
+    {
+      "id": "util-c7",
+      "unmet_job": "Zip and unzip several files or whole folders at once, extract 7z and RAR to the Files app, and delete extracted files cleanly, without taking over file associations.",
+      "competing_apps": [
+        {"name": "iZip - Zip Unzip Unrar", "url": "https://apps.apple.com/us/app/izip-zip-unzip-unrar/id413971331"},
+        {"name": "Unzip - zip,rar,7z file opener", "url": "https://apps.apple.com/us/app/unzip-zip-rar-7z-file-opener/id1281374098"}
+      ],
+      "complaints": [
+        {"quote": "this app doesn’t even allow you to select more than one file at a time, let alone a whole directory.", "app": "iZip - Zip Unzip Unrar", "date": "2026-09-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=413971331/sortBy=mostRecent/json"},
+        {"quote": "it doesn’t delete files if you delete them through the app!", "app": "iZip - Zip Unzip Unrar", "date": "2026-04-26", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=413971331/sortBy=mostRecent/json"},
+        {"quote": "Can’t extract 7z files", "app": "iZip - Zip Unzip Unrar", "date": "2025-12-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=413971331/sortBy=mostRecent/json"},
+        {"quote": "The free version also doesn’t actually unzip or extract files to your phone; it only allows them to be viewed or played in app.", "app": "iZip - Zip Unzip Unrar", "date": "2025-07-01", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=413971331/sortBy=mostRecent/json"},
+        {"quote": "There is absolutely no reason this app should hijack unzipped video files.", "app": "Unzip - zip,rar,7z file opener", "date": "2026-06-18", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1281374098/sortBy=mostRecent/json"},
+        {"quote": "takes over file opening priorities without permission", "app": "Unzip - zip,rar,7z file opener", "date": "2026-06-29", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1281374098/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Thin: 2 apps, 1 to 2 reports per problem, and the file-association reports may be a platform behaviour, not an app feature. Ads (including adult ads) dominate both feeds and were left out as non-capability. One Unzip reviewer says the app supports split archives, so features differ by app. Eight other archive apps were returned by search and not read."
+    },
+    {
+      "id": "util-c8",
+      "unmet_job": "Scan a QR code or barcode, show the decoded content before any action, let the user choose among several codes in view, read barcodes offline and return the raw data.",
+      "competing_apps": [
+        {"name": "QR Pro - Code Reader & Creator", "url": "https://apps.apple.com/us/app/qr-pro-code-reader-creator/id1013912824"},
+        {"name": "QR Code Reader", "url": "https://apps.apple.com/us/app/qr-code-reader/id1200318119"}
+      ],
+      "complaints": [
+        {"quote": "it grabs the first code it sees and it does not wait for the matrix to be fully on the screen.", "app": "QR Pro - Code Reader & Creator", "date": "2025-11-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1013912824/sortBy=mostRecent/json"},
+        {"quote": "Why am I being forced into making selections after I capture the QR code.", "app": "QR Pro - Code Reader & Creator", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1013912824/sortBy=mostRecent/json"},
+        {"quote": "I’ve gotten a redirect to a website called fitcrazehub.com on more than one occasion.", "app": "QR Code Reader", "date": "2025-04-06", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1200318119/sortBy=mostRecent/json"},
+        {"quote": "Scanning barcode doesn’t give me any result (maybe because I didn’t give it network access which shouldn’t be required for a scanner).", "app": "QR Code Reader", "date": "2024-11-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1200318119/sortBy=mostRecent/json"},
+        {"quote": "Beep cannot be disabled, ignores DND, mute switch, ringer volume, media volume.", "app": "QR Code Reader", "date": "2025-06-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1200318119/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Very thin: 2 apps, 5 quotes, 4 of them older than 2026. The QR feeds are overwhelmingly about hidden subscriptions and ads (price-only, not counted). The iPhone camera reads QR codes natively, which one reviewer cites as the reason not to pay; it reads QR only, not barcodes, per one 2024 review. Other QR apps from search were not read."
+    }
+  ],
+  "excluded": [],
+  "excluded_note": "No candidate or app fell on data/excluded_categories.yaml. Widget theme and wallpaper apps (Widgetsmith, Color Widgets, iScreen, Mico, Themify, Photo Widget) were not treated as candidates. Flashlight, simple timer and sound effect apps were not searched. The caller's covered jobs (lecture recording, flashcards, bill lists, spend tracking, journaling, strength logging, nutrient tracking, pronunciation) were avoided.",
+  "price_only_not_candidates": "Subscription price, free-trial billing, weekly charges, cancellation difficulty and ad volume dominated every feed read: QR Code Reader (hundreds, 2024 to 2026), iScanner, CamScanner, Adobe Scan, Genius Scan, Unit Converter - Best Unit App (premium paywall for length, volume and mass conversion after an update, about 2026-11-13), Convert Any Unit Lite (ads over the input field), Cleaner Neat (free-tier limits, cancellation), iZip, Unzip and Widgy (one free widget, 7.99 to unlock). Not made into candidates. Unit converters had no capability complaint beyond paywall and ad placement.",
+  "other_themes_seen_not_candidates": "iPhone Duo and iOS 27 compatibility crashes (Bitwarden, Dashlane, Widgetsmith, Proton Pass, Widgy; Oct to Nov 2026), a platform support issue and not a job. Adult and scam ads in free utilities (Unit Converter, iZip, Unzip, Convert Any Unit, QR Code Reader), a monetisation problem. Review-prompt nagging (Genius Scan, Bitwarden, Proton Pass, Adobe Scan). Adobe Scan crash cluster after the 2026-10-15 update (about 20 reviews, one release).",
+  "trend_signals_note": "TrustMRR discover_startups was called once (cached snapshot, no key). It returned no product matching a candidate on this list (the only Utilities-tagged items were Mac desktop apps, not iOS), so no revenue figures are recorded. list_startups and get_startup were not called. Absence is not evidence.",
+  "could_not_find_or_open": [
+    "No keyword volume or difficulty source was used (none given, no public one tried).",
+    "No trend data source beyond review dates and the single TrustMRR snapshot.",
+    "The review feed returns the most recent pages only, so older dates in Contact Cleanup, QR Code Reader and QR Pro reflect low-rated review sparsity, not a trend.",
+    "Dashlane returned only 8 reviews rated 3 stars or under; Adobe, CamScanner, Unit Converter and Widgy feeds were read in part (first 170 to 260 lines of each saved file), not to the end.",
+    "VPN, calculator, translation, PDF editor, keyboard and file-manager (beyond archives) apps were not searched, so some Utilities jobs are unread.",
+    "Apple's own Passwords, Files and Contacts apps were not reviewed, so the free native alternative is not assessed."
+  ],
+  "injection_suspected": []
+}

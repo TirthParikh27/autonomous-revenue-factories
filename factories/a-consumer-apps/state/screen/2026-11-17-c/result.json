@@ -1,0 +1,24 @@
+{
+  "batch": "2026-11-17-c",
+  "run": "20261117T082903Z-synthetic-screen-ad6785",
+  "runs": 3,
+  "ranker_model": "haiku (fresh subagent per run, no tools, cards in a different order and with different letters each run)",
+  "id_map_by_run": {
+    "run-1": {"A": "old-photo-restoration-that-keeps-faces", "B": "local-document-scanner-no-cloud-lock-in", "C": "caption-editing-with-stable-timing"},
+    "run-2": {"A": "caption-editing-with-stable-timing", "B": "old-photo-restoration-that-keeps-faces", "C": "local-document-scanner-no-cloud-lock-in"},
+    "run-3": {"A": "local-document-scanner-no-cloud-lock-in", "B": "caption-editing-with-stable-timing", "C": "old-photo-restoration-that-keeps-faces"}
+  },
+  "ranks_by_item": {
+    "old-photo-restoration-that-keeps-faces": [1, 1, 1],
+    "local-document-scanner-no-cloud-lock-in": [2, 3, 2],
+    "caption-editing-with-stable-timing": [3, 2, 3]
+  },
+  "median_rank": {
+    "old-photo-restoration-that-keeps-faces": 1,
+    "local-document-scanner-no-cloud-lock-in": 2,
+    "caption-editing-with-stable-timing": 3
+  },
+  "killed": [],
+  "survived": ["old-photo-restoration-that-keeps-faces", "local-document-scanner-no-cloud-lock-in", "caption-editing-with-stable-timing"],
+  "rationale": "Only three ideas. Photo restoration ranked first in all runs. Scanner and captions swapped places in one run (2,3,2 against 3,2,3), a close call at the cut line, so all three survive. Cards were built from the item files (summary, complaint count, keyword data absent), not from the scout file quotes. The ranker favours emotional hooks over utility. Nothing here is demand evidence."
+}

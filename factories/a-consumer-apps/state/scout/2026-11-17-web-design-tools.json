@@ -1,0 +1,95 @@
+{
+  "category": "web:Design Tools",
+  "store": "web",
+  "date": "2026-11-17",
+  "method": "Web product category, so no review feed. (1) trustmrr tools: one discover_startups call (no key needed) and one list_startups call (category design-tools, limit 10, default revenue-desc sort); both worked. The category filter also returned some non-Design-Tools products, which were ignored. (2) WebSearch, 7 standard queries about Canva, AI logo makers, vector/SVG export and background removal. (3) WebFetch was BLOCKED: all 3 attempts (Trustpilot Canva page, a Gamma ideas page, a HubSpot article) failed with 'proxy refused the connection', so no page was opened directly and nothing here comes from a fetched page. (4) Important limit: WebSearch here returns a written summary plus a link list, not raw result snippets with dates. Complaint quotes below are only strings that appeared in quotation marks or parentheses inside that search output, and are copied exactly. The search output did not give a per-review date, so every complaint has date null and a date_note; the result page titles say '2026' for Capterra and G2. Some quotes are fragments. Evidence is thin. No Reddit, no logins. Complaints about price, paywalls and billing were seen in large numbers (Canva Trustpilot summaries) and were left out as not capability gaps.",
+  "products_read": [
+    {"name": "Canva", "url": "https://www.canva.com", "price": "not shown in results read"},
+    {"name": "Make Logo AI", "url": "https://www.producthunt.com/products/make-logo-ai/reviews", "price": "not shown in results read"},
+    {"name": "Recraft", "url": "https://www.recraft.ai/background-remover", "price": "not shown in results read"},
+    {"name": "ToSVG Figma plugin", "url": "https://tosvg.com/figma-plugin", "price": "not shown in results read"},
+    {"name": "Photopea", "url": "https://www.pixelbin.io/blog/how-to-remove-background-in-photopea", "price": "not shown in results read"},
+    {"name": "VistaPrint AI logo maker", "url": "https://www.techradar.com/pro/vistaprint-ai-logo-maker-review", "price": "not shown in results read"},
+    {"name": "CreativeClaw (TrustMRR listing)", "url": "https://trustmrr.com/startup/creativeclaw", "price": "not read"},
+    {"name": "Artboard Studio (anonymous, TrustMRR listing)", "url": "https://trustmrr.com/startup/artboard-studio-inc", "price": "not read"},
+    {"name": "Sleek (TrustMRR listing)", "url": "https://trustmrr.com/startup/sleek", "price": "not read"},
+    {"name": "Stencil AI (TrustMRR listing, listed under Mobile Apps)", "url": "https://trustmrr.com/startup/stencil-ai", "price": "not read"}
+  ],
+  "candidates": [
+    {
+      "id": "dt-c1",
+      "unmet_job": "Get an AI-made logo or graphic as clean, editable vector paths (SVG), not a flat image, so it can be recoloured, resized and printed.",
+      "competing_products": [
+        {"name": "Make Logo AI", "url": "https://www.producthunt.com/products/make-logo-ai/reviews"},
+        {"name": "Canva (AI logo)", "url": "https://www.canva.com"},
+        {"name": "Recraft", "url": "https://www.recraft.ai/background-remover"},
+        {"name": "ToSVG Figma plugin", "url": "https://tosvg.com/figma-plugin"}
+      ],
+      "complaints": [
+        {"quote": "Can't generate vector files directly.", "app": "AI logo generators tested by HubSpot", "date": null, "date_note": "date not in search output", "source_url": "https://blog.hubspot.com/marketing/i-tried-5-ai-logo-generators", "source_type": "search_result"},
+        {"quote": "semi-unusable, with poor vector quality and amateurish designs", "app": "Make Logo AI", "date": null, "date_note": "date not in search output; quote is a fragment", "source_url": "https://www.producthunt.com/products/make-logo-ai/reviews", "source_type": "search_result"},
+        {"quote": "you can't modify AI-generated elements within its editor", "app": "Canva AI logo tool", "date": null, "date_note": "date not in search output; fragment of a longer sentence", "source_url": "https://blog.hubspot.com/marketing/i-tried-5-ai-logo-generators", "source_type": "search_result"}
+      ],
+      "keyword_data": null,
+      "trend_signals": [
+        {"signal": "Verified 30-day revenue of an AI creative product in TrustMRR Design Tools: CreativeClaw, 114900.62 USD last 30 days, 264 active subscriptions, growth30d 12.7 percent. It generates images, video, audio and 3D through an MCP; it is not a vector tool, so it shows the category sells, not this gap.", "source": "https://trustmrr.com/startup/creativeclaw", "date": "2026-11-17", "estimate": false}
+      ],
+      "not_found": "Quotes carry no dates. Recraft and the ToSVG plugin are described in search output as offering SVG; output quality was not verified, so the gap may already be partly filled. No review of those two was read. Complaint count is 3 from 2 sources, thin."
+    },
+    {
+      "id": "dt-c2",
+      "unmet_job": "Take a design made in a browser design tool out as a native editable source file (such as .AI or .PSD) to keep working in other software.",
+      "competing_products": [
+        {"name": "Canva", "url": "https://www.g2.com/products/canva/reviews"},
+        {"name": "Photopea", "url": "https://www.pixelbin.io/blog/how-to-remove-background-in-photopea"}
+      ],
+      "complaints": [
+        {"quote": "restrictive compared to illustrtor for complex vector work", "app": "Canva", "date": null, "date_note": "date not in search output; typo is in the source text as returned; search output says G2 2026", "source_url": "https://www.g2.com/products/canva/reviews", "source_type": "search_result"},
+        {"quote": "better offline support for editing projects without an internet connection would help", "app": "Canva", "date": null, "date_note": "date not in search output; fragment; this is an offline-use point, see dt-c3", "source_url": "https://www.g2.com/products/canva/reviews", "source_type": "search_result"}
+      ],
+      "keyword_data": null,
+      "trend_signals": [
+        {"signal": "Verified 30-day revenue of a web graphic and motion design tool (anonymous listing): 35426.15 USD last 30 days, 1677 active subscriptions, growth30d -28.3 percent, MRR 35332 USD.", "source": "https://trustmrr.com/startup/artboard-studio-inc", "date": "2026-11-17", "estimate": false}
+      ],
+      "not_found": "The export-to-source-file point was stated in the search output only as a summary ('can't easily export projects as native, fully editable source files'), not a quoted string, so it is NOT counted as a complaint. Only 2 quoted fragments, both from the G2 listing, no dates. Very thin."
+    },
+    {
+      "id": "dt-c3",
+      "unmet_job": "Keep editing a design in a browser-based design tool when offline or on a weak connection.",
+      "competing_products": [
+        {"name": "Canva", "url": "https://www.g2.com/products/canva/reviews"}
+      ],
+      "complaints": [
+        {"quote": "better offline support for editing projects without an internet connection would help", "app": "Canva", "date": null, "date_note": "date not in search output; same quote as in dt-c2, counted once across the file", "source_url": "https://www.g2.com/products/canva/reviews", "source_type": "search_result"}
+      ],
+      "keyword_data": null,
+      "trend_signals": "none found",
+      "not_found": "Search output also says one 2026 reviewer reports Canva recently added an offline mode, so the gap may be closed. One complaint, one product, no date. Weakest candidate; reported only because it was seen."
+    },
+    {
+      "id": "dt-c4",
+      "unmet_job": "Open and work on a shared design under the right account, and use the same features on desktop and mobile.",
+      "competing_products": [
+        {"name": "Canva", "url": "https://www.capterra.com/p/168956/Canva/reviews/"}
+      ],
+      "complaints": [
+        {"quote": "when I open a link to a shared design, Canva doesn't let me select which account I want to view the shared design from", "app": "Canva", "date": null, "date_note": "date not in search output; Capterra page titles say 2026, exact page not identified", "source_url": "https://www.capterra.com/p/168956/Canva/reviews/", "source_type": "search_result"},
+        {"quote": "The desktop version does not have all the features as on mobile.", "app": "Canva", "date": null, "date_note": "date not in search output; Capterra page titles say 2026, exact page not identified", "source_url": "https://www.capterra.com/p/168956/Canva/reviews/", "source_type": "search_result"}
+      ],
+      "keyword_data": null,
+      "trend_signals": "none found",
+      "not_found": "One incumbent only, 2 complaints, no dates. This is a feature of one large product, which a small product may not be able to address; not assessed further."
+    }
+  ],
+  "other_themes_seen_not_candidates": "Subscription, billing and cancellation complaints about Canva dominate Trustpilot summaries (price, unexpected charges, cancel not going through); excluded as price and billing. AI logo tools asking for payment before showing a real preview was reported in a search summary with no quotable string; price and flow, not counted. Garbled AI text in logos was reported (Shotkit, Designlab) with no quotable string; not counted.",
+  "excluded": [],
+  "excluded_note": "No product or candidate fell on data/excluded_categories.yaml. state/scout/rejected.jsonl was not read.",
+  "could_not_find_or_open": [
+    "WebFetch refused all 3 attempts (proxy refused the connection): https://www.trustpilot.com/review/canva.com?page=1, https://ideas.gamma.app/ideas/p/ai-image-editor-is-absolute-junk, https://blog.hubspot.com/marketing/i-tried-5-ai-logo-generators. No page was read directly.",
+    "WebSearch output gave no per-review dates, so all complaint dates are null.",
+    "Capterra, G2 and Trustpilot individual review pages were not opened, so exact review URLs and dates are unknown.",
+    "TrustMRR: only 1 list_startups page (10 rows) and 1 discover call were used, with 889 listed in total; the category filter returned mixed categories. No keyword volume or difficulty source was available.",
+    "Public prices of competing products were not shown in the results read."
+  ],
+  "injection_suspected": []
+}

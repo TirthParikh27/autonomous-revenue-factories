@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17-caption-editing-with-stable-timing",
+  "stage": "killed",
+  "platform": "web",
+  "screen_notes": "Median rank 3 of 3 (ranks 3,2,3). Narrow creator audience, benefit hard to show in one ad. Copy idea only, not evidence.",
+  "created": "2026-11-17",
+  "updated": "2026-11-17",
+  "summary": "Video creators who add auto-captions want to edit the words without caption timing drifting or breaking.",
+  "category": "Photo and Video",
+  "evidence": [
+    {"claim": "8 dated complaints across 3 apps (Captions, Captiono, InShot) about caption timing drifting or breaking after edits", "source": "state/scout/2026-11-17-photo-video.json (pv-c2; each quote has an Apple review RSS URL and date)", "checked": "2026-11-17"}
+  ],
+  "scores": {"complaints": 8, "apps_with_complaints": 3, "keyword_popularity": null, "keyword_source": "none configured", "verifier": {"distinguishable_in_one_minute": "No (web competitors unsourced; SRT editors keep timestamps)", "capability_not_look": "Yes, narrow", "stack_fit": "Borderline (STT vendor unnamed, ffmpeg.wasm size and hosting limits unconfirmed)"}, "risk_note": "borderline count; may be better built for web, spec stage decides"},
+  "spend_usd": 0,
+  "revenue_usd": 0,
+  "history": [{"at": "2026-11-17T08:50:00Z", "from": null, "to": "discovered", "run": "20261117T082434Z-gap-mining-7704e7", "note": "kept: capability complaint across 3 apps; count is modest"}, {"at": "2026-11-17T09:00:00Z", "from": "discovered", "to": "screened", "run": "20261117T082903Z-synthetic-screen-ad6785", "note": "synthetic screen, rank 3 of 3 (ranks 3,2,3); close call, survives"}, {"at": "2026-11-17T08:50:00Z", "from": "screened", "to": "killed", "run": "20261117T083004Z-spec-differentiation-920f14", "note": "spec written as web; verifier: cannot be told from web caption editors (never scouted), evidence is 2 real apps of 3 (InShot quote is about AI cut), lowest complaint count. Needs web competitors sourced; killed."}]
+}

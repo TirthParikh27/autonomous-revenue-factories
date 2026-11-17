@@ -1,0 +1,359 @@
+[
+ {
+  "date": "2026-11-09",
+  "rating": 1,
+  "title": "No Duo Support",
+  "text": "This app is not supported on iPhone Duo.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-11-04",
+  "rating": 1,
+  "title": "Poor app update",
+  "text": "I’ve been using Bitwarden for several years, but I have decided to stop using it. The updates of the chrome browser extension for this app have disappointed all the users.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-11-03",
+  "rating": 1,
+  "title": "Broken",
+  "text": "Latest update broke the app. Conflicts with Chrome password manager on iOS 27.x",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-11-01",
+  "rating": 3,
+  "title": "Solid Backend. Iffy iOS App",
+  "text": "While I have no issues with bitwarden as a platform, the iOS / Safari integration just leaves something to be desired.\nIt feels clunky at times and doesn’t always perform the right behavior. I’ve experienced random glitching, autofill failures, etc.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-11-01",
+  "rating": 1,
+  "title": "Do not trust Bitwarden with your data",
+  "text": "Update after update that continues to make this app knowingly less secure and dangerous. Stay away. Support was horrible.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-30",
+  "rating": 2,
+  "title": "All good with BIG exception",
+  "text": "What kind of service are you running that the app straight up refuses to accept your master password, it even being copy pasted but somehow “invalid”. What is this nonsense? The website seems to accept the same copy pasted password nicely, but the app can’t handle it? Hello? Makes you go nuts trying to think if you input it wrong or forgot, but turns out, the app just lies to you for no reason, and just locks you out because of that. What if it was life or death situation?",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-28",
+  "rating": 3,
+  "title": "Freaking great",
+  "text": "Honestly, my only complaint is i cant use 2fa codes on this for free. I dont want to use google’s and would like to uninstall it. Why dont you add this for free? :( google’s is free. Why cant yours be? Super inconvenient\n\nThe app often has poor field detection which means manually exiting the another app to fetch whats in here.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-22",
+  "rating": 1,
+  "title": "BUG Authenticate WebAuthn",
+  "text": "I literally cannot login because every time I put in my password or anything it’ll take me round and round to login and put in my password and say the same damn thing. Please fix this or else your app is completely useless to me and others",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-21",
+  "rating": 1,
+  "title": "Annoying",
+  "text": "Despite settings have to enter master password every single time it comes up in the same session. \nAlmost worthless.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-21",
+  "rating": 1,
+  "title": "What the heck???",
+  "text": "They just updated the app, now I can’t log in, even with my master code or face recognition?? Please fix!",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-20",
+  "rating": 1,
+  "title": "Problem signing in to every app on iPhone",
+  "text": "I’m pretty sure it’s Bitwarden app that tries to speed up my login with my information from the app but it never works. I always have to find another way to type password or work around this.\n\nIf someone could explain that it’s user error I’d be thrilled to keep this app and take down this review.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-19",
+  "rating": 3,
+  "title": "Not great",
+  "text": "I have to be really careful to manually store new logins ( copy and paste passwords etc from the form into Bitwarden).",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-17",
+  "rating": 2,
+  "title": "Updating",
+  "text": "It’s not updating across devices and platforms",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-16",
+  "rating": 1,
+  "title": "This is a hacker account!!",
+  "text": "If you click on their website for support it takes you to a website called hacker one which has instructions and tools to hack. They had all my passwords and took over my phone and accounts’",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-14",
+  "rating": 2,
+  "title": "Doesn’t synch",
+  "text": "When updating a password on computer it doesn’t update when using on phone.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-09",
+  "rating": 1,
+  "title": "Still Crashing",
+  "text": "What is wrong with you guys? Seriously. Your app crashes every browser except Safari when filling in 2FA codes. 1Password doesn’t have this issue, but I don’t want to switch to 1Password. I just want you to fix your app. You’d think this app would get better now that you’ve doubled the subscription price, but that 100% is not the case. It’s just gradually getting worse. Seriously. Please fix this. I was going to recommend this app to a friend, but I can’t until you fix this crashing nonsense.\n\nYour app is the only password manager that crashes apps during 2FA. I’m honestly so close to switching to another password manager. Do you guys even care about your product anymore?",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-06",
+  "rating": 2,
+  "title": "Stop With the “Rate Me” Nags",
+  "text": "When I’m trying to login smoothly and quickly to a website , the last thing i need is a pop up asking me to rate the app.  And I gave a paid subscription.  \n\nBut here goes - the interface is clunky, the app uses a lot of memory, it seems, abd half the time, it doesn’t suggest the password for the website, even though I have an entry that says to just match the base domain.  \nA lot if tumes tge fields don’t get filled, but that could be the website itself’s fault.  \n\nOh, and the current ios version has the “install the Safari extension” link, but it points to the Mac version of the extension, and the Apple App Store app won’t let you install it.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-05",
+  "rating": 1,
+  "title": "Why can’t you sort and filter entries? Really?",
+  "text": "Why can’t you sort and filter entries? Really? Just one big long list of entries. Wtf",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-10-03",
+  "rating": 3,
+  "title": "Horrible mobile sign in",
+  "text": "You have to put your password in every time you login on your phone. It's horrible",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-09-23",
+  "rating": 1,
+  "title": "Find something else",
+  "text": "Used to be good. Now it never works",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-09-20",
+  "rating": 1,
+  "title": "Nightmare",
+  "text": "Bitwarden is either not compatible with the latest Apple IOS , or needed updated. Every time i need a password and attempt to log in my Vault, Bitwarden is requiring that i log in with my Master PW, and then wants a code which there is no one home at Bitwarden to explain how to stop this. After multiple years of use, it has become too buggy and I am exporting the PW file and am 30 min away from wiping it from all my Apple devices.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-09-20",
+  "rating": 1,
+  "title": "Pathetic",
+  "text": "App doesn’t work across platforms. In the past three days the app has completely stopped autofilling. Don’t waste your time or money.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-09-18",
+  "rating": 1,
+  "title": "Support has been worthless",
+  "text": "This app has locked me out and says my account doesn’t exist. All I did was the most recent update and I am wasting time emailing help desk with ZERO help. Every single password I have has been saved here for 2 years. This is UNACCEPTABLE.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-09-10",
+  "rating": 2,
+  "title": "Ok but could be better",
+  "text": "I’m a transplant from Dashlane due to the ever increasing price. I’m currently trying Bitwarden as an alternative. Most of the app is showing it’s a good option. However a big negative keeping me from going with Bitwarden permanently, is if you change a password on one device it doesn’t automatically update on all other devices. You have to sign in, sign out, then sign in again to get it to update the password change. This is currently a point that’s keeping me from purchasing the app. If this issue was fixed I’d purchase now but I’m also trying a few other apps because of this issue.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-09-03",
+  "rating": 1,
+  "title": "UI for iPad, iOS and Windows App is all different",
+  "text": "It is bloody annoying that certain important functions, such as attaching a file to a secure note are not available on mobile app and have to be done on Windows app. Can't do that!!",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-08-28",
+  "rating": 1,
+  "title": "Vaultwarden ipad app broken now",
+  "text": "I can log into my vault on all other devices just fine but after logging in on ipad it doesnt show vault and error appears",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-08-21",
+  "rating": 1,
+  "title": "Version 2026.8.0",
+  "text": "Due to this update, I am constantly receiving timed out notifications while in the app. I also cannot change anything inside the app because when I go to save the changes it just shows a spinning screen that never ends. Please fix these issues asap. Thank you.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-08-10",
+  "rating": 1,
+  "title": "Every time",
+  "text": "I get an annoying in app pop up asking to place a review I give 1 star",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-08-05",
+  "rating": 1,
+  "title": "Double sign in",
+  "text": "Not necessary and tired of having to cancel it on sign in",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-08-05",
+  "rating": 1,
+  "title": "Automatic 1-star review for interrupting me",
+  "text": "Don’t interrupt me when I’m using the app to ask for a review.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-08-03",
+  "rating": 2,
+  "title": "PLEASE FIX BUGS",
+  "text": "Extremely glitchy and gets passwords doubled and mixed up. HORRIBLY GLITCHY.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-07-29",
+  "rating": 2,
+  "title": "Nice to have but inconvenient",
+  "text": "The timeout function doesnt work and the app prompts for the master password with every single autofill unless the timeout is set to ‘never’. There are many increments available from 5 minutes to 4 hours, but all result in password prompting without a lapse in time",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-07-21",
+  "rating": 1,
+  "title": "Not a good system for people that are not real savvy.",
+  "text": "I have to manually put in the username and password. Bitwarden does not work correctly often.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-07-19",
+  "rating": 1,
+  "title": "Can’t log in",
+  "text": "I am 100% sure I am using the correct Master password and it is not letting me login. There was an update a few days ago so I don’t know if that messed something up. I haven’t used it for a while but it always worked up until now. Tried clearing my cache, using incognito mode, made sure I wasn’t using the eu version… so frustrating!",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-07-08",
+  "rating": 1,
+  "title": "Suggested login banner is terrible ux",
+  "text": "Trying to login to a website? giant bitwarden banner suggesting me a login blocking everything. I have to close it, wait for it to go away, then open the list of logins. Why are you anticipating what I am doing? Hold my passwords and get OUT OF MY WAY.\n\nEdit: dev response is not correct. It is the bottom bar autofill that pops up BEFORE keyboard, suggesting only a single login. NO, I do not have it enabled. I ONLY want keyboard autofill, so I can select from a list of logins. Instead it is banner, close banner, keyboard pops up, click autofill options, ANOTHER pop up, select login.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-07-03",
+  "rating": 1,
+  "title": "John",
+  "text": "You have critical bug! Asking for master password but I set to pin but LOG OUT button still active if I click on it they ask - are you sure you wants to log out?! Why you ask me log out and the same time you ask master password to log in?! Why not you ask me pin than ?- than I understood why log out button still getting me out!!! Fix critical bug please as soon as possible?!! \n\nPin - the same trusted comp, quick access...so u try to say u use different logic on pc and phone?!\nWhen I reboot my iPhone - I still can get to app by the pin - what problem with comp?! Why configuration on the comps app not safe my preferences - now I give all picture what is going on just fix it please.\n\n\n\n\nYou have a bug, when I set up the pin and just closed the window of app - its required master password again why????? I am not log out from the app and why I should keep it open all the time becouse of the pin??!!!closed the window just mean next session it will be asking for the pin?! Why master password ??!! That's why u have locked and log out?!\nSo u force me your app running on the background why?! U wants my resources for what? It's just logic ...not rocket ...\nOn iPhone its work ok on Mac it's asking for password , on iPhone app not working on the background - swipe it done!!! Good job\n\n\n\nWhy after update it's always ask for master password?  I set up pin!!! And you force to get to web browser to fix it? Why not safe all my configuration and nobody have access to it?",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-07-03",
+  "rating": 2,
+  "title": "It’s fine, I guess",
+  "text": "There’s no integration on MacOS with password management.  Feels like a very silly oversight but they’ve known about it for years now.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-06-29",
+  "rating": 1,
+  "title": "Hostile UX",
+  "text": "Unfortunately the app sucks now. In true Apple form, the UX has become hostile to user agency and instead foists an opinionated view of what I’m “supposed” to do in every case while completely ignoring legitimate use cases.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-06-28",
+  "rating": 1,
+  "title": "Master password intermittently fails",
+  "text": "Master password sometimes flat out fails. App will not accept it but same pass on desktop works, or desktop doesn't but website does. Website frequently also goes into a login loop on mobile and is correct but will not proceed to the actual vault. This was never an issue until recently but now it is a constant problem. This completely breaks functionality, one star.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-06-19",
+  "rating": 2,
+  "title": "UI bug",
+  "text": "On my iOS 26.5 device the UI looks terrible. So much padding around buttons and labels. Not sure what’s going on.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-06-13",
+  "rating": 3,
+  "title": "great but buggy and slow",
+  "text": "I like using Bitwarden, but sometimes it's buggy on picking out the password for websites and it's very slow to sync between different devices",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-06-05",
+  "rating": 3,
+  "title": "Okay",
+  "text": "Auto fill not working",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-05-30",
+  "rating": 3,
+  "title": "CRASH-TASTIC! FAIL CREATING ACCOUNT FROM WITHIN OTHER APPS.",
+  "text": "5/30/26 UPDATE: Persistent bug where the app crashes when creating a login (vault item) from within an iOS app via Autofill>Passwords>+Login. \nFirst the app crashes while creating the new item. Then when you try again the iOS keyboard will not present, so you can’t proceed. \n\nLast several versions and this major bug persists despite release notes claim long press autofill bug is resolved. \n\nOtherwise generally good app. \n\nAlso missing Credit Card + identity fill. \n\nThe Bitwarden Mac desktop extension and competitors’ app have credit card and identity fill for forms and shopping. Even Apple’s lacking password service does. But confusingly Bitwarden has omitted this from their iOS app/extension. \n\nI can find no way for Bitwarden to fill Card details or name and address from Identity. Only items in the Login section can be filled. \n\nBig flaw as 1Password and others have had this for years. \n\nSure you could use Apple's along side Bitwarden but then you have to maintain all your cards in 2 locations. Isn’t the point to have all of your stuff in ONE place?",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-05-30",
+  "rating": 1,
+  "title": "Removed Viewing in Web App",
+  "text": "In the extension, the fill button takes up the entire screen and I can't easily view the item details.  Trash design.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-05-19",
+  "rating": 1,
+  "title": "Unreliable",
+  "text": "Just bad. Goin back to 1Password.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-05-16",
+  "rating": 1,
+  "title": "Can’t export data or log in anywhere else.",
+  "text": "I can’t export my data because it says my master password is wrong (it isn’t) and says it’s having problems exporting. Please fix!",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-05-15",
+  "rating": 1,
+  "title": "Doesn’t sync reliably",
+  "text": "Doesn’t sync reliably across devices. I hate it.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-05-08",
+  "rating": 2,
+  "title": "Remove subscription for 2FA",
+  "text": "It doesn’t make sense you would charge to use a feature so common such as 2FA.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-05-05",
+  "rating": 1,
+  "title": "Has never worked on iOS",
+  "text": "I have been using Bitwarden in the web browser for years and in that same amount of time the iOS app has never worked for me. I can install it, but logging in always gives me “An error has occurred,” no other context. I have tried uninstalling and reinstalling. Now it has been so long that I even started fresh on a new phone but I still get the same error. Planning to switch to another password manager since this one obviously doesn’t provide even the basics.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-05-01",
+  "rating": 1,
+  "title": "Irritating to use",
+  "text": "Requires the master password for every login used in Safari or Chrome. Changing the settings in the app to a PIN code has no effect.",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ },
+ {
+  "date": "2026-04-30",
+  "rating": 3,
+  "title": "Syncing issues",
+  "text": "I added a new password on the desktop app but it is now syncing to the mobile app. Either there is a delay or something is broken",
+  "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1137397744/sortBy=mostRecent/json"
+ }
+]

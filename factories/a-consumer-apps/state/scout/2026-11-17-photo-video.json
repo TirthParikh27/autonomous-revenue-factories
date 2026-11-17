@@ -1,0 +1,221 @@
+{
+  "category": "Photo & Video",
+  "store": "App Store, iOS, US",
+  "date": "2026-11-17",
+  "method": "fetch_reviews.py search and reviews (Apple public search and customer review RSS), reviews rated 3 stars or under, 3 pages per app. Raw files in state/scout/reviews/<app id>.json. TrustMRR discover_startups (no key) for revenue signals. No WebFetch, no WebSearch, no Reddit, no logins. Most review files were read from the top (newest first) up to about 130 to 260 lines, not to the end, so counts below are what was read, not all that exist.",
+  "apps_read": [
+    {"id": 1455009060, "name": "Photoroom: AI Photo & Video", "url": "https://apps.apple.com/us/app/photoroom-ai-photo-video/id1455009060"},
+    {"id": 1534785237, "name": "Pixelcut: AI Photo & Video", "url": "https://apps.apple.com/us/app/pixelcut-ai-photo-video/id1534785237"},
+    {"id": 1230394683, "name": "Photo Retouch-Object Removal", "url": "https://apps.apple.com/us/app/photo-retouch-object-removal/id1230394683"},
+    {"id": 1149994032, "name": "Facetune: Photo & Video Editor", "url": "https://apps.apple.com/us/app/facetune-photo-video-editor/id1149994032"},
+    {"id": 1600979855, "name": "FixMyPics - Restore Old Photos", "url": "https://apps.apple.com/us/app/fixmypics-restore-old-photos/id1600979855"},
+    {"id": 6478808149, "name": "RetroFix - Old Picture Restore", "url": "https://apps.apple.com/us/app/retrofix-old-picture-restore/id6478808149"},
+    {"id": 951627022, "name": "Photo Scan Plus", "url": "https://apps.apple.com/us/app/photo-scan-plus/id951627022"},
+    {"id": 1541407007, "name": "Captions: AI Edits Your Video", "url": "https://apps.apple.com/us/app/captions-ai-edits-your-video/id1541407007"},
+    {"id": 6538722927, "name": "Captiono: AI Subtitles", "url": "https://apps.apple.com/us/app/captiono-ai-subtitles/id6538722927"},
+    {"id": 997362197, "name": "InShot - Video Editor", "url": "https://apps.apple.com/us/app/inshot-video-editor/id997362197"},
+    {"id": 1500855883, "name": "CapCut: Photo & Video Editor", "url": "https://apps.apple.com/us/app/capcut-photo-video-editor/id1500855883"},
+    {"id": 1194582243, "name": "Cleaner Kit - Clean Up Storage", "url": "https://apps.apple.com/us/app/cleaner-kit-clean-up-storage/id1194582243"},
+    {"id": 1185398417, "name": "Duplicate Cleaner: Storage", "url": "https://apps.apple.com/us/app/duplicate-cleaner-storage/id1185398417"},
+    {"id": 1473857051, "name": "Compress Videos & Resize Video", "url": "https://apps.apple.com/us/app/compress-videos-resize-video/id1473857051"},
+    {"id": 1133417726, "name": "Video Compressor-Shrink videos", "url": "https://apps.apple.com/us/app/video-compressor-shrink-videos/id1133417726"},
+    {"id": 1163846234, "name": "Video Compress - Shrink Videos", "url": "https://apps.apple.com/us/app/video-compress-shrink-videos/id1163846234"}
+  ],
+  "candidates": [
+    {
+      "id": "pv-c1",
+      "unmet_job": "Repair and sharpen old or scanned family photos so the people still look like themselves, with scratches actually removed rather than blurred.",
+      "competing_apps": [
+        {"name": "FixMyPics - Restore Old Photos", "url": "https://apps.apple.com/us/app/fixmypics-restore-old-photos/id1600979855"},
+        {"name": "RetroFix - Old Picture Restore", "url": "https://apps.apple.com/us/app/retrofix-old-picture-restore/id6478808149"},
+        {"name": "Photo Scan Plus", "url": "https://apps.apple.com/us/app/photo-scan-plus/id951627022"}
+      ],
+      "complaints": [
+        {"quote": "This app disfigured faces in photos!", "app": "FixMyPics - Restore Old Photos", "date": "2025-04-22", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1600979855/sortBy=mostRecent/json"},
+        {"quote": "The “restorations” make the pictures look fake, almost cartoonish.", "app": "FixMyPics - Restore Old Photos", "date": "2026-08-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1600979855/sortBy=mostRecent/json"},
+        {"quote": "It just blurrs the scratches like you used a smooth over function or something.", "app": "FixMyPics - Restore Old Photos", "date": "2025-09-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1600979855/sortBy=mostRecent/json"},
+        {"quote": "You can not save to your photo file, only can save in this app.", "app": "FixMyPics - Restore Old Photos", "date": "2025-02-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1600979855/sortBy=mostRecent/json"},
+        {"quote": "It changes people faces", "app": "RetroFix - Old Picture Restore", "date": "2026-07-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6478808149/sortBy=mostRecent/json"},
+        {"quote": "Made a baby photo into a 20 year old man’s face, no enhancements or wrinkles cleared.", "app": "RetroFix - Old Picture Restore", "date": "2026-06-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6478808149/sortBy=mostRecent/json"},
+        {"quote": "turns u into cartoons", "app": "RetroFix - Old Picture Restore", "date": "2026-03-24", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6478808149/sortBy=mostRecent/json"},
+        {"quote": "such as removing facial hair and glasses from a person’s face and turning a girl in swirly dress into a boy and a polo shirt.", "app": "RetroFix - Old Picture Restore", "date": "2026-03-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=6478808149/sortBy=mostRecent/json"},
+        {"quote": "The AI reconstruction of faces is pretty bad.", "app": "Photo Scan Plus", "date": "2026-10-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=951627022/sortBy=mostRecent/json"},
+        {"quote": "the feature to make faces clearer ends up making people look like someone else or worse.", "app": "Photo Scan Plus", "date": "2026-01-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=951627022/sortBy=mostRecent/json"},
+        {"quote": "I cannot find a manual override ability to identify the missed face.", "app": "Photo Scan Plus", "date": "2025-12-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=951627022/sortBy=mostRecent/json"},
+        {"quote": "This results in many of the older photos looking like they have floating heads that are not in sync with the other objects in the photo.", "app": "Photo Scan Plus", "date": "2025-12-06", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=951627022/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Face-alteration complaints appear in every restoration app read, but the reviews do not show whether any app does this well. Several reviewers say general chat AI tools or Google PhotoScan do better (RetroFix 2026-10-13 and Photo Scan Plus 2026-01-24 and 2025-12-03), which suggests free substitutes exist. Most FixMyPics reviews are 2025 or older. Many restoration complaints are also about trial billing; those were not counted. Other restoration apps from search (Renew, Yore, Colorize) were not read."
+    },
+    {
+      "id": "pv-c2",
+      "unmet_job": "Edit auto-generated video captions (fix words, spacing, timing and position) without the timing of the rest drifting or the speech being cut off.",
+      "competing_apps": [
+        {"name": "Captions: AI Edits Your Video", "url": "https://apps.apple.com/us/app/captions-ai-edits-your-video/id1541407007"},
+        {"name": "Captiono: AI Subtitles", "url": "https://apps.apple.com/us/app/captiono-ai-subtitles/id6538722927"},
+        {"name": "InShot - Video Editor", "url": "https://apps.apple.com/us/app/inshot-video-editor/id997362197"}
+      ],
+      "complaints": [
+        {"quote": "you can’t edit the words without messing up the timing of when the words appear on the screen.", "app": "Captions: AI Edits Your Video", "date": "2026-11-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1541407007/sortBy=mostRecent/json"},
+        {"quote": "They made it SO difficult to add instant keyframes on captions now.", "app": "Captions: AI Edits Your Video", "date": "2026-10-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1541407007/sortBy=mostRecent/json"},
+        {"quote": "the clip styles cut off the audio at the ends of my sentences, removing spoken words.", "app": "Captions: AI Edits Your Video", "date": "2026-11-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1541407007/sortBy=mostRecent/json"},
+        {"quote": "delay between caption and voice.", "app": "Captions: AI Edits Your Video", "date": "2026-11-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1541407007/sortBy=mostRecent/json"},
+        {"quote": "you have to edit the caption word by word, and you have to fix the timing one by one which takes a lot of time", "app": "Captiono: AI Subtitles", "date": "2025-12-06", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6538722927/sortBy=mostRecent/json"},
+        {"quote": "the caption and the video does not match", "app": "Captiono: AI Subtitles", "date": "2025-12-06", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6538722927/sortBy=mostRecent/json"},
+        {"quote": "full of spelling mistakes and the writing doesn't match your speech at all.", "app": "Captiono: AI Subtitles", "date": "2026-08-21", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6538722927/sortBy=mostRecent/json"},
+        {"quote": "It will preview the AI cut fine but when applies the timings off", "app": "InShot - Video Editor", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=997362197/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": [
+        {"signal": "Lowdeo, a web AI clipping tool with word-by-word captions, verified 30-day revenue of $1,157.78 (MRR $718.45), listed as recently added. Web product, not iOS.", "source": "TrustMRR discover_startups", "url": "https://trustmrr.com/startup/lowdeo", "date": "2026-11-17", "estimate": false}
+      ],
+      "not_found": "Caption quality in non-English languages is also raised in Captiono reviews (Persian); those reviews were not quoted because they are not in English. The Captions app complaints are partly about the app moving to AI-driven edits (2026-11-08, 2026-11-02), which may be a one-app trend. One Captions reviewer says they edit on a PC and used the app only for caption templates (2026-10-15). Free-tier export limits and billing complaints were left out."
+    },
+    {
+      "id": "pv-c3",
+      "unmet_job": "Finish a long photo or video edit without losing the work: autosave and recover a project after a crash, and export reliably.",
+      "competing_apps": [
+        {"name": "InShot - Video Editor", "url": "https://apps.apple.com/us/app/inshot-video-editor/id997362197"},
+        {"name": "Captions: AI Edits Your Video", "url": "https://apps.apple.com/us/app/captions-ai-edits-your-video/id1541407007"},
+        {"name": "Captiono: AI Subtitles", "url": "https://apps.apple.com/us/app/captiono-ai-subtitles/id6538722927"},
+        {"name": "Photoroom: AI Photo & Video", "url": "https://apps.apple.com/us/app/photoroom-ai-photo-video/id1455009060"},
+        {"name": "FixMyPics - Restore Old Photos", "url": "https://apps.apple.com/us/app/fixmypics-restore-old-photos/id1600979855"}
+      ],
+      "complaints": [
+        {"quote": "Now all of a sudden it won’t let me export any of my videos - so many hours wasted editing.", "app": "InShot - Video Editor", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=997362197/sortBy=mostRecent/json"},
+        {"quote": "when you try to export/download old videos, it gets stuck processing indefinitely even if you have all the videos saved in your camera roll.", "app": "InShot - Video Editor", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=997362197/sortBy=mostRecent/json"},
+        {"quote": "Have lost two fully edited videos.", "app": "InShot - Video Editor", "date": "2026-11-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=997362197/sortBy=mostRecent/json"},
+        {"quote": "My video export gets stuck at 4% every time I tap Save in InShot.", "app": "InShot - Video Editor", "date": "2026-10-30", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=997362197/sortBy=mostRecent/json"},
+        {"quote": "I’ve had multiple instances of complete videos being lost due to an update.", "app": "Captions: AI Edits Your Video", "date": "2026-11-12", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1541407007/sortBy=mostRecent/json"},
+        {"quote": "It takes a long time to generate and then it crashes, you’ve lost the credits and you have to start from scratch.", "app": "Captions: AI Edits Your Video", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1541407007/sortBy=mostRecent/json"},
+        {"quote": "when you get kicked out of the app your work won’t be saved.", "app": "Captiono: AI Subtitles", "date": "2025-12-06", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6538722927/sortBy=mostRecent/json"},
+        {"quote": "The app crashes every time I get almost to the end of my editing.", "app": "Photoroom: AI Photo & Video", "date": "2026-08-25", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1455009060/sortBy=mostRecent/json"},
+        {"quote": "I’ve lost hours of work ofer and over", "app": "Photoroom: AI Photo & Video", "date": "2026-08-25", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=3/id=1455009060/sortBy=mostRecent/json"},
+        {"quote": "when restoring is in 80%, it crashed.", "app": "FixMyPics - Restore Old Photos", "date": "2026-08-01", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1600979855/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "This is mostly app instability after updates, so it may be bugs in those apps rather than a missing capability. Reviews do not show which exact feature (autosave, draft recovery) users would value, and the one request for autosave found was in Persian and not quoted. Evidence of a whole-category pattern is stronger than evidence for any single job."
+    },
+    {
+      "id": "pv-c4",
+      "unmet_job": "Apply an AI edit to a photo or video that changes only what was asked (not faces, logos, garments or other parts of the frame) and lets the user correct it without spending credits again.",
+      "competing_apps": [
+        {"name": "Photoroom: AI Photo & Video", "url": "https://apps.apple.com/us/app/photoroom-ai-photo-video/id1455009060"},
+        {"name": "Pixelcut: AI Photo & Video", "url": "https://apps.apple.com/us/app/pixelcut-ai-photo-video/id1534785237"},
+        {"name": "Photo Retouch-Object Removal", "url": "https://apps.apple.com/us/app/photo-retouch-object-removal/id1230394683"},
+        {"name": "Captions: AI Edits Your Video", "url": "https://apps.apple.com/us/app/captions-ai-edits-your-video/id1541407007"}
+      ],
+      "complaints": [
+        {"quote": "The AI on Photoroom started editing the faces of the people in my photos.", "app": "Photoroom: AI Photo & Video", "date": "2026-10-25", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1455009060/sortBy=mostRecent/json"},
+        {"quote": "It changed the details on one dressed and removed the details of another dress.", "app": "Photoroom: AI Photo & Video", "date": "2026-10-06", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1455009060/sortBy=mostRecent/json"},
+        {"quote": "The AI fashion models often alter the clothing", "app": "Photoroom: AI Photo & Video", "date": "2026-09-16", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1455009060/sortBy=mostRecent/json"},
+        {"quote": "this app turns your whole pictures into a whole different thing than you ask it to do.", "app": "Pixelcut: AI Photo & Video", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1534785237/sortBy=mostRecent/json"},
+        {"quote": "AI keeps screwing up the logos in pics even though our logo is clearly on the garment in the photo we’ve uploaded.", "app": "Pixelcut: AI Photo & Video", "date": "2026-10-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1534785237/sortBy=mostRecent/json"},
+        {"quote": "i bought this and wasted most of my credits on trying to correct the AI errors.", "app": "Pixelcut: AI Photo & Video", "date": "2026-10-18", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1534785237/sortBy=mostRecent/json"},
+        {"quote": "it also completely removed one subjects arm at the elbow with no way of adjusting to get it back.", "app": "Photo Retouch-Object Removal", "date": "2026-11-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1230394683/sortBy=mostRecent/json"},
+        {"quote": "The AI just does what it wants.", "app": "Captions: AI Edits Your Video", "date": "2026-11-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1541407007/sortBy=mostRecent/json"},
+        {"quote": "if you don’t like how it turned out there’s very little possibility to fix it", "app": "Captions: AI Edits Your Video", "date": "2026-11-02", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1541407007/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Reviews that mention resellers and product photos (Photoroom 2026-09-11 and 2026-10-06, Pixelcut 2026-10-31) suggest a seller sub-audience, but the sample is small. Several reviewers say chat AI tools are better and cheaper (Pixelcut 2026-11-13 and 2026-11-11, RetroFix 2026-10-13), so free substitutes exist. Credits and pricing complaints are common and were left out as price-only. Photoroom reviews also say a resale marketplace suspended a seller over AI images (2026-08-02); one review, not verified."
+    },
+    {
+      "id": "pv-c5",
+      "unmet_job": "Reshape or warp parts of a photo by hand (drag, stretch, slim, resize) with a manual tool, after a leading app removed it in an update.",
+      "competing_apps": [
+        {"name": "Photo Retouch-Object Removal", "url": "https://apps.apple.com/us/app/photo-retouch-object-removal/id1230394683"},
+        {"name": "Facetune: Photo & Video Editor", "url": "https://apps.apple.com/us/app/facetune-photo-video-editor/id1149994032"}
+      ],
+      "complaints": [
+        {"quote": "Why is body reshape gone?", "app": "Photo Retouch-Object Removal", "date": "2026-11-01", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1230394683/sortBy=mostRecent/json"},
+        {"quote": "The body contour and plump was removed and that was the best part of the app", "app": "Photo Retouch-Object Removal", "date": "2026-10-31", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1230394683/sortBy=mostRecent/json"},
+        {"quote": "why would you change the photo fix tab and remove the stretch tool", "app": "Photo Retouch-Object Removal", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1230394683/sortBy=mostRecent/json"},
+        {"quote": "they removed the one thing I use, the photo warping tool.", "app": "Photo Retouch-Object Removal", "date": "2026-11-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1230394683/sortBy=mostRecent/json"},
+        {"quote": "What happened to the slim tool? Seems to have been removed in the last update…", "app": "Photo Retouch-Object Removal", "date": "2026-11-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1230394683/sortBy=mostRecent/json"},
+        {"quote": "but I can no longer reshape or resize anything.", "app": "Photo Retouch-Object Removal", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1230394683/sortBy=mostRecent/json"},
+        {"quote": "Hate the new. layout doesn’t allow you to adjust or edit on your own", "app": "Facetune: Photo & Video Editor", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1149994032/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Thin: the complaints are a burst of at least 25 reviews on one app between 2026-10-31 and 2026-11-15 after one release (six quoted here). They are not a long-run trend, and the app may restore the tool. Only one weak complaint from a second app. The job is body and face reshaping of photos of people; this scout makes no view on how that fits store or platform policy. The review text of the other 20 or so Photo Retouch complaints was not quoted because they repeat the same point."
+    },
+    {
+      "id": "pv-c6",
+      "unmet_job": "Find real duplicate and near-duplicate photos, show the candidates side by side with file details, and actually free storage after deletion.",
+      "competing_apps": [
+        {"name": "Duplicate Cleaner: Storage", "url": "https://apps.apple.com/us/app/duplicate-cleaner-storage/id1185398417"},
+        {"name": "Cleaner Kit - Clean Up Storage", "url": "https://apps.apple.com/us/app/cleaner-kit-clean-up-storage/id1194582243"}
+      ],
+      "complaints": [
+        {"quote": "In one case there were five duplicates, but I was horrified to find they were five very different photos.", "app": "Duplicate Cleaner: Storage", "date": "2026-07-09", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1185398417/sortBy=mostRecent/json"},
+        {"quote": "I want to find a piece of software that will look for duplicates and show all of the candidate photos, with the file names and ALL metadata", "app": "Duplicate Cleaner: Storage", "date": "2026-07-09", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1185398417/sortBy=mostRecent/json"},
+        {"quote": "when I looked in the recently deleted folder it showed undeleted items which then if i had deleted would have deleted them!", "app": "Duplicate Cleaner: Storage", "date": "2026-05-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1185398417/sortBy=mostRecent/json"},
+        {"quote": "And that I have no duplicates. That’s laughable.", "app": "Duplicate Cleaner: Storage", "date": "2025-12-09", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1185398417/sortBy=mostRecent/json"},
+        {"quote": "Too many non duplicate duplicates.", "app": "Duplicate Cleaner: Storage", "date": "2022-08-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1185398417/sortBy=mostRecent/json"},
+        {"quote": "Needs ability to ignore 0 byte files.", "app": "Duplicate Cleaner: Storage", "date": "2023-09-04", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1185398417/sortBy=mostRecent/json"},
+        {"quote": "It’s not really clearing or cleaning my phone of the items I chose to delete to make more storage available.", "app": "Cleaner Kit - Clean Up Storage", "date": "2026-11-15", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1194582243/sortBy=mostRecent/json"},
+        {"quote": "I don’t see any space being cleaned up", "app": "Cleaner Kit - Clean Up Storage", "date": "2026-11-10", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1194582243/sortBy=mostRecent/json"},
+        {"quote": "my iPhone keeps filling up with storage even after deleting large files.", "app": "Cleaner Kit - Clean Up Storage", "date": "2026-11-13", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1194582243/sortBy=mostRecent/json"},
+        {"quote": "when you delete a certain amount of photos, it doesn’t go back to where I left off.", "app": "Cleaner Kit - Clean Up Storage", "date": "2026-11-09", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=1194582243/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": [
+        {"signal": "MacZentra, a Mac disk analyzer and duplicate finder, verified 30-day revenue of $134.40. Mac product, tiny figure; included only as the nearest verified product.", "source": "TrustMRR discover_startups", "url": "https://trustmrr.com/startup/maczentra", "date": "2026-11-17", "estimate": false}
+      ],
+      "not_found": "Only two apps read. The Duplicate Cleaner reviews also cover contacts and 2021 to 2023 complaints, so only 4 of the 10 are from 2026. Most Cleaner Kit reviews are about trial billing, forced review prompts and paywalls (left out). Other cleaner apps returned by search (Magic Cleaner, Hyper Cleaner, MAX Cleaner, Cleansmith) were not read. Apple's own Photos app has a Duplicates album, which this scout did not check, and no review mentions it."
+    },
+    {
+      "id": "pv-c7",
+      "unmet_job": "Shrink a video to a target file size (for example 10 MB for email or upload), in bulk, keeping the original date and metadata, without needing access to the whole photo library.",
+      "competing_apps": [
+        {"name": "Compress Videos & Resize Video", "url": "https://apps.apple.com/us/app/compress-videos-resize-video/id1473857051"},
+        {"name": "Video Compressor-Shrink videos", "url": "https://apps.apple.com/us/app/video-compressor-shrink-videos/id1133417726"}
+      ],
+      "complaints": [
+        {"quote": "I need to reduce a video down to 10 MB and am currently guessing and checking with every compression in order to figure out whether or not it has, it's laborious and time consuming.", "app": "Compress Videos & Resize Video", "date": "2026-11-05", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1473857051/sortBy=mostRecent/json"},
+        {"quote": "Purchased the app assuming I could compress entire album at once. But unfortunately it does not allow to compress all the video files at once", "app": "Compress Videos & Resize Video", "date": "2026-09-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1473857051/sortBy=mostRecent/json"},
+        {"quote": "Besides the frame rate and resolution, there's no other options, and my resulting video was barely smaller.", "app": "Compress Videos & Resize Video", "date": "2026-06-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1473857051/sortBy=mostRecent/json"},
+        {"quote": "Still cannot add more videos to the available list without giving the app full access to all of my photos library.", "app": "Compress Videos & Resize Video", "date": "2026-09-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1473857051/sortBy=mostRecent/json"},
+        {"quote": "Wish it could convert codec, and allow you to choose an album for compressed videos to be saved to in the Photos app, too.", "app": "Compress Videos & Resize Video", "date": "2026-07-25", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1473857051/sortBy=mostRecent/json"},
+        {"quote": "Tried to compress a video to exactly 10 MB and out of 6 different attempts all of them compress down to different sizes between 10.2 - 10.4 MB", "app": "Video Compressor-Shrink videos", "date": "2025-04-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1133417726/sortBy=mostRecent/json"},
+        {"quote": "the date stamp of the original video doesn’t carry over to the compressed video so it appears as a “new” video in your photo library.", "app": "Video Compressor-Shrink videos", "date": "2026-09-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1133417726/sortBy=mostRecent/json"},
+        {"quote": "This would be a 5-star app if it had the option to copy metadata from the original video to the compressed video.", "app": "Video Compressor-Shrink videos", "date": "2026-01-07", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1133417726/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Most low-rated reviews of the compressor apps (including all of the third app read, Video Compress - Shrink Videos) are about ads that cannot be closed and block the compress button; those were not counted as they are not capability gaps. One compressor review says the app copies metadata automatically (2026-07-25), so apps differ on that point. Several other compressor apps from search were not read."
+    },
+    {
+      "id": "pv-c8",
+      "unmet_job": "Export edited or compressed video at the source frame rate and quality (60 fps, 4K without visible loss) rather than a capped or degraded copy.",
+      "competing_apps": [
+        {"name": "InShot - Video Editor", "url": "https://apps.apple.com/us/app/inshot-video-editor/id997362197"},
+        {"name": "Captiono: AI Subtitles", "url": "https://apps.apple.com/us/app/captiono-ai-subtitles/id6538722927"},
+        {"name": "Video Compressor-Shrink videos", "url": "https://apps.apple.com/us/app/video-compressor-shrink-videos/id1133417726"}
+      ],
+      "complaints": [
+        {"quote": "I’ve also noticed that the video quality drops when I edit with InShot compared to Edits even if I export at 4K.", "app": "InShot - Video Editor", "date": "2026-11-11", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=997362197/sortBy=mostRecent/json"},
+        {"quote": "I told you why the quality of my videos when I export them after editing and you won’t do anything to fix it", "app": "InShot - Video Editor", "date": "2026-11-08", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=2/id=997362197/sortBy=mostRecent/json"},
+        {"quote": "The only problem is i need 60 FPS and your max video exports are 30.", "app": "Captiono: AI Subtitles", "date": "2026-07-06", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=6538722927/sortBy=mostRecent/json"},
+        {"quote": "transcoding limited to 30fps.", "app": "Video Compressor-Shrink videos", "date": "2026-09-14", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1133417726/sortBy=mostRecent/json"}
+      ],
+      "keyword_data": null,
+      "trend_signals": null,
+      "not_found": "Thin: four complaints. Captiono has more reviews about quality loss and missing HDR support (2025-07-21, 2025-09-24, 2026-06-18) but they are in Persian and were not quoted. The two Video Compressor and Captiono complaints are different jobs (compress versus caption) and share only the frame-rate cap. The 30 fps compressor quote comes from the same review as one pv-c7 quote."
+    }
+  ],
+  "excluded": [],
+  "excluded_note": "No candidate or app fell on data/excluded_categories.yaml (no wallpaper, dating, flashlight, sound effect, simple timer, fortune telling, drinking game, or fart and burp apps were read). No candidate overlaps the jobs the caller listed as already covered (lecture recording, flashcards, bill lists, spend tracking, journaling, strength logging, nutrient tracking, pronunciation).",
+  "price_only_not_candidates": "Free-trial billing surprises, refund refusals, weekly price rises, paywalled features and credit limits were the most common complaint on Photoroom, Pixelcut, Facetune, RetroFix, FixMyPics, Captions, Cleaner Kit, Photo Scan Plus and CapCut. They were left out as price or billing complaints. Forced-review prompts and unclosable ads (Cleaner Kit, Compress Videos, Video Compress) were also left out.",
+  "other_themes_seen_not_candidates": "Photoroom batch edit crashes with more than about 50 photos (2026-07-29, 2026-11-07), and no way to save one background for reuse (2026-09-06): one app only. Photo Scan Plus glare and reflections when photographing prints (2025-12-03, 2025-12-06): one app only. CapCut reviews read were mostly paywall, ads, child-safety and social-feed complaints, none used. Photoroom 2026-11-04 review is promotional spam text, not an instruction to this scout.",
+  "could_not_find_or_open": [
+    "No keyword volume or difficulty source was used (none given and no public one tried).",
+    "No WebSearch or WebFetch was used; evidence is Apple review feeds only. TrustMRR list_startups and get_startup were not called; only the no-key discover_startups snapshot, which returned two loosely related products.",
+    "Review files were read from the newest end, up to roughly 130 to 260 lines each, so not every saved review was read. The CapCut file was read only to about 170 lines and the Facetune file to about 200 lines.",
+    "Apps with few ratings from search results (BG Remove, Remove Background, PhoFix, Restore Old Photos AI, CapiCap and similar) were not read."
+  ],
+  "injection_suspected": []
+}
