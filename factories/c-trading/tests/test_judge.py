@@ -164,4 +164,7 @@ def test_exam_judges_only_unseen_data_and_publishes_no_numbers(tmp_path, monkeyp
     record, health = paper.record(good, dev, bars, started)
     assert record["daily"][0][0] == started and record["days"] == len(record["daily"]) == 365
     assert health["status"] == "in_range"
-    assert paper.record(bad, dev, bars, started)[1]["status"] == "below_range"
+    broken = paper.record(bad, dev, bars, started)
+    assert broken[1]["status"] == "below_range"
+    both = paper.book([record, broken[0]])                   # equal risk: the two cancel after the cutoff
+    assert both["days"] == 365 and abs(both["paper_result"]) < abs(record["paper_result"])

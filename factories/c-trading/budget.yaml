@@ -21,7 +21,8 @@ per_run:                 # passed by the wrapper as --max-turns and --max-budget
   build:         {max_turns: 60,  max_budget_usd: 5.00, model: opus}
   optimise:      {max_turns: 60,  max_budget_usd: 5.00, model: opus}
   weekly-review: {max_turns: 40,  max_budget_usd: 4.00, model: opus}
-  # maintain and winner-packet are added in build step 7 (FACTORY_SPEC.md section 11)
+  maintain:      {max_turns: 40,  max_budget_usd: 4.00, model: opus}
+  winner-packet: {max_turns: 40,  max_budget_usd: 4.00, model: opus}
 
 pipeline:
   max_new_cards_per_run: 3

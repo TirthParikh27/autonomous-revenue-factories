@@ -54,6 +54,7 @@ def record(s: strat.Strategy, dev_bars: Bars, all_bars: Bars, started: str) -> t
         "market_adjusted_result": round(float(alpha.sum()), 4) if n else 0.0,
         "max_drawdown": round(stats.max_drawdown(r), 4) if n else 0.0,
         "sharpe": round(stats.annual_sharpe(r, ppy), 2) if n >= MIN_DAYS else None,
+        "development_daily_volatility": round(float(full[seen].std(ddof=1)), 6),
         "note": "Forward test with the engine's own fills and costs. A paper result is not profit.",
         "daily": [[str(d.date()), round(float(x), 6), round(float(y), 6), round(float(a), 6)]
                   for d, x, y, a in zip(full.index[live], r, b, alpha)],      # date, strategy, benchmark, market-adjusted
@@ -77,10 +78,32 @@ def record(s: strat.Strategy, dev_bars: Bars, all_bars: Bars, started: str) -> t
     return paper, health
 
 
+def book(papers: list[dict]) -> dict:
+    """The combined book: confirmed strategies at equal risk, so that a calm strategy and a
+    wild one contribute the same. Weights are set from development volatility, never from paper results."""
+    days = sorted({d[0] for p in papers for d in p["daily"]})
+    series = {p["strategy"]: {d[0]: (d[1], d[3]) for d in p["daily"]} for p in papers}
+    risk = {p["strategy"]: 1.0 / p["development_daily_volatility"] for p in papers if p["development_daily_volatility"] > 0}
+    daily = []
+    for day in days:
+        live = [k for k in risk if day in series[k]]
+        total = sum(risk[k] for k in live)
+        daily.append([day, round(sum(risk[k] / total * series[k][day][0] for k in live), 6),
+                      round(sum(risk[k] / total * series[k][day][1] for k in live), 6), len(live)])
+    r = np.array([d[1] for d in daily])
+    return {"strategies": sorted(risk), "days": len(daily),
+            "paper_result": round(float(np.prod(1 + r) - 1), 4) if len(r) else 0.0,
+            "market_adjusted_result": round(float(sum(d[2] for d in daily)), 4),
+            "max_drawdown": round(stats.max_drawdown(r), 4) if len(r) else 0.0,
+            "note": "Equal-risk combination of confirmed strategies. A paper result is not profit.",
+            "daily": daily}       # date, book, market-adjusted, strategies live that day
+
+
 def main() -> int:
     if os.environ.get("FACTORY_EXAM") != "1":
         print("refused: the paper stage runs only inside the judge's job", file=sys.stderr)
         return 2
+    confirmed = []
     for path in sorted(_dir("exam").glob("*.json")):
         exam = json.loads(path.read_text())
         item_path = trials.state_dir() / "items" / f"{exam['strategy']}.json"
@@ -108,7 +131,11 @@ def main() -> int:
         for folder, doc in (("paper", paper), ("health", health)):
             _dir(folder).mkdir(parents=True, exist_ok=True)
             (_dir(folder) / f"{sid}.json").write_text(json.dumps(doc, indent=2) + "\n")
+        if item.get("stage") in ("confirmed", "awaiting_human"):
+            confirmed.append(paper)
         print(f"{sid}: {paper['days']} paper days, {health['status']}")
+    if confirmed:
+        (_dir("paper") / "book.json").write_text(json.dumps(book(confirmed), indent=2) + "\n")
     return 0
 
 

@@ -25,7 +25,7 @@ Each run does one stage and exits. You are started by the run wrapper with one s
 
 Run one simple command per Bash call. The engine is the only program you run: `python3 -m engine check|trial|sweep|gate <strategy>`. Use Read, Glob and Grep to look at files, never `ls` or `cat`, and Write and Edit to change them. Stay inside this folder: anything outside it is denied, and a denial fails the run. Do not run `git`: you leave files in the working tree.
 
-Stage order: `ideate`, `build`, `optimise`, then the exam, the paper stage and the health watch, which are scripts in a daily GitHub job. Then `maintain` and `winner-packet`. `weekly-review` runs weekly.
+Stage order: `ideate`, `build`, `optimise`, then the exam, the paper stage and the health watch, which are scripts in a daily GitHub job. Then `maintain` and `winner-packet`, which act on what those scripts wrote. `weekly-review` runs weekly.
 
 ## Hard rules
 

@@ -1,6 +1,6 @@
 # Factory C: Trading strategy factory
 
-Status: architecture, revision 2 (17 November 2026). The engine, the final exam, the paper stage and the health watch are built and tested on crypto data, and the idea, build and optimise stages have each been run through the run wrapper (build steps 1 to 6). Nothing is scheduled yet.
+Status: architecture, revision 2 (17 November 2026). The engine, the final exam, the paper stage and the health watch are built and tested on crypto data, and the idea, build and optimise stages have each been run through the run wrapper (build steps 1 to 7). Nothing is scheduled yet.
 Nothing in this factory is financial advice. It is a research harness on paper accounts.
 
 This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md).
@@ -117,8 +117,8 @@ Each paper strategy has a predicted range: the spread of outcomes its backtest i
 1. **Watch** (script, every day, in the same job). Compares each strategy's market-adjusted paper result with the range its development result predicts for a record that long. Writes `health/<id>.json` with `in_range`, `below_range`, `above_range` or `too_early` (under 30 days).
 2. **Diagnose** (agent, when a strategy leaves its range). Reads the health file, fills and recent market data. Names one cause: implementation fault, higher costs, a regime the strategy was never tested in, or a fading edge. Proposes one action.
 3. **Act.**
-   - *Fix* an implementation fault and restart the paper clock.
-   - *Re-tune* inside the card's declared ranges using recent data. The new version is a counted trial, takes the final exam, and runs in shadow beside the old version. The one that does better on paper stays.
+   - *Fix* an implementation fault. The corrected strategy is a new item that goes through build, optimise and the exam again.
+   - *Re-tune* inside the card's declared ranges, once the development cutoff has moved forward to include the period that went wrong. The new version's trials are counted, it takes the final exam, and it runs beside the old version, which is paused. The one that does better on paper stays.
    - *Reduce weight* or *pause*. A paused strategy keeps running in shadow so evidence keeps building.
    - *Retire.* Also the outcome for a strategy that keeps needing re-tunes.
 
@@ -227,8 +227,9 @@ Where research gives no agreed number, such as a pass mark for overfitting proba
 4. Done: `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, permissions, the `ideate`, `build`, `optimise` and `weekly-review` skills, and both agents.
 5. Done: the exam (`engine/exam.py`) and its GitHub job. The job first runs for real once it is on `main` and a strategy reaches `optimised`.
 6. Done: the paper stage as a forward test, with the health watch (`engine/paper.py`). Checked end to end on real data by treating the last months of development data as unseen.
-7. The `maintain` and `winner-packet` skills, and the combined book.
-8. Idea scout, then schedules.
+7. Done: the `maintain` and `winner-packet` skills, and the combined book (`paper/book.json`). Neither skill has run yet, because nothing has reached paper.
+8. Not yet built: moving the development cutoff forward, which re-tuning depends on.
+9. Schedules, with run state on the `factory-state` branch.
 
 ## 12. Open items
 
