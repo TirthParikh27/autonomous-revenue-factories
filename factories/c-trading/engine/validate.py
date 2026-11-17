@@ -101,6 +101,29 @@ def planted(edge_sharpe: float, years: int = 5, seed: int = 0) -> dict:
             "failed": [k for k, c in out["checks"].items() if not c["pass"]]}
 
 
+def exam_rates(seeds: int = 40, unseen_days: int = 300) -> list[dict]:
+    """How often the exam's look at unseen data passes a strategy with no edge, and one with
+    a real edge. Each seed is a fresh synthetic market: five years seen, about ten months unseen."""
+    from . import exam
+    out = []
+    for edge in (0.0, 2.0, 3.0):
+        passed = 0
+        for seed in range(seeds):
+            bars, regime = synthetic_market(6, edge, 1000 + seed)
+            all_bars = bars.until(5 * 8760 + unseen_days * 24)
+
+            def informed(b: Bars, params: dict) -> pd.DataFrame:
+                w = pd.DataFrame(0.0, index=b.close.index, columns=b.symbols)
+                w["S0"] = np.roll(regime, -1)[: len(w)]
+                return w
+
+            s = _strategy(f"exam-{edge}-{seed}", informed, {"k": 1})
+            passed += all(exam.holdout(s, bars.until(5 * 8760), all_bars).values())
+        out.append({"planted_annual_sharpe_before_costs": edge, "markets": seeds,
+                    "unseen_days": unseen_days, "passed_unseen_checks": passed})
+    return out
+
+
 def main() -> int:
     report = {"engine_version": CONFIG["engine_version"]}
     if "--planted-only" not in sys.argv:
@@ -113,6 +136,7 @@ def main() -> int:
             os.environ["FACTORY_STATE_DIR"] = tmp
             report["planted"].append(planted(edge))
     os.environ.pop("FACTORY_STATE_DIR")
+    report["exam"] = exam_rates()
     print(json.dumps(report, indent=2))
     if "noise" in report:
         (ROOT / "engine" / "VALIDATION.json").write_text(json.dumps(report, indent=2) + "\n")

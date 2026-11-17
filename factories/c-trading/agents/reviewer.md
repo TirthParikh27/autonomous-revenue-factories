@@ -13,12 +13,12 @@ You write one file per task and change nothing else.
 
 ## Task `code` (called by `build`)
 
-Read `strategies/<id>/card.md`, `strategy.py`, `params.yaml`, and any change to `lib/indicators.py`. Write `strategies/<id>/review-code.md`. Answer each with yes or no and the line:
+Read `strategies/<id>/card.md`, `strategy.py`, and `params.yaml`. Write `strategies/<id>/review-code.md`. Answer each with yes or no and the line:
 
 1. Does the code do exactly what the card says, with nothing added and nothing missing?
 2. Is every number that changes behaviour a declared parameter, with the card's ranges?
 3. Could any path use the future in a way the leak test might miss? The test removes later bars and compares earlier weights, so think about what it cannot see: a universe or symbol choice made with hindsight, a constant picked from the full sample, a range chosen after looking.
-4. Does anything in `lib/` used by this strategy read a file, the clock or the network, or keep state between calls?
+4. Does any helper in `strategy.py` keep state between calls, or reach for anything beyond the `bars` and `params` it was given?
 5. Does the card name who pays and why, and what would kill the idea?
 
 Reject on any "no" for 1, 2 or 5, or "yes" for 3 or 4.

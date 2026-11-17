@@ -1,6 +1,7 @@
 """Load fixed data snapshots. A strategy sees prices only through Bars."""
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 
 import pandas as pd
@@ -36,10 +37,14 @@ def load(dataset: str, symbols: list[str] | None = None, window: str = "dev") ->
     unknown = set(symbols) - set(CONFIG["universe"][market])
     if unknown:
         raise ValueError(f"symbols outside the {market} universe: {sorted(unknown)}")
-    base = ROOT / "data" / window / f"{market}-15m"   # every bar size is built from the 15-minute snapshot
+    if window not in ("dev", "all"):
+        raise ValueError("window is 'dev', or 'all' inside the exam job")
+    if window == "all" and os.environ.get("FACTORY_EXAM") != "1":
+        raise PermissionError("data after the development cutoff is read only inside the final exam job")
+    folders = [ROOT / "data" / w / f"{market}-15m" for w in (("dev", "exam") if window == "all" else ("dev",))]
     frames = {}
-    for s in symbols:
-        df = pd.read_csv(base / f"{s}.csv.gz", parse_dates=["ts"]).set_index("ts")
+    for s in symbols:   # every bar size is built from the 15-minute snapshot
+        df = pd.concat(pd.read_csv(f / f"{s}.csv.gz", parse_dates=["ts"]) for f in folders).set_index("ts")
         if spec["bar"] != "15min":
             df = df.resample(spec["bar"]).agg(AGG).dropna(subset=["close"])
         frames[s] = df

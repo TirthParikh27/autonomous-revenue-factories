@@ -5,13 +5,14 @@ Writes data/<window>/crypto-15m/<SYMBOL>.csv.gz, where window is "dev"
 (bars up to the development cutoff) or "exam" (bars after it). The exam
 window may only be fetched inside the final exam job, which sets FACTORY_EXAM=1.
 
-Usage: python data/fetch_binance.py [--window dev|exam] [--symbols BTCUSDT ...]
+Usage: python data/fetch_binance.py [--window dev|exam] [--verify] [--symbols BTCUSDT ...]
 """
 from __future__ import annotations
 
 import argparse
 import concurrent.futures as cf
 import datetime as dt
+import gzip
 import hashlib
 import io
 import json
@@ -58,6 +59,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--window", choices=["dev", "exam"], default="dev")
     ap.add_argument("--symbols", nargs="*", default=cfg["universe"]["crypto"])
+    ap.add_argument("--verify", action="store_true", help="fail if the download differs from the committed manifest")
     args = ap.parse_args()
 
     cutoff = dt.date.fromisoformat(cfg["dev_cutoff"])
@@ -83,10 +85,16 @@ def main() -> int:
         df.to_csv(path, index=False)
         manifest[symbol] = {
             "bars": len(df), "first": str(df["ts"].iloc[0]), "last": str(df["ts"].iloc[-1]),
-            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "sha256": hashlib.sha256(gzip.decompress(path.read_bytes())).hexdigest(),   # of the CSV text
         }
         print(symbol, manifest[symbol]["bars"], manifest[symbol]["first"], "to", manifest[symbol]["last"])
-    (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    path = out_dir / "manifest.json"
+    if args.verify:
+        if json.loads(path.read_text()) != manifest:
+            print("refused: the download does not match the committed manifest", file=sys.stderr)
+            return 1
+        return 0
+    path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     return 0
 
 

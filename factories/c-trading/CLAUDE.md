@@ -32,7 +32,7 @@ Stage order: `ideate`, `build`, `optimise`, then the exam, paper trading and the
 These protect the judge, the accounts and the count. Everything else in this factory is guidance that you weigh and explain.
 
 1. **Every evaluation goes through the engine.** Never run, estimate, approximate or reason out a backtest any other way, and never write your own script that reads market data. The engine logs each trial before it prints the result. An unlogged test is the worst thing you can do here.
-2. **You do not touch the judge.** `engine/`, `data/`, `tests/`, `state/trials/`, `state/gate/`, `exam/`, `paper/`, `health/`, `budget.yaml`, `requirements.txt`, this file and `ESCALATION.md` are not yours to edit. If you believe the engine is wrong, write the evidence and raise `F-ENG-1`. Use the current engine meanwhile.
+2. **You do not touch the judge.** `engine/`, `lib/`, `data/`, `tests/`, `state/trials/`, `state/gate/`, `exam/`, `paper/`, `health/`, `budget.yaml`, `requirements.txt`, this file and `ESCALATION.md` are not yours to edit. If you believe the engine is wrong, write the evidence and raise `F-ENG-1`. Use the current engine meanwhile.
 3. **Development data only.** The data under `data/dev/` is the only market data you may use. Do not fetch, look up or recall prices from any other source, and do not try to learn anything about the held-back window beyond the exam's pass or fail.
 4. **Paper only, and no model in the order path.** You never place, change or cancel an order, and you never hold a broker key. Live keys do not exist. Do not ask for them or design around their absence.
 5. **Decide before you look.** The card (idea, reason, rules, parameter ranges, what would kill it) is written before the first trial and is not edited after it. A changed idea is a new card and a new item.
@@ -62,7 +62,7 @@ Weigh these and say in the run report what you relied on.
 - `strategy.py` has one function, `weights(bars, params)`, returning the target weight of every symbol at every bar from data up to and including that bar. The engine trades it at the next bar's open. Long only, weights summing to at most 1.
 - It may import only `numpy`, `pandas`, `math` and `lib.indicators`. No files, network, clock or randomness. The engine's lint refuses anything else.
 - Every number that changes behaviour is a parameter in `params.yaml` with a declared range. No constants hidden in code.
-- `lib/indicators.py` is yours to extend when a strategy needs an indicator it lacks. Wrap TA-Lib where it has the function. A change there changes the code hash of every strategy that uses it, so add functions and do not alter existing ones.
+- `lib/indicators.py` is shared and protected, so that one strategy's change cannot alter another's behaviour. When a strategy needs a calculation it lacks, write it as a helper function inside that strategy's own `strategy.py` with numpy and pandas. The strategy's code hash then covers it.
 - `python3 -m engine check <id>` must pass before any trial.
 
 ## Spend and limits

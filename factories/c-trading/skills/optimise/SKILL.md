@@ -21,7 +21,7 @@ This stage answers one question: is there a broad region of the declared ranges 
 5. Run `python3 -m engine gate <id>`. The engine writes `state/gate/<id>.json` with the four coded checks and the supporting evidence.
 6. If any coded check fails, the item is killed and the family is closed. Write `result.md` with the numbers copied from the gate file.
 7. If all four pass, call the `reviewer` agent with the task `result`. It reads the gate file and the trial log and writes `strategies/<id>/review-result.md`. It can reject for reasons the coded checks do not see: an overfit sweep, one sub-period carrying the result, a near-copy of an existing strategy. A rejection kills the item.
-8. If the reviewer does not reject, move the item to `optimised`, write `result.md`, and set the item's next step to the final exam (`FACTORY_SPEC.md` section 4.4).
+8. If the reviewer does not reject, move the item to `optimised` and write `result.md`. The exam job on GitHub picks up `optimised` items by itself, runs the single look at unseen data, writes `exam/<id>.json` and moves the item to `paper` or `killed`. You do nothing more.
 
 ## Guidance
 

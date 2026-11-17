@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from engine import CONFIG, backtest, stats, strategy as strat, trials, validate
+from engine import CONFIG, backtest, exam, gate, stats, strategy as strat, trials, validate
 from engine.data import Bars
 
 DATASET = "crypto-1h"
@@ -126,3 +126,35 @@ def test_gate_passes_a_strong_planted_edge_and_fails_a_weak_one(tmp_path, monkey
     assert validate.planted(3.0)["pass"]
     monkeypatch.setenv("FACTORY_STATE_DIR", str(tmp_path / "weak"))
     assert not validate.planted(0.5)["pass"]
+
+
+def test_exam_judges_only_unseen_data_and_publishes_no_numbers(tmp_path, monkeypatch):
+    monkeypatch.setenv("FACTORY_STATE_DIR", str(tmp_path / "state"))
+    bars, regime = validate.synthetic_market(6, 3.0, seed=0)
+    dev = bars.until(5 * 8760)
+
+    def informed(b, p):                                      # the edge stops when the seen data ends
+        w = pd.DataFrame(0.0, index=b.close.index, columns=b.symbols)
+        w["S0"] = np.roll(regime, -1)[: len(w)]
+        return w
+
+    def fades(b, p):
+        w = informed(b, p)
+        w.iloc[5 * 8760:, 0] = 1.0 - w.iloc[5 * 8760:, 0]   # after the cutoff it holds the wrong regime
+        return w
+
+    with pytest.raises(PermissionError):                     # outside the exam job the later data is unreadable
+        from engine.data import load
+        load(DATASET, window="all")
+
+    good = validate._strategy("good", informed, {"k": 1})
+    assert not exam.evaluate(good, dev, bars)["pass"]        # no logged gate result: refused before any look
+    gate.evaluate(good, dev)
+    out = exam.evaluate(good, dev, bars)
+    assert out["pass"] and all(isinstance(v, bool) for v in out["checks"].values())
+
+    bad = validate._strategy("bad", fades, {"k": 1})
+    assert gate.evaluate(bad, dev)["pass"]
+    out = exam.evaluate(bad, dev, bars)
+    assert not out["pass"] and out["checks"]["gate_on_development_data"]
+    assert not out["checks"]["positive_after_costs_on_unseen_data"]

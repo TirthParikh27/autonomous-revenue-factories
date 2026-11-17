@@ -48,5 +48,25 @@
       "measured_sharpe_after_costs": 2.56,
       "failed": []
     }
+  ],
+  "exam": [
+    {
+      "planted_annual_sharpe_before_costs": 0.0,
+      "markets": 40,
+      "unseen_days": 300,
+      "passed_unseen_checks": 22
+    },
+    {
+      "planted_annual_sharpe_before_costs": 2.0,
+      "markets": 40,
+      "unseen_days": 300,
+      "passed_unseen_checks": 36
+    },
+    {
+      "planted_annual_sharpe_before_costs": 3.0,
+      "markets": 40,
+      "unseen_days": 300,
+      "passed_unseen_checks": 34
+    }
   ]
 }

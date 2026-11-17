@@ -11,7 +11,7 @@ Read `CLAUDE.md` and `budget.yaml` first. Take one item at `proposed`, the oldes
 
 1. Read the card. If it cannot be coded as written (missing data, a rule that needs the future, a rule that is ambiguous), kill the item with that reason. Do not repair the idea here.
 2. Write `strategies/<id>/params.yaml`: the `dataset`, the `ranges` exactly as the card declares them, and a `chosen` set from the middle of each range. `chosen` is a starting point for the checks, not a tuned result.
-3. Write `strategies/<id>/strategy.py` with the single function `weights(bars, params)`. Follow the coding standards in `CLAUDE.md`. Use `lib.indicators`, and add an indicator there only when the card needs one it lacks.
+3. Write `strategies/<id>/strategy.py` with the single function `weights(bars, params)`. Follow the coding standards in `CLAUDE.md`. Use `lib.indicators` where it has what the card needs, and write anything else as a helper function in the same file.
 4. Run `python3 -m engine check <id>`. It lints the code and runs the leak test: the weights computed on the full history must equal the weights computed with the future removed. Fix the code until it passes. A leak is fixed by removing it, never by changing the card.
 5. Call the `reviewer` agent with the task `code`. It writes `strategies/<id>/review-code.md`. If it rejects, fix what it names and call it once more. A second rejection kills the item.
 6. Move the item to `built` and record the check output and the review path in `evidence`.
@@ -27,7 +27,7 @@ Read `CLAUDE.md` and `budget.yaml` first. Take one item at `proposed`, the oldes
 
 - Never run `trial`, `sweep` or `gate` in this stage. The first counted trial belongs to `optimise`.
 - Never edit the card. If the card is wrong, the item is killed and `ideate` may write a new one.
-- Never work around the lint with an indirect import or a helper in `lib/` that reads files, the clock or the network.
+- Never work around the lint with an indirect import or attribute trick to reach files, the clock or the network.
 
 ## Finish
 

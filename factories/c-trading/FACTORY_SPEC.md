@@ -1,6 +1,6 @@
 # Factory C: Trading strategy factory
 
-Status: architecture, revision 2 (17 November 2026). The engine is built and tested on crypto data, and the instructions, skills and agents for the idea, build and optimise stages are written (build steps 1 to 4). Nothing is scheduled, and no exam job or paper trading exists yet.
+Status: architecture, revision 2 (17 November 2026). The engine and the final exam are built and tested on crypto data, and the idea, build and optimise stages have each been run through the run wrapper (build steps 1 to 5). Nothing is scheduled, and no paper trading exists yet.
 Nothing in this factory is financial advice. It is a research harness on paper accounts.
 
 This revision replaces the 16 November blueprint. It is the output of a double diamond design process. The reasoning is in [`design/`](design/): [research](design/DISCOVERY_REPORT.md), [requirements](design/DEFINE.md) and [design options](design/DEVELOP.md).
@@ -63,7 +63,7 @@ The engine trades a target at the next bar's open, so a strategy cannot trade on
 | Part | Built on | Notes |
 |---|---|---|
 | Backtester | vectorbt (pinned) | A wrapper fixes next-bar fills, fees, slippage, no leverage, and a rebalance band so drift does not pay costs. Checked against a hand-written reference in tests |
-| Indicators | TA-Lib | `lib/indicators.py`. Outside the protected engine, so agents can add indicators |
+| Indicators | TA-Lib | `lib/indicators.py`. Protected like the engine. A strategy that needs something else writes it inside its own file, where its code hash covers it |
 | Parameter search | Optuna | Searches only inside the card's declared ranges. Every run is a counted trial |
 | Cost model | Own | One table per market in `engine/config.yaml`, sourced from venue fee pages. Every result is also produced at raised costs |
 | Leak test | Own | Removes the future and checks that past decisions do not change. Run on every candidate |
@@ -93,9 +93,10 @@ What the gate can and cannot see is measured in section 9. In short, on five yea
 
 - Development data stops at a cutoff date. It is the only market data that exists where agents work.
 - The held-back window, from the cutoff to today, exists only inside one GitHub Actions job.
-- An agent requests an exam by opening a pull request with the strategy folder. The job takes the engine and its own workflow from `main` and only the strategy folder from the branch. It checks that the strategy's local trials are in the log, re-runs the gate on development data, then runs the strategy once on the held-back window.
-- The job writes `exam/<id>.json`: pass or fail per check, nothing else. Agents never see held-back returns.
-- A failed strategy's family is closed. It cannot be resubmitted with tweaks.
+- The exam job (`.github/workflows/c-trading-exam.yml`) runs daily and picks up every item at `optimised`. It takes the engine and its own workflow from `main`, and only `strategy.py` and `params.yaml` from the `factory-state` branch.
+- It checks that the submitted code and parameters are the ones whose trials are in the log, re-runs the gate on development data, and only then runs the strategy once across the held-back window. Three things must hold there: the leak test passes, the market-adjusted return after costs is positive, and the result is not below the 5th percentile of what the development result predicts for a window that short.
+- The job writes `exam/<id>.json`: pass or fail per check, nothing else, and moves the item to `paper` or `killed`. Agents never see held-back returns. A strategy takes the exam once.
+- A failed strategy's family is closed. A later strategy whose development returns move with a failed one is refused before any look.
 - The cutoff rolls forward on a schedule, releasing old exam data to development and adding new. Time supplies fresh exam data, and the paper period is the last unseen test.
 
 ### 4.5 Paper trading
@@ -133,8 +134,7 @@ One item per strategy, in the format of `factories/_shared/CONVENTIONS.md`.
 |---|---|---|---|
 | `proposed` | Card written, and it is a different mechanism from every existing and killed card | `ideate` skill, `idea-scout` agent | `built`, `killed` |
 | `built` | Strategy code written, lint and leak test passed, reviewer confirms code matches card | `build` skill, `reviewer` agent | `optimised`, `killed` |
-| `optimised` | Parameters searched inside declared ranges on development data, stable region chosen, gate passed locally, reviewer did not reject | `optimise` skill, engine, `reviewer` agent | `exam`, `killed` |
-| `exam` | Final exam in CI | GitHub Actions | `paper`, `killed` |
+| `optimised` | Parameters searched inside declared ranges on development data, stable region chosen, gate passed locally, reviewer did not reject. Waits here for the final exam | `optimise` skill, engine, `reviewer` agent, then the exam job | `paper`, `killed` |
 | `paper` | Runs on paper, watched daily | scripts, `maintain` skill | `confirmed`, `paused`, `killed` |
 | `confirmed` | Ran correctly and stayed in range for long enough, and adds to the combined book | `maintain` skill, engine check | `awaiting_human`, `paused`, `killed` |
 | `awaiting_human` | Winner packet sent (`F-CAP-1`) | `winner-packet` skill | operator's decision |
@@ -184,7 +184,11 @@ The judge is tested before any strategy is mined, and again after every engine c
 | Rejects noise | 200 random strategies on real crypto data. The best had a raw Sharpe of 1.33 from market exposure alone. None of the top 25 passed |
 | Finds a planted edge | In a synthetic market, a planted edge with Sharpe 2 or 3 before costs passed. Sharpe 1 and 0.5 did not |
 
-The last row is the gate's honest limit. Five years of data cannot separate a real Sharpe-1 edge from luck, which matches the research. Modest real edges will be rejected. That is the price of rejecting noise, and it eases only with more history, more markets, or time on paper.
+| The exam's look at unseen data | In 40 synthetic markets each, with ten unseen months: a strategy with no edge passed 22 times, Sharpe 2 passed 36 times, Sharpe 3 passed 34 times |
+
+The fourth row is the gate's honest limit. Five years of data cannot separate a real Sharpe-1 edge from luck, which matches the research. Modest real edges will be rejected. That is the price of rejecting noise, and it eases only with more history, more markets, or time on paper.
+
+The exam's limit is the last row. Ten months is too short to prove anything, so the unseen look removes about half of the false winners the gate lets through and wrongly fails about one real edge in eight. It is a consistency check, kept lenient on purpose: paper trading is free, so sending a false winner to paper costs little, and killing a real edge loses it for good. It gets stronger as the held-back window grows.
 
 Not yet done: reproducing a published result (time-series momentum across asset classes). It needs daily data for ETFs or futures, which needs the Alpaca account.
 
@@ -218,8 +222,8 @@ Where research gives no agreed number, such as a pass mark for overfitting proba
 1. Done: engine, cost model, statistics and the judge's tests.
 2. Done for crypto: data snapshot script and the development cutoff. ETFs and FX need account keys.
 3. Done: one strategy taken by hand from card to local gate (`strategies/crypto-trend-1h/`). It failed the gate narrowly, which is a valid result.
-4. Done: `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, permissions, the `ideate`, `build`, `optimise` and `weekly-review` skills, and both agents. Not yet run headless.
-5. The exam job.
+4. Done: `CLAUDE.md`, `ESCALATION.md`, `budget.yaml`, permissions, the `ideate`, `build`, `optimise` and `weekly-review` skills, and both agents.
+5. Done: the exam (`engine/exam.py`) and its GitHub job. The job first runs for real once it is on `main` and a strategy reaches `optimised`.
 6. Paper runner and journal (needs `F-ACC-1`), then the `winner-packet` skill.
 7. Health watch and the `maintain` skill.
 8. Idea scout, then schedules.

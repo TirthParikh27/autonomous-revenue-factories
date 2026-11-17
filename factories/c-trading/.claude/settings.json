@@ -9,6 +9,7 @@
     ],
     "deny": [
       "Edit(engine/**)", "Write(engine/**)",
+      "Edit(lib/**)", "Write(lib/**)",
       "Edit(data/**)", "Write(data/**)",
       "Edit(tests/**)", "Write(tests/**)",
       "Edit(state/trials/**)", "Write(state/trials/**)",
