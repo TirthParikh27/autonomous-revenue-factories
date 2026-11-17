@@ -20,7 +20,7 @@ The `checks` workflow fails a pull request when:
 
 A factory whose tests need their own requirements is not covered by this job. The pull request that adds such tests also adds a test job for that factory with the same two steps, and only then leaves the factory's folder out in `.coveragerc`.
 
-These rules are easy to satisfy on paper: any test file anywhere counts as "a test changed", code placed under a `tests/` folder is not measured, and only Python lines are measured. The reviewer checks that the tests really exercise the change.
+These rules are easy to satisfy on paper: any test file anywhere counts as "a test changed", code placed under a `tests/` folder or in a `conftest.py` is not measured, and only Python lines are measured. The reviewer checks that the tests really exercise the change.
 
 ## What the reviewer checks
 
@@ -55,7 +55,8 @@ The author's session merges its own pull request once CI is green and the verdic
 - places or enables live trades;
 - publishes, launches or submits anything outside the repository (ads, store releases, posts, emails);
 - adds, reads or changes how keys and credentials are handled;
-- changes a file listed in [`.github/CODEOWNERS`](.github/CODEOWNERS). These are each factory's rules and budgets, guard checks, publishers, CI and these review rules. `python tools/pr_gate.py` names them.
+- was opened by a factory run;
+- changes a file listed in [`.github/CODEOWNERS`](.github/CODEOWNERS) on `main` or in the pull request. These are each factory's rules and budgets, guard checks, publishers, CI and these review rules. `python tools/pr_gate.py` names them.
 
 When in doubt, it waits.
 

@@ -1,6 +1,7 @@
 # Files that guard money, accounts, keys, publishing and the review rules.
 # A pull request that changes any of them waits for the operator to merge (REVIEW.md).
-# tools/pr_gate.py reads this list. Start every path with / so the gate matches it the way GitHub does.
+# tools/pr_gate.py reads this list, from the base branch and from the pull request.
+# Start every path with /, because the gate matches paths from the repository root only.
 /factories/*/budget.yaml            @TirthParikh27
 /factories/*/CLAUDE.md              @TirthParikh27
 /factories/*/ESCALATION.md          @TirthParikh27
@@ -19,6 +20,7 @@
 /.coveragerc                        @TirthParikh27
 /pyproject.toml                     @TirthParikh27
 /pytest.ini                         @TirthParikh27
+/.pytest.ini                        @TirthParikh27
 /setup.cfg                          @TirthParikh27
 /tox.ini                            @TirthParikh27
 /conftest.py                        @TirthParikh27

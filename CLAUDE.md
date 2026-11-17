@@ -1,6 +1,6 @@
 # Changing this repository
 
-This file is for sessions that change the repository through pull requests. A factory run follows `factories/<name>/CLAUDE.md` and does not open pull requests.
+This file is for a session merging a pull request it wrote itself. A factory run follows `factories/<name>/CLAUDE.md`, and any pull request a factory run opens is merged by Tirth, never by the run.
 
 ## From pull request to merge
 

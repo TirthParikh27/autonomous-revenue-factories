@@ -18,7 +18,7 @@ from coverage.config import DEFAULT_EXCLUDE
 
 ROOT = Path(__file__).resolve().parents[1]
 # The same comment forms coverage itself treats as "do not measure this".
-OPT_OUT = re.compile(DEFAULT_EXCLUDE[0])
+OPT_OUT = re.compile(DEFAULT_EXCLUDE[0])  # the other defaults hide no runtime code
 CODE_SUFFIXES = {".py", ".js", ".jsx", ".ts", ".tsx", ".swift", ".sh", ".sql"}
 
 
@@ -101,7 +101,11 @@ def main() -> int:
     parser.add_argument("--base", default="origin/main")
     args = parser.parse_args()
 
-    patterns = protected_patterns((ROOT / ".github" / "CODEOWNERS").read_text())
+    # The list on the base branch counts too, as on GitHub, so a pull request cannot unprotect its own files.
+    on_base = subprocess.run(
+        ["git", "show", f"{args.base}:.github/CODEOWNERS"], cwd=ROOT, capture_output=True, text=True,
+    ).stdout
+    patterns = protected_patterns(on_base + "\n" + (ROOT / ".github" / "CODEOWNERS").read_text())
     changes = parse_name_status(git_diff(args.base, "-z", "--name-status", "-M100%"))
     untested, protected = judge(changes, patterns)
     opt_outs = coverage_opt_outs(git_diff(
