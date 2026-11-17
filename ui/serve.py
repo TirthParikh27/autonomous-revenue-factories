@@ -45,7 +45,7 @@ class Handler(SimpleHTTPRequestHandler):
     root: Path
 
     def reply(self, status: int, body: dict) -> None:
-        raw = json.dumps(body).encode()
+        raw = json.dumps(body, allow_nan=False).encode()      # NaN is not JSON a browser can read
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(raw)))
@@ -89,6 +89,8 @@ class Handler(SimpleHTTPRequestHandler):
             return self.reply(409, {"error": str(err)})
         except ValueError as err:
             return self.reply(400, {"error": str(err)})
+        except OSError as err:                    # two clicks at once: the second finds the file already gone
+            return self.reply(500, {"error": f"{type(err).__name__}: {err}"})
         self.send_data()                        # the switch has moved: answer with the files as they now are
 
     def log_message(self, *args) -> None:

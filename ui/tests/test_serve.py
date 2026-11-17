@@ -146,3 +146,17 @@ def test_the_switch_still_answers_when_a_state_file_is_broken(root, call):
     status, body = call("/api/factories/a-consumer-apps/power", '{"on": false}')
     assert status == 500 and "budget.yaml" in json.loads(body)["error"]
     assert (root / "factories" / "a-consumer-apps" / "STOP").exists()
+
+
+def test_a_number_a_browser_cannot_read_is_an_error_not_a_blank_page(root, call):
+    items = root / "factories" / "a-consumer-apps" / "state" / "items"
+    items.mkdir()
+    (items / "zz.json").write_text('{"id": "zz", "stage": "discovered", "spend_usd": NaN}')
+    status, body = call("/api/data")
+    assert status == 500 and "Could not read the factory files" in json.loads(body)["error"]
+
+
+def test_a_switch_that_cannot_be_written_answers_with_the_reason(root, call):
+    (root / "factories" / "a-consumer-apps" / "STOP").mkdir()        # a folder where the file should be
+    status, body = call("/api/factories/a-consumer-apps/power", '{"on": true}')
+    assert status == 500 and "Error" in json.loads(body)["error"]
