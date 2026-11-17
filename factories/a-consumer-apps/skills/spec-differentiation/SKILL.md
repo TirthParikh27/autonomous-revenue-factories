@@ -10,13 +10,12 @@ You are a fresh session. Read `CLAUDE.md` and `budget.yaml` first. You work only
 ## Inputs
 
 - Items at `screened` in `state/items/`, up to 10 a run. Each spec also states one proposed monthly price, taken from the price range of the named competitors, because the demand test shows it.
-- Each item's `state/scout/<id>.json`.
+- The scout file each item's `evidence` points to, and the raw reviews under `state/scout/reviews/`. Spot-check a few quotes against the raw reviews.
 - `state/specs/` for every earlier item, including killed ones.
-- `data/spec_template.md`.
 
 ## Steps
 
-1. For each item, write `state/specs/<id>.md` from the template. It is one short page with these sections:
+1. For each item, write `state/specs/<id>.md`. It is one short page with these sections:
    - **Job:** the single job the app does, for whom, in one sentence.
    - **Differentiation statement:** "Unlike <named competitors>, this app <capability>, which matters because <sourced complaint pattern>."
    - **Competitor table:** the nearest named apps with store URLs taken from the scout file, and what each lacks.

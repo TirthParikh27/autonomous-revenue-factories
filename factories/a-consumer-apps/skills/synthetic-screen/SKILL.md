@@ -20,8 +20,8 @@ Paid persona services are not used. The self-serve ones cost from about $20 a mo
 
 ## Inputs
 
-- Items at `discovered`, in batches of 10 to 25. If fewer than 10 are waiting, exit.
-- Each item's `state/scout/<id>.json`: the unmet job, sourced complaints, competitor list, keyword popularity.
+- Items at `discovered`, up to 25 a run. Screen whatever is waiting. With a small batch, cut only ideas that are clearly weaker than the rest, and cut none if none are.
+- The scout file each item's `evidence` points to: the unmet job, sourced complaints, competitor list, keyword popularity.
 - `pipeline.screen_runs` and `pipeline.screen_kill_fraction` in `budget.yaml`, as reference points.
 
 ## Steps
