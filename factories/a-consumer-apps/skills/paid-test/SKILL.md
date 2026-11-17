@@ -16,7 +16,7 @@ The demand test showed that people click and commit. This stage finds out whethe
 ## Steps
 
 1. Confirm the trial-started and first-purchase events reach the ad platform as conversion events: from RevenueCat for an iOS app, from Stripe through the site for a web product. If the read-back shows no test event received, stop and report. A campaign that cannot see trials cannot be judged.
-2. Write three creatives to `ads/<id>/paid/`. Use real screenshots and screen recordings from the shipped build. Remove the "in development" wording. Run `checks/copy_lint`.
+2. Make three ads in `ads/<id>/paid/` by following `skills/ad-creative/SKILL.md`. Keep the idea's character and start from the reason to care that won the demand test. Use real screenshots and screen recordings from the shipped build, and remove the "Concept" mark and the "in development" wording. Have the `creative-reviewer` agent look at the frames. Run `checks/copy_lint`.
 3. Write `ads/<id>/paid/plan.json`: one campaign optimised for trial start, lifetime budget and duration for tranche 1, the tranche 2 budget that follows if tranche 1 passes, and the reference points telemetry will weigh, from `budget.yaml`.
 4. Raise `A-AD-2` for the item. It covers both tranches, up to $600 in total. Move the item to `awaiting_human`.
 5. When the packet is in `approved/`, run `python3 publish.py ads ads/<id>/paid/plan.json --packet A-AD-2`. It creates the tranche 1 campaign paused and reads it back. Until ad credentials exist it runs dry and writes `readback.json` without contacting Meta.

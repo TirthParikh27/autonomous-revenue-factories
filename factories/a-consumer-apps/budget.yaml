@@ -39,7 +39,7 @@ per_run:                 # passed by the wrapper as --max-turns and --max-budget
   gap-mining:                 {max_turns: 60,  max_budget_usd: 4.00}
   synthetic-screen:           {max_turns: 20,  max_budget_usd: 1.50}
   spec-differentiation:       {max_turns: 40,  max_budget_usd: 3.00}
-  demand-test:                {max_turns: 80,  max_budget_usd: 8.00}
+  demand-test:                {max_turns: 200, max_budget_usd: 25.00, model: opus}   # pages, demo videos and visual review
   mvp-build:                  {max_turns: 150, max_budget_usd: 12.00, model: opus}
   release-readiness:          {max_turns: 60,  max_budget_usd: 5.00}
   paid-test:                  {max_turns: 40,  max_budget_usd: 3.00}
@@ -51,7 +51,7 @@ per_item_caps_usd:       # cumulative token spend on one item while in that stag
   discovered: 2
   screened: 1
   specced: 3
-  demand_test: 6         # tokens only. Ad spend is capped under ads:
+  demand_test: 12        # tokens only. Ad spend is capped under ads:
   build: 100             # first overrun raises A-BLD-1, second kills
 
 pipeline:
@@ -90,8 +90,9 @@ content:                 # organic content is produced for winners only
   mode: drafts_only                    # never "publish"; enforced by hook, not by this file
   max_drafts_per_app_per_week: 7
   max_hashtags: 5                      # reference point
-  allow_realistic_ai_people_or_scenes: false
-  allow_generative_video: false
+  allow_character_or_ai_presenter: true   # as the brand's narrator only, never as a customer (operator, 2026-11-17)
+  allow_realistic_ai_people_or_scenes: false   # needs a paid tool, so ACC-1 first
+  allow_generative_video: false          # HyperFrames renders of our own HTML are not generative video
   allow_testimonial_formats: false
   purchased_engagement: false
   emails_to_early_access_list: disabled   # sending to people is off until the operator raises it

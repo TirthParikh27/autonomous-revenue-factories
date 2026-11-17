@@ -19,7 +19,7 @@ The wrapper refuses to start if a `STOP` file exists or the month's budget in `b
 | Stage | Without accounts |
 |---|---|
 | Idea mining, screen, spec | Fully. Costs tokens only |
-| Demand test | Writes landing pages, ads and the ad plan. `publish.py ads` runs dry: it writes `readback.json` and contacts nobody |
+| Demand test | Writes landing pages, demo video ads, a batch preview and the ad plan. `publish.py ads` runs dry: it writes `readback.json` and contacts nobody |
 | Build | Writes the app or web product and its tests. Store builds need an Expo token. Web payments need a Stripe test key |
 | Content | Writes drafts. `publish.py drafts` runs dry and writes `drafts.json` |
 | Telemetry, paid test | Need real numbers, so they wait for accounts |
@@ -28,15 +28,50 @@ The wrapper refuses to start if a `STOP` file exists or the month's budget in `b
 
 Idea mining reads Apple's search and review feeds, so the machine running it must be able to reach `itunes.apple.com` and `apps.apple.com`. The scout can also read verified revenue from TrustMRR (`trustmrr.com`), declared in `.mcp.json`. It works without an account. To unlock filtering, store a free API key as a network secret on the environment (host `trustmrr.com`, header `Authorization`, value `Bearer <key>`), never in the repo.
 
-## To go live later
+## Set up once, then say go
 
-1. Approvals: the factory writes a packet to `escalations/open/`. You approve by moving it to `escalations/approved/` in a commit.
-2. Ads: a Meta ad account with an account spending limit, then raise `monthly_caps_usd.ads` in `budget.yaml` from 0. Campaigns are always created paused. You activate them.
-3. Content: a Postiz account. Posts are always drafts. You publish them.
-4. Store: an Apple developer account. You submit every build yourself.
-5. Web products: a Stripe account and a Cloudflare account. You create the live price and merge the launch yourself.
+The factory prepares everything and never spends or launches by itself. Your part is connecting accounts once, then approving each batch.
 
-Live mode for `publish.py` is added when the first two exist.
+Once:
+
+1. Tools on the machine that runs stages: Node 20 or later, then at the repo root `npm install playwright` and `npx playwright install chromium`. Demo videos render with `npx hyperframes`, which downloads itself.
+2. A Meta ad account with an account spending limit. Raise `monthly_caps_usd.ads` in `budget.yaml` from 0.
+3. A Cloudflare Pages project that serves the `demand/` folder, and a Supabase table for the early-access list.
+4. Fill in `demand/config.js` (pixel id, sign-up endpoint and its publishable key, event endpoint). Every test page reads this one file.
+5. Later, when something ships: Apple developer account, Stripe, Postiz.
+
+Each batch:
+
+1. Open `demand/batches/<batch>/preview.html`. It shows every idea's videos, page screenshots, price and the critic's and reviewer's verdicts.
+2. If you like it, approve by moving the `A-AD-1` packet from `escalations/open/` to `escalations/approved/` in a commit, and merge the batch pull request. CI deploys the pages.
+3. Run the `demand-test` stage again. It creates the campaigns paused.
+4. Activate them in Ads Manager and record the date. Telemetry takes it from there.
+
+You submit store builds, publish posts and switch web payments to live yourself. Live mode for `publish.py` is added when the Meta account exists; until then it runs dry.
+
+## Optional integrations
+
+The factory works without these. Each one makes its evidence stronger. Both are paid, so the factory uses them only when you connect them.
+
+| Tool | What it adds | Cost |
+|---|---|---|
+| GetAppNiche | Estimated revenue and downloads for competing apps, so the scout can tell a market that pays from one that only complains. Estimates are rough bands | $39 a month |
+| PickFu | A poll of real people in the target audience on an idea's ad hooks before ad money is spent. Can kill an idea or pick the lead hook; never passes one | Pay as you go, about $1 a response |
+
+To connect one:
+
+1. Create the account and an API key.
+2. Store the key as a network secret on the environment, never in the repo. GetAppNiche: host `api.getappniche.com`, header `Authorization`, value `Bearer <key>`. PickFu: host `mcp.pickfu.com`, same header.
+3. Add the server to `.mcp.json`:
+
+```
+"getappniche": {"type": "http", "url": "https://api.getappniche.com/mcp"},
+"pickfu": {"type": "http", "url": "https://mcp.pickfu.com/mcp"}
+```
+
+4. GetAppNiche's read tools are already on the allow list in `.claude/settings.json`. For PickFu, add its tool names there after you have looked at what the server offers, because creating a poll spends money.
+
+Research behind these picks (2026-11-17): they are the cheapest options an agent can call directly. The larger names (Sensor Tower, Appfigures estimates, UserTesting) cost far more, and the free tiers elsewhere have no API.
 
 ## Known limit
 
