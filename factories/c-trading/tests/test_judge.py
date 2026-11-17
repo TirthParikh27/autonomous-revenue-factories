@@ -142,7 +142,7 @@ def test_borrowing_cost_and_liquidation_by_hand():
 
 def test_every_market_has_usable_terms():
     w = pd.DataFrame({"A": [0.5, -0.5]})
-    for market, costs in CONFIG["costs"].items():
+    for market in CONFIG["costs"]:
         t = backtest.terms(market, w)
         assert t["margin"] and t["max_gross_exposure"] >= 1 and 0 <= t["maintenance_margin"] < 1 / t["max_gross_exposure"]
         assert not backtest.terms(market, w.abs())["margin"] or market == "fx"

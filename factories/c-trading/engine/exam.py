@@ -19,7 +19,7 @@ import sys
 import numpy as np
 from scipy.stats import norm
 
-from . import CONFIG, GATE, ROOT
+from . import CONFIG, GATE
 from . import backtest, gate, stats, strategy as strat, trials
 from .data import Bars, load as load_bars
 

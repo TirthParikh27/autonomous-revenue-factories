@@ -1,0 +1,15 @@
+# Lint for real faults only: undefined names, unused imports and variables, likely bugs.
+# Style and layout are left alone, so the linter never causes churn. See REVIEW.md.
+extend-exclude = [
+    "factories/c-trading/design",       # one-off trials, kept as a record
+    "factories/c-trading/strategies",   # trial history is tied to each file's exact text
+]
+
+[lint]
+select = ["F", "E9", "B"]
+ignore = ["B905"]   # would need every zip() call rewritten for little gain
+
+[lint.per-file-ignores]
+# B023 stays on for new code. Here the lambdas are used up inside the loop that defines them.
+"factories/c-trading/data/fetch_binance.py" = ["B023"]
+"factories/c-trading/engine/validate.py" = ["B023"]

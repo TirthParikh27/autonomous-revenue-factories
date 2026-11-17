@@ -2,12 +2,14 @@
 """Pull request gate (REVIEW.md, "What CI enforces").
 
 Fails when a pull request changes code but no test, or adds a coverage opt-out.
-Also names the changed files that only the operator may merge: .github/CODEOWNERS and each
+Names the changed files that only the operator may merge: .github/CODEOWNERS and each
 factory's deny list in factories/<name>/.claude/settings.json.
+Names the tests a pull request removes or skips, for the reviewer to check.
 
     python tools/pr_gate.py [--base origin/main]
 """
 import argparse
+import ast
 import json
 import os
 import re
@@ -61,8 +63,18 @@ def deny_patterns(settings_path: str, settings_text: str) -> list[str]:
         deny = json.loads(settings_text).get("permissions", {}).get("deny", [])
     except (ValueError, AttributeError):
         return []
-    found = (re.fullmatch(r"(?:Edit|Write)\((.+)\)", str(rule)) for rule in deny)
-    return sorted({f"/{factory}/{match.group(1).removeprefix('./').lstrip('/')}" for match in found if match})
+    if not isinstance(deny, list):
+        return []
+    patterns = set()
+    for rule in deny:
+        match = re.fullmatch(r"(?:Edit|Write)\((.+)\)", str(rule))
+        if not match:
+            continue
+        path = match.group(1).removeprefix("./").lstrip("/")
+        patterns.add(f"/{factory}/{path}")
+        if "/" not in path:  # like .gitignore, a rule with no slash applies at any depth
+            patterns.add(f"/{factory}/**/{path}")
+    return sorted(patterns)
 
 
 def factory_settings(base: str) -> list[tuple[str, str]]:
@@ -90,6 +102,48 @@ def judge(changes: list[tuple[str, str]], patterns: list[str]) -> tuple[list[str
     return ([] if has_test else code), protected
 
 
+def same_python(old: str | bytes, new: str | bytes) -> bool:
+    """True when two versions of a .py file differ only in comments, blank lines or layout.
+
+    Bytes are parsed as Python reads them, so a changed coding line counts as a change.
+    """
+    try:
+        return ast.dump(ast.parse(old)) == ast.dump(ast.parse(new))
+    except (SyntaxError, ValueError, RecursionError):
+        return False
+
+
+# A line that starts with a skip: a decorator or a call, not a string that mentions one.
+TEST_SKIP = re.compile(
+    r"(pytestmark\s*=.*)?@?((pytest\.)?mark\.(skip|skipif|xfail)\b|pytest\.(skip|xfail)\("
+    r"|unittest\.(skip|expectedFailure)|(it|test|describe)\.(skip|only)\(|x(it|describe)\()"
+)
+TEST_DEF = re.compile(r"^\s*(?:async\s+)?def\s+(test_\w+)")
+
+
+def weakened_tests(diff: str) -> list[str]:
+    """From a `git diff -U0`: test functions that are gone and new skip markers, for the reviewer."""
+    removed, added, skips, path = {}, set(), [], ""
+    for line in diff.splitlines():
+        if line.startswith("diff --git "):
+            path = line.split(" b/", 1)[-1]
+        elif line.startswith("+++ b/"):
+            path = line[6:]
+        elif line.startswith("--- a/"):
+            path = line[6:]
+        elif not is_test(path) or line.startswith(("+++", "---")):
+            continue
+        elif line.startswith("-") and (match := TEST_DEF.match(line[1:])):
+            removed.setdefault((path, match.group(1)), None)
+        elif line.startswith("+"):
+            if match := TEST_DEF.match(line[1:]):
+                added.add((path, match.group(1)))
+            if TEST_SKIP.match(line[1:].lstrip()):
+                skips.append(f"{path}: {line[1:].strip()}")
+    gone = [f"{path}: {name} removed" for path, name in removed if (path, name) not in added]
+    return gone + skips
+
+
 def parse_name_status(raw: str) -> list[tuple[str, str]]:
     """Reads `git diff -z --name-status -M100%`. -z keeps non-ASCII paths unquoted."""
     fields = [field for field in raw.split("\0") if field]
@@ -107,9 +161,24 @@ def parse_name_status(raw: str) -> list[tuple[str, str]]:
 
 def git_diff(base: str, *args: str, paths: tuple[str, ...] = ()) -> str:
     return subprocess.run(
-        ["git", "diff", *args, f"{base}...HEAD", "--", *paths],
+        # --text: a .gitattributes "-diff" line must not hide what changed.
+        ["git", "-c", "core.quotePath=false", "diff", "--text", *args, f"{base}...HEAD", "--", *paths],
         cwd=ROOT, check=True, capture_output=True, text=True, errors="replace",
     ).stdout
+
+
+def comment_only(merge_base: str, status: str, path: str) -> bool:
+    """A modified .py file whose committed code is the same as on the merge base.
+
+    Reads both versions from git, never from the working tree, which CI overwrites with the base gate.
+    """
+    if status != "M" or not path.endswith(".py"):
+        return False
+    old, new = (
+        subprocess.run(["git", "show", f"{ref}:{path}"], cwd=ROOT, capture_output=True)
+        for ref in (merge_base, "HEAD")
+    )
+    return old.returncode == 0 and new.returncode == 0 and same_python(old.stdout, new.stdout)
 
 
 def coverage_opt_outs(diff: str) -> list[str]:
@@ -135,10 +204,21 @@ def main() -> int:
     for path, text in factory_settings(args.base):
         patterns += deny_patterns(path, text)
     changes = parse_name_status(git_diff(args.base, "-z", "--name-status", "-M100%"))
-    untested, protected = judge(changes, patterns)
+    merge_base = subprocess.run(
+        ["git", "merge-base", args.base, "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True,
+    ).stdout.strip()
+    # A comment-only edit needs no test, but a protected file is still named however small the edit.
+    code_changes = [(status, path) for status, path in changes if not comment_only(merge_base, status, path)]
+    untested, _ = judge(code_changes, patterns)
+    _, protected = judge(changes, patterns)
     opt_outs = coverage_opt_outs(git_diff(
         args.base, "-U0", paths=("*.py", ":(exclude,glob)**/tests/**", ":(exclude,glob)**/test_*.py")
     ))
+
+    for note in weakened_tests(git_diff(args.base, "-U0")):
+        print(f"Check: {note}")
+        if os.environ.get("GITHUB_ACTIONS"):
+            print(f"::warning::Test removed or skipped. {note}")
 
     if protected:
         note = "Waits for the operator to merge. Protected files changed: " + ", ".join(protected)
