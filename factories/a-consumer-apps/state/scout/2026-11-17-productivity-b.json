@@ -1,0 +1,135 @@
+{
+  "category": "Productivity (iOS App Store)",
+  "date": "2026-11-17",
+  "method_notes": [
+    "WebFetch test on an apps.apple.com page (Notion, id1232780281) succeeded.",
+    "App lists came from itunes.apple.com/search. Reviews came from the itunes.apple.com customerreviews RSS JSON, page 1 only, sortBy=mostRecent, ratings 1 to 3 only.",
+    "WebFetch passes pages through a summarising model that caps quotes at about 125 characters. Quotes below are the excerpts returned in quotation marks. They are truncated, not paraphrased, but could not be checked against the raw JSON.",
+    "Reviewer names are omitted. Review dates are the feed's updated date.",
+    "Keyword volume and difficulty: no source was available to me. I did not query any. All keyword fields are empty.",
+    "Search results for 'task manager todo' and 'note taking app' were truncated at 100000 characters by the tool, so the last result of each list was not read.",
+    "Only page 1 of reviews was read per app. Counts below are complaints I recorded, not the number of such complaints in the feed."
+  ],
+  "candidates": [
+    {
+      "id": "c1",
+      "unmet_job": "Track a personal list of daily habits without a recurring subscription priced like a premium service, a habit cap, or a paywall shown before the app can be tried.",
+      "competitors": [
+        {"name": "Productive - Habit Tracker", "url": "https://apps.apple.com/us/app/productive-habit-tracker/id983826477", "rating_count": 91067},
+        {"name": "Habit Tracker", "url": "https://apps.apple.com/us/app/habit-tracker/id1438388363", "rating_count": 148961},
+        {"name": "Habit Tracker - HabitKit", "url": "https://apps.apple.com/us/app/habit-tracker-habitkit/id6443918070", "rating_count": 2595},
+        {"name": "Routine Planner, Habit Tracker", "url": "https://apps.apple.com/us/app/routine-planner-habit-tracker/id1450486923", "rating_count": 18223}
+      ],
+      "complaints": [
+        {"quote": "$5.99 a week or $99.99 a year. Without paying one of those, you are limited to only 5 free habits.", "app": "Productive - Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=983826477/sortBy=mostRecent/json", "date": "2026-07-07", "rating": 1},
+        {"quote": "$99/year (and not even a lifetime subscription", "app": "Productive - Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=983826477/sortBy=mostRecent/json", "date": "2026-11-09", "rating": 2},
+        {"quote": "100 dollars a year for a habit tracker is", "app": "Productive - Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=983826477/sortBy=mostRecent/json", "date": "2026-10-09", "rating": 1},
+        {"quote": "Cost is crazy, add lifetime and a lower fee", "app": "Productive - Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=983826477/sortBy=mostRecent/json", "date": "2025-12-18", "rating": 1},
+        {"quote": "Paywall before you even try", "app": "Productive - Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=983826477/sortBy=mostRecent/json", "date": "2026-03-05", "rating": 1, "note": "This is the review title. The excerpt also says the tutorial cannot be skipped."},
+        {"quote": "limited habits, mate you post for pro but i like to break down my day step by step, get an app with unlimited habits", "app": "Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1438388363/sortBy=mostRecent/json", "date": "2026-11-09", "rating": 1},
+        {"quote": "Why do all the apps wait to tell you you have to pay 20 bucks to use the app? Why not just buy the app?", "app": "Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1438388363/sortBy=mostRecent/json", "date": "2026-11-09", "rating": 1},
+        {"quote": "The app updated and I no longer have lifetime access", "app": "Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1438388363/sortBy=mostRecent/json", "date": "2026-10-22", "rating": 1},
+        {"quote": "You should not have to pay Tudor something for your mental health", "app": "Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1438388363/sortBy=mostRecent/json", "date": "2026-10-13", "rating": 1}
+      ],
+      "keyword_data": [],
+      "trend_signals": [
+        {"signal": "Several 2025 to 2026 reviews on Productive cite price rises, for example '$17 to $54' and '$20/year' to '$99/year'. This is reviewer-reported only.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=983826477/sortBy=mostRecent/json", "date": "2026-11-09"}
+      ],
+      "not_found": ["No keyword volume or difficulty.", "No independent source for the price history.", "Page 1 of reviews only."],
+      "evidence_strength": "Pricing complaints repeat across two apps and across nine months of dates. Both apps are large, with 90K to 150K ratings. These are complaints about price, not about missing functions."
+    },
+    {
+      "id": "c2",
+      "unmet_job": "Keep a large personal note archive in a notes app that does not raise its price sharply, show ads or upgrade prompts when a note is opened, or restrict access to one's own notes unless a paid plan is held.",
+      "competitors": [
+        {"name": "Evernote: AI Notes & Notebook", "url": "https://apps.apple.com/us/app/evernote-ai-notes-notebook/id281796108", "rating_count": 78240},
+        {"name": "Notion: Notes, Tasks, AI", "url": "https://apps.apple.com/us/app/notion-notes-tasks-ai/id1232780281", "rating_count": 90724},
+        {"name": "Google Keep - Notes and lists", "url": "https://apps.apple.com/us/app/google-keep-notes-and-lists/id1029207872", "rating_count": 29036},
+        {"name": "Microsoft OneNote", "url": "https://apps.apple.com/us/app/microsoft-onenote/id410395246", "rating_count": 1072981}
+      ],
+      "complaints": [
+        {"quote": "they raised pricing from $69 to 129 a year, and now nearly doubling that to $249.99 a year!", "app": "Evernote", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=281796108/sortBy=mostRecent/json", "date": "2026-11-05", "rating": 1},
+        {"quote": "I have many years of notes. I feel hostage to paying your high fees for functionality I don’t use.", "app": "Evernote", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=281796108/sortBy=mostRecent/json", "date": "2026-11-11", "rating": 3},
+        {"quote": "Unless you want to be held hostage for your files/data and needing to upgrade to paid plan", "app": "Evernote", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=281796108/sortBy=mostRecent/json", "date": "2026-11-08", "rating": 1},
+        {"quote": "The ads are now loud. EVERY TIME YOU TRY AND MAKE A NOTE. Unusable.", "app": "Evernote", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=281796108/sortBy=mostRecent/json", "date": "2026-10-06", "rating": 1},
+        {"quote": "every time I open the app you force me to watch an ad before I can access my notes", "app": "Evernote", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=281796108/sortBy=mostRecent/json", "date": "2026-10-02", "rating": 1},
+        {"quote": "Used to love this app and used it for many years until they started making things difficult", "app": "Evernote", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=281796108/sortBy=mostRecent/json", "date": "2026-10-21", "rating": 2, "note": "The summary says the reviewer found migrating away hard."},
+        {"quote": "forces users to pay to use Evernote across more than one device.", "app": "Evernote", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=281796108/sortBy=mostRecent/json", "date": "2026-10-13", "rating": 3},
+        {"quote": "I expect a paid productivity application to provide reliable basic functionality.", "app": "Notion", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1232780281/sortBy=mostRecent/json", "date": "2026-10-28", "rating": 1},
+        {"quote": "I took all my notes here. One random update later all of my notes for every single class were missing.", "app": "Notion", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1232780281/sortBy=mostRecent/json", "date": "2026-10-07", "rating": 1}
+      ],
+      "keyword_data": [],
+      "trend_signals": [
+        {"signal": "Evernote reviewers in Oct to Nov 2026 repeatedly report moving notes elsewhere and cancelling, and name Craft as an alternative in one review. Reviewer-reported only.", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=281796108/sortBy=mostRecent/json", "date": "2026-11-12"}
+      ],
+      "not_found": ["No keyword volume or difficulty.", "Price figures are reviewer-reported and unchecked against Evernote's own page.", "Notion complaints are mostly about crashes and AI, so only two are used here as relevant."],
+      "evidence_strength": "Strong at Evernote, with 48 low-rated reviews on page 1 across Oct and Nov 2026, most about price and ads. Notion evidence is a different problem (reliability and lost data) and is thin for this job."
+    },
+    {
+      "id": "c3",
+      "unmet_job": "Find a specific word or phrase inside a note, and organise notes in folders or sub-folders, in a simple notes app on iPhone.",
+      "competitors": [
+        {"name": "Google Keep - Notes and lists", "url": "https://apps.apple.com/us/app/google-keep-notes-and-lists/id1029207872", "rating_count": 29036},
+        {"name": "Evernote: AI Notes & Notebook", "url": "https://apps.apple.com/us/app/evernote-ai-notes-notebook/id281796108", "rating_count": 78240},
+        {"name": "Notion: Notes, Tasks, AI", "url": "https://apps.apple.com/us/app/notion-notes-tasks-ai/id1232780281", "rating_count": 90724}
+      ],
+      "complaints": [
+        {"quote": "It’s almost 2027! Add folders and sub-folders to google keep and the option to change folder color (not note color).", "app": "Google Keep", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1029207872/sortBy=mostRecent/json", "date": "2026-11-08", "rating": 1},
+        {"quote": "How can you be such a big product since over 10-15 years for notes and still not have a “Search in note” feature", "app": "Google Keep", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1029207872/sortBy=mostRecent/json", "date": "2026-10-14", "rating": 1},
+        {"quote": "For years, still basic AF, no search/find function, useless and ugly interface/styles.", "app": "Google Keep", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1029207872/sortBy=mostRecent/json", "date": "2026-10-04", "rating": 1},
+        {"quote": "it will tell you which note is having a keyword but it does not highlight where the keyword lies in that specific note", "app": "Google Keep", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1029207872/sortBy=mostRecent/json", "date": "2026-09-04", "rating": 1},
+        {"quote": "Google please make this more like apple notes", "app": "Google Keep", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1029207872/sortBy=mostRecent/json", "date": "2026-11-15", "rating": 3, "note": "Review title is 'Needs better tags'."},
+        {"quote": "Now I cannot manage my page hierarchy any more???", "app": "Notion", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1232780281/sortBy=mostRecent/json", "date": "2026-11-01", "rating": 1},
+        {"quote": "missing features such as nesting", "app": "Evernote", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=281796108/sortBy=mostRecent/json", "date": "2026-10-05", "rating": 1, "note": "This phrase is a summariser's wording, not a confirmed verbatim quote. Treat it as weak."}
+      ],
+      "keyword_data": [],
+      "trend_signals": [],
+      "not_found": ["No keyword volume or difficulty.", "No trend source.", "Almost all evidence is about one app (Google Keep). Apple Notes was not read because it is not a store listing with a review feed in the same form."],
+      "evidence_strength": "Thin. Four Google Keep complaints across two months, one from Notion and one weak Evernote item."
+    },
+    {
+      "id": "c4",
+      "unmet_job": "Get task reminders that are hard to miss and fire reliably for urgent items, rather than a banner that vanishes or a push that does not arrive.",
+      "competitors": [
+        {"name": "Todoist: To Do List & Calendar", "url": "https://apps.apple.com/us/app/todoist-to-do-list-calendar/id572688855", "rating_count": 130833},
+        {"name": "Galarm - Alarms and Reminders", "url": "https://apps.apple.com/us/app/galarm-alarms-and-reminders/id1187849174", "rating_count": 4599},
+        {"name": "Alarmed ~ Reminders + Timers", "url": "https://apps.apple.com/us/app/alarmed-reminders-timers/id371886784", "rating_count": 12787}
+      ],
+      "complaints": [
+        {"quote": "Even for urgent tasks and reminders, the notification appears briefly and disappears like a regular notification,", "app": "Todoist", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=572688855/sortBy=mostRecent/json", "date": "2026-09-22", "rating": 1},
+        {"quote": "Push notifications are broken after paying for both a personal and business plan and with recent update. Please fix!!", "app": "Todoist", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=572688855/sortBy=mostRecent/json", "date": "2026-11-10", "rating": 3},
+        {"quote": "you get the little pop-up “added to your inbox, “ but it’s not in your inbox. It’s not anywhere this thing doesn’t work.", "app": "Todoist", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=572688855/sortBy=mostRecent/json", "date": "2026-11-09", "rating": 1},
+        {"quote": "Not in my face enough to help", "app": "Habit Tracker (id1438388363)", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1438388363/sortBy=mostRecent/json", "date": "2026-10-01", "rating": 2}
+      ],
+      "keyword_data": [],
+      "trend_signals": [],
+      "not_found": ["Did not read reviews for Galarm or Alarmed, so no complaints from the dedicated reminder apps.", "No keyword volume or difficulty.", "No trend source."],
+      "evidence_strength": "Thin. Three Todoist complaints and one from a habit app, over seven weeks. Todoist also has many crash reports in the same feed that are not about this job."
+    },
+    {
+      "id": "c5",
+      "unmet_job": "Check off tasks or habits from a home-screen widget that works as expected, including showing the inbox or all of the user's items.",
+      "competitors": [
+        {"name": "Todoist: To Do List & Calendar", "url": "https://apps.apple.com/us/app/todoist-to-do-list-calendar/id572688855", "rating_count": 130833},
+        {"name": "Habit Tracker", "url": "https://apps.apple.com/us/app/habit-tracker/id1438388363", "rating_count": 148961}
+      ],
+      "complaints": [
+        {"quote": "I was trying to create a medium sized widget to have a simple task list and I can check them off once complete.", "app": "Todoist", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=572688855/sortBy=mostRecent/json", "date": "2026-09-30", "rating": 2, "note": "The same review says the inbox could not be seen on the widget."},
+        {"quote": "I restarted my iPhone like they recommend, and nothing. Very disappointing", "app": "Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1438388363/sortBy=mostRecent/json", "date": "2026-11-10", "rating": 1, "note": "Review title is 'Widgets don't work'."},
+        {"quote": "Cannot get the widget to work correctly. Tried working with support and won't get back to me or have concise instructions.", "app": "Habit Tracker", "source_url": "https://itunes.apple.com/us/rss/customerreviews/page=1/id=1438388363/sortBy=mostRecent/json", "date": "2026-10-10", "rating": 2}
+      ],
+      "keyword_data": [],
+      "trend_signals": [],
+      "not_found": ["No keyword volume or difficulty.", "No trend source.", "Only two apps checked for widget issues."],
+      "evidence_strength": "Very thin. Three complaints on two apps."
+    }
+  ],
+  "excluded": [
+    {"item": "none", "reason": "The category Productivity is not on the excluded list. No candidate found fell into an excluded category. data/excluded_categories.yaml was not read."}
+  ],
+  "injection_suspected": [],
+  "refused_or_unopened": [
+    "No fetch was refused.",
+    "Not fetched: keyword tools, trend sites, and other optional sources. Reason: I did not try any, because the task scope was Apple endpoints. Reddit was not used, as instructed."
+  ]
+}
