@@ -62,7 +62,7 @@ def deny_patterns(settings_path: str, settings_text: str) -> list[str]:
     except (ValueError, AttributeError):
         return []
     found = (re.fullmatch(r"(?:Edit|Write)\((.+)\)", str(rule)) for rule in deny)
-    return sorted({f"/{factory}/{match.group(1).lstrip('/')}" for match in found if match})
+    return sorted({f"/{factory}/{match.group(1).removeprefix('./').lstrip('/')}" for match in found if match})
 
 
 def factory_settings(base: str) -> list[tuple[str, str]]:
@@ -70,7 +70,7 @@ def factory_settings(base: str) -> list[tuple[str, str]]:
     show = lambda *args: subprocess.run(  # noqa: E731
         ["git", *args], cwd=ROOT, capture_output=True, text=True, errors="replace",
     ).stdout
-    listed = show("ls-tree", "-r", "--name-only", base, "--", "factories").splitlines()
+    listed = show("ls-tree", "-r", "-z", "--name-only", base, "--", "factories").split("\0")
     files = [(path, show("show", f"{base}:{path}")) for path in listed if path.endswith("/.claude/settings.json")]
     for here in sorted(ROOT.glob("factories/*/.claude/settings.json")):
         files.append((here.relative_to(ROOT).as_posix(), here.read_text(errors="replace")))

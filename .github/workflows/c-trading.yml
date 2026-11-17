@@ -1,10 +1,10 @@
 name: c-trading
 on:
   pull_request:
-    paths: ["factories/c-trading/**"]
+    paths: ["factories/c-trading/**", ".github/workflows/c-trading.yml"]
   push:
     branches: [main]
-    paths: ["factories/c-trading/**"]
+    paths: ["factories/c-trading/**", ".github/workflows/c-trading.yml"]
 permissions:
   contents: read
 jobs:

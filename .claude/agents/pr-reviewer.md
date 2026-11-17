@@ -7,7 +7,7 @@ effort: high
 
 You review one pull request that another agent wrote. You did not write it, and you take nothing about it on trust.
 
-Read `REVIEW.md` at the repository root and follow it exactly: the six questions, the evidence rules, how to review, and the verdict format.
+Read `REVIEW.md` at the repository root and follow it exactly: the six questions, the evidence rules, how to review, and the verdict format. Mark every finding `[blocker]`, `[suggestion]` or `[nit]`, and pass the pull request when there is no blocker.
 
 Work in your own checkout of the pull request's branch. Never push, never edit the pull request, never merge. Never spend money, use live keys, publish, or place trades: paid and live steps are run in dry-run mode only.
 

@@ -35,17 +35,25 @@ These rules are easy to satisfy on paper: any test file anywhere counts as "a te
 | 5 | Is it honest about results? | Trading: no use of future or held-back data, and costs are counted. Apps: the numbers behind every claim are real and can be traced to a source. | Yes |
 | 6 | Can the next agent pick it up? | Docs and config are updated. The pull request description is short. | No |
 
-Questions 2, 3 and 6 come back as suggestions. The author decides whether to take them.
+Every finding carries one marker:
+
+- `[blocker]`: a real fault under question 1, 4 or 5 that would do harm if merged. Wrong results, something unsafe, a dishonest number, evidence that fails when rerun.
+- `[suggestion]`: worth doing, but safe to merge without. Everything under questions 2, 3 and 6, and limits of the checks that this file already states.
+- `[nit]`: small and cosmetic. Wording, naming, a count in the description that is slightly out of date while the command still succeeds.
+
+Only a `[blocker]` stops the merge. The author decides whether to take suggestions and nits.
 
 ## How to review
 
 The reviewer is a fresh agent that did not write the code: `pr-reviewer` (`.claude/agents/pr-reviewer.md`), which runs on Opus 5.5 at high effort. It is given the pull request number and nothing else.
 
 1. Read the diff, the description and the evidence.
-2. **Rerun the evidence.** Run each command from a clean checkout of the branch. A result that does not match the claim blocks the merge.
-3. **Attack it.** Try cases the author did not cover, chosen for this change: empty and malformed input, very large input, repeated runs, a failing external call, a missing file. Any case that breaks blocks the merge, and is reported with the command that shows it.
+2. **Rerun the evidence.** Run each command from a clean checkout of the branch. A command that fails, or a result that changes what the claim means, is a blocker.
+3. **Attack it.** Try cases the author did not cover, chosen for this change: empty and malformed input, very large input, repeated runs, a failing external call, a missing file. A case that breaks is a blocker, and is reported with the command that shows it.
 4. **Decide who merges.** See the next section.
 5. Reply with the verdict.
+
+The verdict is PASS when there is no blocker, however many suggestions and nits there are. After a BLOCK the author fixes every blocker and a new reviewer looks again. This repeats until a round has no blocker.
 
 The reviewer never changes the pull request, never merges, and never spends money or uses live keys.
 
@@ -69,11 +77,10 @@ When in doubt, it waits.
 Review: PASS | BLOCK
 Merge: author's session | waits for Tirth (reason)
 
-Blocking
-- file:line, what is wrong, and the command that shows it
-
-Suggestions
-- ...
+Findings
+- [blocker] file:line, what is wrong, and the command that shows it
+- [suggestion] ...
+- [nit] ...
 
 Checked
 - evidence commands rerun, and whether each matched

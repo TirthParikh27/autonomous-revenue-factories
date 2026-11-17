@@ -54,7 +54,7 @@ def test_star_stays_inside_one_folder():
 
 
 def test_a_factory_deny_list_is_protected_too():
-    settings = '{"permissions": {"deny": ["Edit(lib/**)", "Write(lib/**)", "Edit(requirements.txt)", "Bash(rm *)"]}}'
+    settings = '{"permissions": {"deny": ["Edit(lib/**)", "Write(lib/**)", "Edit(./requirements.txt)", "Bash(rm *)"]}}'
     patterns = pr_gate.deny_patterns("factories/c/.claude/settings.json", settings)
     assert patterns == ["/factories/c/lib/**", "/factories/c/requirements.txt"]
     assert pr_gate.is_protected("factories/c/lib/a/indicators.py", patterns)
@@ -91,18 +91,19 @@ def test_end_to_end_in_a_real_repository(tmp_path, monkeypatch, capsys):
 
     (tmp_path / ".github").mkdir()
     (tmp_path / ".github" / "CODEOWNERS").write_text("/factories/*/budget.yaml @op\n")
-    (tmp_path / "factories" / "x" / ".claude").mkdir(parents=True)
-    (tmp_path / "factories" / "x" / ".claude" / "settings.json").write_text(
+    (tmp_path / "factories" / "x\u00e9" / ".claude").mkdir(parents=True)
+    (tmp_path / "factories" / "x\u00e9" / ".claude" / "settings.json").write_text(
         '{"permissions": {"deny": ["Edit(data/**)"]}}')
     git("init", "-q", "-b", "main")
     git("add", "-A")
     git("commit", "-q", "-m", "base")
     git("checkout", "-q", "-b", "change")
+    (tmp_path / "factories" / "x").mkdir()
     (tmp_path / "factories" / "x" / "budget.yaml").write_text("cap: 1\n")
     # The change edits a deny-listed file and deletes the deny list. The base's deny list still applies.
-    (tmp_path / "factories" / "x" / "data").mkdir()
-    (tmp_path / "factories" / "x" / "data" / "prices.csv").write_text("1\n")
-    (tmp_path / "factories" / "x" / ".claude" / "settings.json").unlink()
+    (tmp_path / "factories" / "x\u00e9" / "data").mkdir()
+    (tmp_path / "factories" / "x\u00e9" / "data" / "prices.csv").write_text("1\n")
+    (tmp_path / "factories" / "x\u00e9" / ".claude" / "settings.json").unlink()
     (tmp_path / "factories" / "caf\u00e9").mkdir()
     (tmp_path / "factories" / "caf\u00e9" / "budget.yaml").write_text("cap: 1\n")
     (tmp_path / "run.py").write_text("print('hi')\n")
@@ -120,7 +121,7 @@ def test_end_to_end_in_a_real_repository(tmp_path, monkeypatch, capsys):
     assert "Add a test for: na\u00efve.py, run.py" in out
     assert "hides code from the coverage rule: def f():  # pragma: no cover" in out
     assert ("::notice::Waits for the operator to merge. Protected files changed: "
-            "factories/caf\u00e9/budget.yaml, factories/x/budget.yaml, factories/x/data/prices.csv") in out
+            "factories/caf\u00e9/budget.yaml, factories/x/budget.yaml, factories/x\u00e9/data/prices.csv") in out
 
     (tmp_path / "test_run.py").write_text("def test_run():\n    assert True\n")
     (tmp_path / "na\u00efve.py").write_text("def f():\n    return 1\n")
