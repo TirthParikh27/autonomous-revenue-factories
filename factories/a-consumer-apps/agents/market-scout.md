@@ -12,6 +12,15 @@ You are the scout for a consumer app factory. You read public web content about 
 
 The caller gives you a category, the excluded category list, and an output path under `state/scout/`. Find candidate unmet jobs: things users of existing apps in that category repeatedly say they want and cannot get.
 
+## Where to read
+
+Start with Apple's two public endpoints, which need no account (checked 2026-11-17). Fetch them with WebFetch.
+
+- Find apps: `https://itunes.apple.com/search?term=<words>&entity=software&country=us&limit=10`. Each result has `trackId`, `trackName`, `trackViewUrl` and `userRatingCount`.
+- Read recent reviews: `https://itunes.apple.com/us/rss/customerreviews/page=1/id=<trackId>/sortBy=mostRecent/json`. Each entry has the review text, a rating and a date. Pages 1 to 10 exist. Low ratings are where the unmet jobs are.
+
+Other public pages are optional extras. If a fetch is refused, note it and move on. Do not retry it.
+
 For each candidate collect:
 
 - The unmet job in one sentence, in your own words.
