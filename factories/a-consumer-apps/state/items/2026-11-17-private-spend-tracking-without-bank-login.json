@@ -1,6 +1,7 @@
 {
   "id": "2026-11-17-private-spend-tracking-without-bank-login",
-  "stage": "screened",
+  "stage": "killed",
+  "killed_reason": "spec gate: verifier says distinguishable borderline-leaning-no against unsourced manual/CSV-import trackers; no review asks for statement import, so core idea has no sourced complaint behind it; revision cannot fix without browsing",
   "created": "2026-11-17",
   "updated": "2026-11-17",
   "screen_notes": ["No-bank-login and no-data-selling is a sharp trust hook that answers a fear people already voice.", "Many people still expect bank linking, and the competitors are large and well known."],
@@ -12,7 +13,7 @@
   "scores": {"complaints": 9, "apps_with_complaints": 5, "keyword_popularity": null, "keyword_source": "none configured", "note": "marginal. Complaints are reviewer claims about data practices, not verified against privacy policies. Demand is mixed: a Spendee reviewer wants bank linking. Without linking, the job relies on manual entry or statement import; the spec must show that is acceptable. Avoid any claim about competitors' practices."},
   "spend_usd": 0,
   "revenue_usd": 0,
-  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept, marginal: 9 complaints, 5 apps, claims unverified"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T074933Z-synthetic-screen-f03ada", "note": "synthetic screen, median rank 2 of 3 (ranks 2,2,1); not demand evidence"}],
+  "history": [{"at": "2026-11-17T08:00:00Z", "from": null, "to": "discovered", "run": "20261117T074522Z-gap-mining-c52cc5", "note": "kept, marginal: 9 complaints, 5 apps, claims unverified"}, {"at": "2026-11-17T08:10:00Z", "from": "discovered", "to": "screened", "run": "20261117T074933Z-synthetic-screen-f03ada", "note": "synthetic screen, median rank 2 of 3 (ranks 2,2,1); not demand evidence"}, {"at": "2026-11-17T08:30:00Z", "from": "screened", "to": "killed", "run": "20261117T075047Z-spec-differentiation-3e521d", "note": "verifier: borderline leaning no / capability yes / stack no gap; reason in killed_reason. Spec kept in state/specs/ as record."}],
   "blocked_by": null,
   "next_check": null
 }
