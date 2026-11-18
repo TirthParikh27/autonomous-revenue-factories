@@ -1,0 +1,1107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Keiretsu · Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-bleed tilted HUD scene; top bar (title · Board|Live · KPIs); right rail "Needs you"; detail panel slides over the rail. */
+:root{
+  color-scheme:dark;
+  --bg:#050b14; --glass:rgba(10,20,34,.86); --line:rgba(120,190,230,.18); --line2:rgba(120,190,230,.34);
+  --ink:#d9e8f4; --ink2:#7f97ad; --ink3:#4d6278;
+  --cyan:#5fd4f4; --amber:#ffb23e; --red:#ff5d6c; --green:#6fe0b0;
+  --hud:"Chakra Petch","Segoe UI",system-ui,sans-serif; --body:"Inter",system-ui,-apple-system,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --rail:324px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--body);overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:4px}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;background:radial-gradient(ellipse at 40% 55%,#0b1a2c 0%,var(--bg) 62%)}
+#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.lb{position:absolute;left:0;top:0;width:0;height:0;will-change:transform}
+.lb>*{position:absolute;pointer-events:auto;white-space:nowrap;width:max-content}
+.c-below>*{transform:translate(-50%,var(--off,16px))}
+.c-above>*{transform:translate(-50%,calc(-100% - var(--off,16px)))}
+.c-right>*{transform:translate(var(--off,20px),-50%)}
+.c-left>*{transform:translate(calc(-100% - var(--off,20px)),-50%)}
+.lv-all,.lv-fac{transition:opacity .2s}
+/* top bar */
+header{position:fixed;inset:0 0 auto 0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:14px max(20px,env(safe-area-inset-right,0px)) 12px max(20px,env(safe-area-inset-left,0px));background:linear-gradient(180deg,rgba(5,11,20,.94),rgba(5,11,20,0));z-index:5;pointer-events:none}
+header>*{pointer-events:auto}
+.brand{font:600 15px var(--hud);letter-spacing:.22em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.brand i{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.asof{font:11px var(--mono);color:var(--ink2);margin-top:2px}
+.seg{display:flex;border:1px solid var(--line2);border-radius:8px;padding:3px;background:rgba(8,16,28,.8);font:500 13px var(--hud);letter-spacing:.08em}
+.seg a,.seg span{padding:6px 16px;border-radius:5px;text-decoration:none;color:var(--ink2)}
+.seg a:hover{color:var(--ink);background:rgba(95,212,244,.08)}
+.seg span{background:rgba(95,212,244,.16);color:var(--cyan)}
+.kpis{display:flex;justify-content:flex-end;gap:26px}
+.kpi small{display:block;font:500 10px var(--hud);letter-spacing:.16em;text-transform:uppercase;color:var(--ink2)}
+.kpi b{font:500 18px var(--mono);font-variant-numeric:tabular-nums}
+.kpi b em{font:400 12px var(--mono);color:var(--ink2);font-style:normal}
+.kpi.act b{color:var(--amber)}
+/* breadcrumb */
+#crumb{position:fixed;left:max(20px,env(safe-area-inset-left,0px));top:74px;z-index:4;display:flex;align-items:center;gap:8px;font:500 13px var(--hud);letter-spacing:.06em;color:var(--ink2)}
+#crumb button{color:var(--cyan);padding:4px 8px;border:1px solid var(--line2);border-radius:6px}
+#crumb button:hover{background:rgba(95,212,244,.1)}
+#crumb b{color:var(--ink);font-weight:500}
+#note{font:11px var(--mono);color:var(--ink2);border:1px dashed var(--line2);border-radius:4px;padding:2px 8px;margin-left:6px}
+/* rail */
+#rail{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:78px;bottom:16px;width:var(--rail);z-index:4;background:var(--glass);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;backdrop-filter:blur(8px);overflow:hidden}
+.rhead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;font:500 12px var(--hud);letter-spacing:.18em;text-transform:uppercase;color:var(--ink2)}
+.rhead .cnt{background:var(--amber);color:#201400;border-radius:10px;padding:1px 9px;font:600 12px var(--mono);letter-spacing:0}
+.rhead .cnt.zero{background:transparent;color:var(--green);border:1px solid var(--green)}
+#needs{overflow:auto;padding:0 8px 8px;display:grid;gap:4px;align-content:start;flex:1}
+.need{display:grid;gap:3px;padding:10px 10px 10px 12px;border-radius:8px;border:1px solid transparent;width:100%}
+.need:hover{background:rgba(95,212,244,.06);border-color:var(--line)}
+.need.on{border-color:var(--amber);background:rgba(255,178,62,.07)}
+.need .top{display:flex;justify-content:space-between;gap:8px;font:10px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.need .top .fc{color:var(--cyan)}
+.need strong{font:500 14px var(--body);color:var(--ink);white-space:normal}
+.shead{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:11px 16px 8px;font:500 12px var(--hud);letter-spacing:.18em;text-transform:uppercase;color:var(--ink2);flex:none}
+.shead small{font:10px var(--mono);letter-spacing:.04em;text-transform:none;color:var(--ink3);display:flex;align-items:center;gap:6px}
+#stream{list-style:none;margin:0;padding:2px 14px 12px;height:270px;flex:none;overflow:hidden;display:flex;flex-direction:column;gap:7px;font:11.5px/1.42 var(--mono);color:var(--ink2)}
+#stream li{display:grid;grid-template-columns:42px 1fr;gap:8px;flex:none}
+#stream time{color:var(--ink3)}
+#stream b{font-weight:500}
+#stream span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#stream li.flag time{color:var(--amber)}
+#stream li:first-child span{color:var(--ink)}
+#tip{position:fixed;z-index:7;pointer-events:none;background:#09121f;border:1px solid var(--line2);border-radius:6px;padding:5px 9px;font:11px var(--mono);color:var(--ink2);white-space:nowrap;transform:translate(-50%,calc(-100% - 14px))}
+#tip b{color:var(--ink);font-weight:500}
+#tip[hidden]{display:none}
+/* detail */
+#detail{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:78px;bottom:16px;width:var(--rail);z-index:6;background:#09121f;border:1px solid var(--line2);border-radius:12px;padding:16px 18px 20px;overflow:auto;display:grid;gap:12px;align-content:start;transform:translateX(calc(100% + 24px));transition:transform .22s ease;visibility:hidden}
+#detail.on{transform:none;visibility:visible}
+#detail .x{justify-self:end;color:var(--ink2);font:500 11px var(--hud);letter-spacing:.14em;padding:4px 8px;border:1px solid var(--line);border-radius:6px}
+#detail .x:hover{color:var(--ink);border-color:var(--line2)}
+.eyebrow{font:500 11px var(--hud);letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+#detail h2{margin:0;font:500 22px/1.2 var(--hud);text-wrap:balance}
+#detail p{margin:0;color:var(--ink2)}
+#detail p.lead{color:var(--ink)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:11px var(--mono);border:1px solid var(--line2);border-radius:4px;padding:2px 7px}
+.tag.amber{border-color:var(--amber);color:var(--amber)}.tag.red{border-color:var(--red);color:var(--red)}.tag.green{border-color:var(--green);color:var(--green)}
+.hist{list-style:none;margin:0;padding:0}
+.hist li{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}
+.hist time{font:11px var(--mono);color:var(--ink2);padding-top:2px}
+.hist b{display:block;font-weight:500;color:var(--ink)}
+.hist .open{display:block;font:inherit;font-weight:500;color:var(--ink);text-align:left;padding:0;text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px}
+.hist .open:hover{color:var(--cyan)}
+.hist span{color:var(--ink2)}
+.btn{border:1px solid var(--amber);border-radius:7px;padding:8px 14px;font:600 13px var(--body);justify-self:start;background:var(--amber);color:#201400}
+.btn:hover{filter:brightness(1.08)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+/* scene labels */
+.core{display:grid;justify-items:center;gap:0;text-align:center;pointer-events:none!important}
+.core b{font:500 46px/1 var(--mono);color:var(--amber);text-shadow:0 0 24px rgba(255,178,62,.45)}
+.core b.zero{color:var(--green);text-shadow:none}
+.core small{font:500 11px var(--hud);letter-spacing:.24em;text-transform:uppercase;color:var(--ink)}
+.core em{font:500 10px var(--hud);letter-spacing:.3em;color:var(--ink2);font-style:normal;margin-bottom:6px}
+.spend{font:11px var(--mono);color:var(--ink2);pointer-events:none!important}
+.spend b{color:var(--ink);font-weight:500}
+.fac{display:grid;gap:3px;justify-items:center;text-align:center;padding:8px 12px;border-radius:10px;border:1px solid transparent}
+.fac:hover{border-color:var(--line2);background:rgba(95,212,244,.07)}
+.fac .nm{font:500 16px var(--hud);letter-spacing:.04em;color:var(--ink)}
+.fac .st{font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--cyan)}
+.fac .ct{font:12px var(--mono);color:var(--ink2)}
+.fac .bd{font:600 11px var(--mono);background:var(--amber);color:#201400;border-radius:10px;padding:1px 9px;margin-top:2px}
+.fac.plan .nm{color:var(--ink2)}.fac.plan .st{color:var(--ink3)}
+.fac.off .st{color:var(--ink2)}
+.stg{display:grid;gap:2px;justify-items:center;text-align:center;padding:4px 6px;border-radius:6px}
+.stg:hover{background:rgba(95,212,244,.08)}
+.stg .nm{font:500 14px var(--hud);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:5px}
+.stg .ag{font:11px var(--mono);color:var(--ink2);display:flex;align-items:center;gap:5px;font-size:11px}
+.stg .ag.idle{color:var(--ink3)}
+.stg .ag i{width:6px;height:6px;border-radius:50%;background:var(--ink3)}
+.stg .ag.blocked i{background:var(--amber)}.stg .ag.blocked{color:var(--amber)}
+.stg.gate.open .nm{color:var(--amber)}
+.stg svg{width:11px;height:11px}
+.chips{display:grid;gap:5px;justify-items:center}
+.chip{display:flex;align-items:flex-start;gap:7px;font:500 13px/1.25 var(--body);color:var(--ink);background:rgba(10,22,38,.94);border:1px solid var(--line2);border-radius:7px;padding:6px 11px 7px 9px;white-space:nowrap;text-align:left}
+.chip span{display:grid;gap:1px}
+.chip small{font:400 11px var(--mono);color:var(--ink2)}
+.chip i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--cyan);margin-top:4px}
+.chip:hover{border-color:var(--cyan)}
+.chip .sp{flex:none;align-self:center;margin-left:6px;width:46px;height:22px}
+.chip.s-waiting{border-color:var(--amber)}.chip.s-waiting i{background:var(--amber)}
+.chip.sel{box-shadow:0 0 0 1px var(--cyan)}
+.rej{font:500 12px var(--hud);letter-spacing:.1em;text-transform:uppercase;color:var(--red);padding:4px 8px;border-radius:6px;text-align:center}
+.rej:hover{background:rgba(255,93,108,.1)}
+.rej b{display:block;font:500 16px var(--mono)}
+.empty{font:12px var(--mono);color:var(--ink3)}
+.dim{opacity:.28}
+/* zoomed level: header node, You dock, readout */
+.fhead{display:grid;gap:2px}
+.fhead .nm{font:500 20px/1.15 var(--hud);letter-spacing:.03em;color:var(--ink)}
+.fhead .st{font:10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.fhead.off .st,.fhead.plan .st{color:var(--ink2)}
+.fhead .ct{font:12px var(--mono);color:var(--ink2)}
+.ydock{display:grid;justify-items:end;gap:0;text-align:right}
+.ydock em{font:500 10px var(--hud);letter-spacing:.3em;color:var(--ink2);font-style:normal}
+.ydock b{font:500 22px/1.1 var(--mono);color:var(--amber)}
+.ydock b.zero{color:var(--green)}
+.ydock small{font:500 10px var(--hud);letter-spacing:.16em;text-transform:uppercase;color:var(--ink2)}
+#readout{position:fixed;left:max(24px,env(safe-area-inset-left,0px));right:calc(var(--rail) + 48px);bottom:18px;z-index:3;display:grid;grid-template-columns:minmax(0,1.9fr) auto auto minmax(0,1.5fr);gap:32px;align-items:start;padding-top:14px;border-top:1px solid var(--line);opacity:0;visibility:hidden;transition:opacity .25s}
+body.zoomed #readout{opacity:1;visibility:visible}
+#readout h3{margin:0 0 8px;font:500 10px var(--hud);letter-spacing:.2em;text-transform:uppercase;color:var(--ink2)}
+.flow{display:flex;gap:4px;align-items:flex-end}
+.flow div{display:grid;gap:2px;min-width:0;flex:1}
+.flow b{font:500 20px/1 var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.flow b.z{color:var(--ink3)}
+.flow span{font:10.5px var(--mono);color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.flow i{height:2px;background:var(--line2);border-radius:1px;margin-top:4px}
+.flow i.on{background:var(--cyan)}
+.gauge{display:flex;align-items:center;gap:12px}
+.gauge svg{width:54px;height:54px}
+.gauge b{display:block;font:500 18px/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.gauge small,.runs small{font:11px var(--mono);color:var(--ink2)}
+.runs b{display:block;font:500 20px/1 var(--mono);margin-bottom:4px}
+.evs{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.evs li{display:grid;grid-template-columns:52px 1fr;gap:8px;font-size:12px;color:var(--ink2)}
+.evs time{font:11px var(--mono);color:var(--ink3)}
+.evs span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* detail extras */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px}
+.tile{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.tile small{display:block;font:500 9.5px var(--hud);letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+.tile b{font:500 16px var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.pnl{border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.pnl svg{display:block;width:100%;height:64px}
+.sp{color:var(--green)}.sp.down{color:var(--amber)}.sp .line{fill:none;stroke:currentColor;stroke-width:1.5;vector-effect:non-scaling-stroke}.sp .area{fill:currentColor;opacity:.12}.sp .zero{stroke:currentColor;opacity:.3;stroke-dasharray:3 4;vector-effect:non-scaling-stroke}.sp.mini .area,.sp.mini .zero{display:none}
+.pnl .cap{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--ink2);margin-bottom:4px}
+.steps{display:flex;gap:3px}
+.steps span{flex:1;display:grid;gap:5px;font:10px var(--mono);color:var(--ink3);text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.steps span::before{content:"";height:3px;border-radius:2px;background:var(--line2)}
+.steps span.past::before{background:var(--cyan)}
+.steps span.cur{color:var(--ink)}.steps span.cur::before{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.steps span.cur.wait{color:var(--amber)}.steps span.cur.wait::before{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px;margin:0}
+.dl dt{font:500 10px var(--hud);letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);padding-top:3px}
+.dl dd{grid-column:2;margin:0;color:var(--ink)}
+.dl dd+dd{margin-top:8px}
+.killbox{border:1px solid var(--red);border-radius:8px;padding:10px 12px;color:var(--ink)}
+/* phone */
+@media (max-width:760px){
+  header{grid-template-columns:1fr auto;row-gap:10px;padding-top:12px}
+  .kpis{grid-column:1/-1;justify-content:space-between;gap:10px}
+  .kpi b{font-size:15px}.kpi small{font-size:9px;letter-spacing:.1em}
+  .brand{font-size:13px;letter-spacing:.16em}
+  #crumb{top:118px;flex-wrap:wrap;right:16px}
+  #rail{left:0;right:0;top:auto;bottom:0;width:auto;border-radius:14px 14px 0 0;border-width:1px 0 0;max-height:60%;padding-bottom:env(safe-area-inset-bottom,0px)}
+  #rail.closed #needs,#rail.closed .shead,#rail.closed #power{display:none}
+  #rail.closed #stream{height:27px;padding-bottom:8px}
+  #rail.closed #stream span{-webkit-line-clamp:1}
+  #stream{height:132px}
+  #tip{display:none}
+  .rhead{cursor:pointer}
+  #detail{left:0;right:0;top:auto;bottom:0;width:auto;max-height:72%;border-radius:14px 14px 0 0;transform:translateY(105%)}
+  .fac{padding:4px 6px}.fac .nm{font-size:13px}.fac .ct{display:none}
+  .core b{font-size:34px}
+  .chip{max-width:190px;white-space:normal}
+  .chip small{display:none}
+  #readout{display:none}
+  .stg{justify-items:end;text-align:right}
+  .chips{justify-items:start}
+}
+@media (prefers-reduced-motion:reduce){#detail,.lv-all,.lv-fac{transition:none}}
+#power{display:grid;gap:2px;padding:4px 14px 10px}
+#power div{display:flex;align-items:center;justify-content:space-between;font:13px var(--body);color:var(--ink)}
+.sw{display:flex;align-items:center;gap:7px;font:500 11px var(--mono);color:var(--ink3);background:none;border:0;padding:5px 4px;cursor:pointer}
+.sw i{width:26px;height:14px;border-radius:999px;background:rgba(120,190,230,.22);position:relative}
+.sw i::after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:var(--ink2);transition:transform .15s}
+.sw[aria-checked="true"]{color:var(--green)}
+.sw[aria-checked="true"] i{background:rgba(111,224,176,.35)}
+.sw[aria-checked="true"] i::after{transform:translateX(12px);background:var(--green)}
+.clear{margin:6px 16px 12px;color:var(--ink2);font-size:13px}
+.dl dd small{display:block;font:11px var(--mono);color:var(--ink3);overflow-wrap:anywhere;margin-top:2px}
+.load-error{position:fixed;inset:0 0 auto 0;z-index:99;padding:12px 16px;background:#3a1218;color:#ffb3ba;font:14px var(--body)}
+</style>
+</head>
+<body>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="labels"></div>
+
+<header>
+  <div><div class="brand"><i></i>Keiretsu · Live</div><div class="asof" id="asof"></div></div>
+  <nav class="seg" aria-label="View"><a href="board.html">Board</a><span aria-current="page">Live</span></nav>
+  <div class="kpis" id="kpis"></div>
+</header>
+
+<div id="crumb" hidden></div>
+<div id="readout" aria-label="Factory readout"></div>
+
+<aside id="rail" aria-label="Needs you">
+  <div class="rhead" id="rhead"><span>Needs you</span><span class="cnt" id="rcnt"></span></div>
+  <div id="needs"></div>
+  <div class="shead"><span>Factories</span><small>off stops every run</small></div>
+  <div id="power"></div>
+  <div class="shead"><span>Event stream</span><small>latest runs</small></div>
+  <ul id="stream" aria-label="Event stream"></ul>
+</aside>
+
+<div id="tip" hidden></div>
+<section id="detail" aria-live="polite" aria-hidden="true"></section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="app.js"></script>
+<script type="module">
+const D = await loadData().catch(err => { showError(err); throw err; });
+const LOADED = structuredClone(D);   // as the server sent it: the layout below adds its own fields to D
+const FS = D.factories;
+const $ = id => document.getElementById(id);
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const C = {cyan:"95,212,244", amber:"255,178,62", red:"255,93,108", green:"111,224,176", ink:"217,232,244"};
+const LOCK = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.2" y="5.4" width="7.6" height="5.2" rx="1"/><path d="M4 5.4V3.8a2 2 0 0 1 4 0v1.6"/></svg>';
+
+// fixed positions on the orbit: live work sits in front, blueprints behind
+const R = 300, S = 100, OR = 104, TAU = Math.PI * 2;
+const BUILT = FS.filter(f => !f.planned), PLANNED = FS.filter(f => f.planned);
+BUILT.forEach((f, k) => { f.x = BUILT.length > 1 ? (k / (BUILT.length - 1) - .5) * 472 : -236; f.z = 185; });
+PLANNED.forEach((f, k) => { const a = (270 + (k - (PLANNED.length - 1) / 2) * Math.min(65, 180 / PLANNED.length)) * Math.PI / 180; f.x = R * Math.cos(a); f.z = R * Math.sin(a); });
+// each built factory carries its stage chain on a small tilted orbit; the gap in the orbit faces You
+FS.forEach(f => {
+  if (f.planned) return;
+  const n = f.stages.length, back = Math.atan2(-f.z, -f.x), gap = .5, step = (TAU - 2 * gap) / n;
+  f.orb = a => { const z = Math.sin(a); return [f.x + OR * Math.cos(a), 13 * (1 - z), f.z + OR * z]; };
+  f.sa = f.stages.map((s, i) => back - gap - i * step);
+  f.ba = back - gap - n * step;
+});
+
+const st = {fac: null, target: 0, t: 0, hl: null, sel: null, mx: 0, my: 0, px: 0, py: 0, spin: 0,
+  tt: RM ? 3.3 : 0, fl: null, xr: null, scope: null};
+const totalOpen = FS.reduce((n, f) => n + f.approvals.length, 0);
+const spent = FS.reduce((n, f) => n + f.spend.month, 0), budget = FS.reduce((n, f) => n + f.spend.monthBudget, 0) || 1;
+const alive = f => f.items.filter(i => i.state !== "killed");
+const killed = f => f.items.filter(i => i.state === "killed");
+// a decision belongs to the stage that asked for it, or to the first gate when the packet does not say
+const apStage = (f, a) => a.stage || (f.stages.find(s => s.gate) || f.stages[0]).id;
+const stageOpen = (f, sid) => f.approvals.some(a => apStage(f, a) === sid);
+const shortName = s => s.short || s.name;      // a stage may give a shorter label for tight places
+const dotRgb = it => it.state === "waiting" ? C.amber : C.cyan;
+// the machine itself is the status light
+function stStatus(f, s) {
+  if (f.planned) return {rgb: C.cyan, a: .34, sp: 0, dash: [3, 4], k: "plan"};
+  if (stageOpen(f, s.id)) return {rgb: C.amber, a: 1, sp: f.on ? .45 : 0, k: "act"};
+  if (!f.on) return {rgb: C.cyan, a: .3, sp: 0, k: "off"};
+  if (alive(f).some(it => it.stage === s.id)) return {rgb: C.cyan, a: .8, sp: .3, k: "hold"};
+  return {rgb: C.cyan, a: .46, sp: 0, k: "ghost"};
+}
+const STATUS_TXT = {plan: "planned", act: "waiting on you", off: "factory is off", hold: "holding items", ghost: "empty"};
+
+// ---------- camera ----------
+const cv = $("scene"), G = cv.getContext("2d");
+let W = 0, H = 0, phone = false, area = {x: 0, y: 0, w: 0, h: 0}, cam = {};
+function measure() {
+  W = innerWidth; H = innerHeight; phone = W <= 760;
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  cv.width = W * dpr; cv.height = H * dpr; G.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const top = document.querySelector("header").offsetHeight + (phone ? 34 : 10);
+  area = phone ? {x: 0, y: top, w: W, h: H - top - 84} : {x: 0, y: top, w: W - 356, h: H - top - 10};
+}
+function camAll() {
+  const pitch = (phone ? 58 : 42) * Math.PI / 180, fit = 456;
+  const k = Math.min(area.w * .94 / (2 * fit), area.h * .9 / (2 * fit * Math.sin(pitch) + 90));
+  return {tx: 0, tz: 0, k, pitch, yaw: 0, cx: area.x + area.w / 2, cy: area.y + area.h * .49};
+}
+const zs = () => { const SR = phone ? 20 : 30; return {SR, SZ: SR}; };      // plate and machine size when zoomed in
+// screen point just above a machine of half-size sz standing on a plate of radius pr (machines are billboards, so this is not a world height)
+const topOf = (x, z, pr, sz) => { const c = P(x, pr * .3, z); return [c[0], c[1] - sz * 2.3 * cam.k * c[2]]; };
+function camFac(f) {
+  const n = f.stages.length;
+  if (phone) {
+    const pitch = 76 * Math.PI / 180;
+    const k = Math.min(1.15, area.h * .8 / (n * S * Math.sin(pitch)));
+    return {tx: f.x + S / 2, tz: f.z, k, pitch, yaw: Math.PI / 2, cx: area.x + area.w * .43, cy: area.y + area.h * .5};
+  }
+  const pitch = 48 * Math.PI / 180;
+  const k = Math.min(1.9, area.w * .9 / ((n + .75) * S));
+  return {tx: f.x + S * .42, tz: f.z, k, pitch, yaw: 0, cx: area.x + area.w / 2, cy: area.y + area.h * .47};
+}
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const fr = x => x - Math.floor(x);
+function setCam() {
+  const a = camAll(), e = ease(st.t);
+  if (st.fac) { const b = camFac(st.fac); for (const k in a) cam[k] = a[k] + (b[k] - a[k]) * e; } else Object.assign(cam, a);
+  if (!RM) {
+    cam.yaw += Math.sin(st.tt * .09) * .06 * (1 - e);                       // slow drift
+    if (!phone) { cam.yaw += st.px * (.11 * (1 - e) + .02 * e); cam.pitch += st.py * .06 * (1 - e); }   // parallax
+  }
+  cam.cs = Math.cos(cam.yaw); cam.sn = Math.sin(cam.yaw); cam.sp = Math.sin(cam.pitch); cam.cp = Math.cos(cam.pitch);
+}
+// world -> [screen x, screen y, perspective scale]
+function P(x, y, z) {
+  const dx = x - cam.tx, dz = z - cam.tz;
+  const xr = dx * cam.cs - dz * cam.sn, zr = dx * cam.sn + dz * cam.cs;
+  const s = 1700 / (1700 - (zr * cam.cp + y * cam.sp) * .8);
+  return [cam.cx + xr * cam.k * s, cam.cy + (zr * cam.sp - y * cam.cp) * cam.k * s, s];
+}
+const dA = s => { const near = .5 + .5 * Math.max(0, Math.min(1, (s - .87) / .26)); return near + (1 - near) * ease(st.t); };   // nearer = brighter
+
+// ---------- drawing ----------
+function path(pts, close) { G.beginPath(); pts.forEach((p, i) => i ? G.lineTo(p[0], p[1]) : G.moveTo(p[0], p[1])); if (close) G.closePath(); }
+function ring(x, z, y, r, a0 = 0, a1 = Math.PI * 2) {
+  const n = Math.max(8, Math.ceil(48 * (a1 - a0) / (Math.PI * 2))), pts = [];
+  for (let i = 0; i <= n; i++) { const a = a0 + (a1 - a0) * i / n; pts.push(P(x + r * Math.cos(a), y, z + r * Math.sin(a))); }
+  path(pts);
+}
+function stroke(rgb, a, w = 1, dash, off = 0) { G.strokeStyle = `rgba(${rgb},${a})`; G.lineWidth = w; G.setLineDash(dash || []); G.lineDashOffset = off; G.stroke(); G.setLineDash([]); G.lineDashOffset = 0; }
+function hexPrism(x, z, r, h, rgb, a, fillA, dash) {
+  const top = [], bot = [];
+  for (let i = 0; i < 6; i++) { const an = Math.PI / 3 * i + Math.PI / 6; top.push(P(x + r * Math.cos(an), h, z + r * Math.sin(an))); bot.push(P(x + r * Math.cos(an), 0, z + r * Math.sin(an))); }
+  path(bot, true); stroke(rgb, a * .45, 1, dash);
+  for (let i = 0; i < 6; i++) { path([top[i], bot[i]]); stroke(rgb, a * .45, 1, dash); }
+  path(top, true); if (fillA) { G.fillStyle = `rgba(${rgb},${fillA * a})`; G.fill(); } stroke(rgb, a, 1.4, dash);
+}
+function ticks(x, z, r0, r1, n, rot, rgb, a) {
+  G.beginPath();
+  for (let i = 0; i < n; i++) { const an = rot + Math.PI * 2 * i / n; const p = P(x + r0 * Math.cos(an), 0, z + r0 * Math.sin(an)), q = P(x + r1 * Math.cos(an), 0, z + r1 * Math.sin(an)); G.moveTo(p[0], p[1]); G.lineTo(q[0], q[1]); }
+  stroke(rgb, a, 1);
+}
+const headPos = () => [area.x + 66, area.y + 122];
+const youPos = () => [area.x + area.w - 64, area.y + 56];
+function hex2d(cx, cy, r, h, rgb, a, fillA, dash) {
+  const top = [], bot = [];
+  for (let i = 0; i < 6; i++) { const an = Math.PI / 3 * i + Math.PI / 6; top.push([cx + r * Math.cos(an), cy - h + r * .58 * Math.sin(an)]); bot.push([cx + r * Math.cos(an), cy + r * .58 * Math.sin(an)]); }
+  path(bot, true); stroke(rgb, a * .45, 1, dash);
+  for (let i = 0; i < 6; i++) { path([top[i], bot[i]]); stroke(rgb, a * .45, 1, dash); }
+  path(top, true); if (fillA) { G.fillStyle = `rgba(${rgb},${fillA * a})`; G.fill(); } stroke(rgb, a, 1.4, dash);
+}
+function ell(cx, cy, r, a0 = 0, a1 = Math.PI * 2) { G.beginPath(); G.ellipse(cx, cy, r, r * .58, 0, a0, a1); }
+function chipLayout(f) {
+  // greedy: push a station's chip stack down until it clears its neighbours
+  const n = f.stages.length, step = S * camFac(f).k, placed = [], out = {};
+  f.stages.forEach((s, i) => {
+    const its = alive(f).filter(it => it.stage === s.id); if (!its.length) return;
+    const w = Math.max(...its.map(it => Math.max(it.name.length * 7.3, chipFact(it).length * 6.7) + (it.pnl ? 54 : 0))) + 40, h = its.length * 47 - 5;
+    const x0 = i * step - w / 2, x1 = i * step + w / 2; let y = 0, moved = true;
+    while (moved) { moved = false; for (const r of placed) if (x0 < r.x1 + 10 && x1 > r.x0 - 10 && y < r.y1 + 12 && y + h > r.y0 - 12) { y = r.y1 + 14; moved = true; } }
+    placed.push({x0, x1, y0: y, y1: y + h}); out[s.id] = y;
+  });
+  return out;
+}
+const chipFact = it => [it.platform, it.category].filter(Boolean).join(" · ") || it.state;
+
+// ======================================================================
+// STAGE ART. One holographic line-art machine per stage, keyed by stage id.
+// Each is drawn in a unit box (x and y from -1 to 1, floor at y = 1) with the
+// stroke colour already set by the caller, so the status colours the machine.
+// Arguments: t = loop time, rich = large enough for detail, still = frozen pose.
+// To restyle a stage, edit its function here and nothing else.
+// ======================================================================
+const ln = (...p) => { G.beginPath(); G.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) G.lineTo(p[i], p[i + 1]); G.stroke(); };
+const pl = (...p) => { G.beginPath(); G.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) G.lineTo(p[i], p[i + 1]); G.closePath(); G.stroke(); };
+const soft = (a, fn) => { const o = G.globalAlpha; G.globalAlpha = o * a; fn(); G.globalAlpha = o; };
+const ci = (x, y, r, a = 1) => soft(a, () => { G.beginPath(); G.arc(x, y, r, 0, TAU); G.stroke(); });
+const dot = (x, y, r, a = 1) => soft(a, () => { G.beginPath(); G.arc(x, y, r, 0, TAU); G.fill(); });
+const ar = (x, y, r, a0, a1, a = 1) => soft(a, () => { G.beginPath(); G.arc(x, y, r, a0, a1); G.stroke(); });
+const STAGE_ART = {
+  // ---------------- app factory ----------------
+  mine(t, rich) {            // radar dish sweeping the market
+    ln(-.4, 1, 0, .4, .4, 1); ln(0, 1, 0, .4); if (rich) ln(-.2, .7, .2, .7);
+    G.save(); G.translate(0, .32); G.rotate(-.5 + .26 * Math.sin(t * .9));
+    ar(0, -.62, .78, Math.PI * .19, Math.PI * .81);
+    G.beginPath(); G.ellipse(0, -.16, .65, .1, 0, 0, TAU); G.stroke();
+    ln(0, .16, 0, -.6); dot(0, -.66, .075);
+    if (rich) { ln(-.32, .09, 0, -.6, .32, .09); ar(0, -.62, .78, Math.PI * .36, Math.PI * .64, .5); }
+    for (let i = 0; i < 2; i++) { const p = fr(t * .45 + i / 2); ar(0, -.66, .14 + p * .46, -Math.PI * .78, -Math.PI * .22, 1 - p); }
+    G.restore();
+  },
+  screen(t, rich) {          // sieve: many ideas drop in, few fall through
+    pl(-.84, -.56, .84, -.56, .2, .26, -.2, .26); ln(-.2, .26, -.2, .52); ln(.2, .26, .2, .52);
+    soft(.65, () => { ln(-.6, -.26, .6, -.26); if (rich) { ln(-.4, 0, .4, 0); for (let x = -.45; x < .5; x += .18) ln(x, -.26, x + .07, -.4); } });
+    ln(-.5, .86, -.5, 1, .5, 1, .5, .86);
+    [-.44, .04, .42].forEach((x, i) => { const p = fr(t * .5 + i / 3); dot(x, -1 + p * .62, .075, p < .8 ? 1 : (1 - p) * 5); });
+    const q = fr(t * .5 / 3) * 3; if (q < 1) dot(0, .34 + q * .56, .075);
+  },
+  spec(t, rich, still) {     // blueprint drawing itself in
+    ln(-.6, .68, -.74, 1); ln(.6, .56, .74, 1);
+    G.save(); G.transform(1, -.1, 0, 1, 0, 0);
+    pl(-.84, -.74, .84, -.74, .84, .62, -.84, .62);
+    const p = still ? 4 : fr(t * .2) * 4.6;
+    [-.46, -.2, .06].forEach((y, i) => { const u = Math.max(0, Math.min(1, p - i)); if (u > 0) { ln(-.62, y, -.62 + (i === 2 ? .55 : 1.24) * u, y); if (u < 1) dot(-.62 + (i === 2 ? .55 : 1.24) * u, y, .07); } });
+    const u = Math.max(0, Math.min(1, p - 3)); if (u > 0) soft(u, () => { pl(.2, .0, .62, .0, .62, .42, .2, .42); if (rich) ln(.2, .42, .62, 0); });
+    if (rich) { for (let x = -.7; x < .8; x += .2) soft(.6, () => ln(x, -.74, x, -.66)); soft(.6, () => { ln(-.62, .34, -.05, .34); ln(-.62, .28, -.62, .4); ln(-.05, .28, -.05, .4); }); }
+    G.restore();
+  },
+  demand(t, rich) {          // broadcast tower pinging a target audience
+    ln(-.84, 1, -.52, -.5, -.2, 1); ln(-.73, .5, -.31, .5); ln(-.63, 0, -.41, 0);
+    if (rich) soft(.7, () => { ln(-.73, .5, -.41, 0); ln(-.31, .5, -.63, 0); ln(-.84, 1, -.31, .5); ln(-.2, 1, -.73, .5); });
+    ln(-.52, -.5, -.52, -.8); dot(-.52, -.85, .075);
+    for (let i = 0; i < 3; i++) { const p = fr(t * .4 + i / 3); ar(-.52, -.85, .2 + p * .95, -.15, .8, (1 - p) * .95); }
+    ci(.62, .56, .3); dot(.62, .56, .09);
+    if (rich) { ci(.62, .56, .18, .6); ln(.62, .16, .62, .3); ln(.62, .82, .62, .96); ln(.22, .56, .36, .56); ln(.88, .56, 1, .56); }
+  },
+  build(t, rich) {           // robotic arm stacking a block
+    pl(-.88, 1, -.88, .76, -.36, .76, -.36, 1);
+    const a = 1.2 + .2 * Math.sin(t * 1.1), b = .15 + .3 * Math.sin(t * 1.1 + 1.2);
+    const ex = -.62 + .8 * Math.cos(a), ey = .68 - .8 * Math.sin(a), hx = ex + .7 * Math.cos(b), hy = ey + .7 * Math.sin(b);
+    ln(-.62, .68, ex, ey, hx, hy); ci(-.62, .68, .1); ci(ex, ey, .085);
+    ln(hx - .13, hy + .16, hx - .13, hy + .03, hx + .13, hy + .03, hx + .13, hy + .16);
+    soft(.8, () => pl(hx - .17, hy + .16, hx + .17, hy + .16, hx + .17, hy + .46, hx - .17, hy + .46));
+    pl(.16, 1, .16, .66, .58, .66, .58, 1);
+    if (rich) { pl(.58, 1, .58, .78, .88, .78, .88, 1); soft(.6, () => { ln(.16, .83, .58, .83); ln(.37, .66, .37, 1); ci(-.62, .88, .07); ln(-.8, .88, -.72, .88); ln(-.52, .88, -.44, .88); }); }
+  },
+  launch(t, rich) {          // rocket on the pad with its gantry, venting steam
+    const c = -.14;
+    G.beginPath(); G.moveTo(c, -1); G.quadraticCurveTo(c + .3, -.62, c + .25, -.1); G.lineTo(c + .25, .5); G.lineTo(c - .25, .5); G.lineTo(c - .25, -.1); G.quadraticCurveTo(c - .3, -.62, c, -1); G.stroke();
+    ln(c - .25, .14, c - .5, .64, c - .25, .5); ln(c + .25, .14, c + .5, .64, c + .25, .5);
+    ln(c - .12, .5, c - .17, .66); ln(c + .12, .5, c + .17, .66); ci(c, -.32, .1);
+    ln(-.92, .84, .92, .84); ln(-.72, .84, -.8, 1); ln(.72, .84, .8, 1);
+    ln(.64, .84, .64, -.72, .82, -.72, .82, .84); ln(.64, -.42, c + .25, -.42);
+    if (rich) soft(.65, () => { for (let y = .84; y > -.6; y -= .52) { ln(.64, y, .82, y - .26); ln(.82, y - .26, .64, y - .52); } ln(c - .25, .08, c + .25, .08); });
+    for (let i = 0; i < 3; i++) { const p = fr(t * .45 + i / 3), sd = i % 2 ? 1 : -1; ci(c + sd * (.22 + p * .5), .74 - p * .12, .05 + p * .11, (1 - p) * .85); }
+  },
+  grow(t, rich, still) {     // bars rising under a trend line
+    ln(-.92, 1, .92, 1);
+    const p = still ? 1 : Math.min(1, fr(t * .14) * 1.7), e = 1 - Math.pow(1 - p, 3);
+    (rich ? [[-.76, .4], [-.36, .7], [.04, 1.02], [.44, 1.3]] : [[-.74, .4], [-.24, .75], [.26, 1.15]]).forEach(([x, h]) => {
+      const hh = h * (.3 + .7 * e); pl(x, 1, x, 1 - hh, x + .3, 1 - hh, x + .3, 1);
+      if (rich) soft(.45, () => { for (let y = 1 - hh + .14; y < .96; y += .14) ln(x, y, x + .3, y); });
+    });
+    soft(.4 + .6 * e, () => { ln(-.86, -.1, -.34, -.42, -.04, -.3, .76, -.88); ln(.5, -.9, .78, -.9, .78, -.62); });
+  },
+  // ---------------- trading factory ----------------
+  idea(t, rich) {            // lightbulb sparking
+    ar(0, -.15, .46, Math.PI * .72, Math.PI * 2.28);
+    ln(-.29, .2, -.2, .5, .2, .5, .29, .2); ln(-.2, .63, .2, .63); ln(-.16, .76, .16, .76); ln(-.08, .89, .08, .89);
+    ln(-.12, .2, -.07, -.14, 0, .02, .07, -.14, .12, .2);
+    const n = rich ? 7 : 5;
+    for (let i = 0; i < n; i++) { const an = -Math.PI / 2 + (i - (n - 1) / 2) * (rich ? .5 : .64), a = .3 + .7 * (.5 + .5 * Math.sin(t * 2 - i * .9));
+      soft(a, () => ln(.6 * Math.cos(an), -.15 + .6 * Math.sin(an), .8 * Math.cos(an), -.15 + .8 * Math.sin(an))); }
+  },
+  code(t, rich, still) {     // terminal with brackets and a blinking cursor
+    pl(-.95, -.8, .95, -.8, .95, .6, -.95, .6); ln(0, .6, 0, 1); ln(-.34, 1, .34, 1);
+    ln(-.3, -.4, -.62, -.08, -.3, .24); ln(.3, -.4, .62, -.08, .3, .24);
+    if (still || fr(t * .8) < .55) G.fillRect(-.12, .12, .24, .11);
+    if (rich) soft(.6, () => { ln(-.95, -.6, .95, -.6); dot(-.82, -.7, .035); dot(-.7, -.7, .035); dot(-.58, -.7, .035); ln(.08, -.46, -.08, .02); });
+  },
+  backtest(t, rich) {        // candlesticks replayed backwards
+    ln(-.95, 1, .95, 1);
+    (rich ? [[-.75, .34, .42], [-.45, .1, .36], [-.15, .3, .3], [.15, -.02, .42], [.45, -.2, .36], [.75, -.08, .28]] : [[-.62, .32, .42], [-.2, .04, .42], [.22, .24, .32], [.64, -.14, .42]])
+      .forEach(([x, y, h]) => { ln(x, y - .14, x, y); ln(x, y + h, x, y + h + .14); pl(x - .1, y, x + .1, y, x + .1, y + h, x - .1, y + h); });
+    ar(0, -.4, .56, -Math.PI * .86, -Math.PI * .14); ln(-.56, -.9, -.51, -.64, -.26, -.72);
+    const x = .9 - fr(t * .3) * 1.8; soft(.75, () => ln(x, -.3, x, .96));
+  },
+  exam(t, rich) {            // sealed vault door, dial turning
+    pl(-.8, -.82, .8, -.82, .8, .8, -.8, .8); ln(-.6, .8, -.6, 1); ln(.6, .8, .6, 1);
+    ln(-.8, -.5, -.93, -.5, -.93, -.28, -.8, -.28); ln(-.8, .28, -.93, .28, -.93, .5, -.8, .5);
+    ci(0, 0, .46); dot(0, 0, .075);
+    const a = .9 * Math.sin(t * .6);
+    for (let i = 0; i < 3; i++) { const an = a + i * Math.PI / 3; ln(-.34 * Math.cos(an), -.34 * Math.sin(an), .34 * Math.cos(an), .34 * Math.sin(an)); }
+    if (rich) { [[-.64, -.66], [.64, -.66], [-.64, .64], [.64, .64]].forEach(([x, y]) => dot(x, y, .045)); soft(.6, () => { for (let i = 0; i < 12; i++) { const an = i * TAU / 12; ln(.52 * Math.cos(an), .52 * Math.sin(an), .6 * Math.cos(an), .6 * Math.sin(an)); } }); }
+  },
+  paper(t, rich) {           // paper plane on a test flight over the tape
+    G.save(); G.translate(0, -.14 + .07 * Math.sin(t * 1.4));
+    pl(-.9, .02, .9, -.62, .06, .62, -.12, .18); ln(-.12, .18, .9, -.62);
+    G.restore();
+    for (let i = 0; i < 4; i++) { const p = fr(t * .45 + i / 4); dot(-.3 - p * .6, .5 + p * .3, .045, 1 - p); }
+    ln(-.92, 1, .92, 1);
+    if (rich) soft(.6, () => { ln(-.92, .86, .92, .86); for (let i = 0; i < 7; i++) { const x = -.92 + fr(t * .12 + i / 7) * 1.84; ln(x, .86, x, 1); } });
+  },
+  watch(t, rich) {           // eye on a stand, scanning
+    ln(0, .34, 0, 1); ln(-.32, 1, .32, 1);
+    G.save(); G.translate(0, -.24);
+    G.beginPath(); G.moveTo(-.94, 0); G.quadraticCurveTo(0, -1.02, .94, 0); G.quadraticCurveTo(0, 1.02, -.94, 0); G.stroke();
+    const px = .24 * Math.sin(t * .8); ci(px, 0, .33); dot(px, 0, .13);
+    if (rich) { ar(px, 0, .23, -2.5, -1.5, .7); soft(.6, () => { ln(-.96, -.5, -.96, -.72, -.74, -.72); ln(.96, -.5, .96, -.72, .74, -.72); ln(-.2, -.72, .2, -.72); }); }
+    G.restore();
+  }
+};
+// planned stages: one dim generic module
+function ART_GENERIC() { pl(0, -.5, .7, -.16, .7, .64, 0, 1, -.7, .64, -.7, -.16); ln(-.7, -.16, 0, .18, .7, -.16); ln(0, .18, 0, 1); }
+// rejected: a small incinerator
+function ART_BIN(t, rich) {
+  pl(-.52, 0, .52, 0, .4, 1, -.4, 1); ln(-.68, 0, .68, 0); ln(-.16, .26, -.13, .8); ln(.16, .26, .13, .8); if (rich) ln(0, .26, 0, .8);
+  const f = .09 * Math.sin(t * 2.4), h = .06 * Math.sin(t * 3.1);
+  G.beginPath(); G.moveTo(-.22, -.12); G.quadraticCurveTo(-.36, -.5, f, -.92 + h); G.quadraticCurveTo(.36, -.5, .22, -.12); G.stroke();
+  soft(.7, () => { G.beginPath(); G.moveTo(-.09, -.12); G.quadraticCurveTo(-.14, -.34, -f * .5, -.52); G.quadraticCurveTo(.14, -.34, .09, -.12); G.stroke(); });
+}
+// ====================== end of stage art ======================
+
+// ======================================================================
+// 3D STAGE MODELS. In the zoomed view each machine becomes a small 3D
+// hologram (three.js), rendered to a sprite and composited onto the plate.
+// If three.js is unavailable the line-art machines above are used instead.
+// ======================================================================
+const M3 = (() => {
+  if (!window.THREE) return null;
+  try {
+function glowTex(){
+  const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d");
+  const r = g.createRadialGradient(32,32,0,32,32,32); r.addColorStop(0,"rgba(255,255,255,1)"); r.addColorStop(.25,"rgba(255,255,255,.45)"); r.addColorStop(1,"rgba(255,255,255,0)");
+  g.fillStyle = r; g.fillRect(0,0,64,64); return new THREE.CanvasTexture(c);
+}
+const GLOW = glowTex();
+const glow = (color, size, opacity = 0.8) => { const s = new THREE.Sprite(new THREE.SpriteMaterial({map:GLOW, color, transparent:true, opacity, blending:THREE.AdditiveBlending, depthWrite:false})); s.scale.set(size,size,1); return s; };
+const lineMat = (col, op) => new THREE.LineBasicMaterial({color:col, transparent:true, opacity:op});
+function kit(col, tint){
+  const reg = m => { tint.push(m); return m; };
+  const k = {
+    E:(geo, op = .95) => new THREE.LineSegments(new THREE.EdgesGeometry(geo), reg(lineMat(col, op))),
+    Wf:(geo, op = .5) => new THREE.Mesh(geo, reg(new THREE.MeshBasicMaterial({color:col, wireframe:true, transparent:true, opacity:op, depthWrite:false}))),
+    Fc:(geo, op = .12) => new THREE.Mesh(geo, reg(new THREE.MeshBasicMaterial({color:col, transparent:true, opacity:op, side:THREE.DoubleSide, depthWrite:false, blending:THREE.AdditiveBlending}))),
+    Ln:(pts, op = .95) => new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts.map(q => new THREE.Vector3(q[0], q[1], q[2] || 0))), reg(lineMat(col, op))),
+    Dot:(r = .05) => new THREE.Mesh(new THREE.SphereGeometry(r, 8, 6), reg(new THREE.MeshBasicMaterial({color:col, transparent:true, opacity:.95}))),
+    Glow:(size, op) => { const g = glow(col, size, op); tint.push(g.material); return g; },
+  };
+  k.S = (geo, fo = .12) => { const g = new THREE.Group(); g.add(k.Fc(geo, fo), k.E(geo)); return g; };              // solid: faint faces + bright edges
+  k.Bar = (x1, y1, x2, y2, th = .05) => { const L = Math.hypot(x2 - x1, y2 - y1); const b = k.Fc(new THREE.BoxGeometry(L, th, th), .9); b.position.set((x1 + x2)/2, (y1 + y2)/2, 0); b.rotation.z = Math.atan2(y2 - y1, x2 - x1); return b; };
+  return k;
+}
+const at = (o, x, y, z) => { o.position.set(x, y, z); return o; };
+const PI = Math.PI;
+// each builder adds to g and returns tick(t) or nothing. g.userData.face = true means "turn to face the camera" (flat models).
+const STAGE_MODELS = {
+  /* ---- app factory ---- */
+  mine(k, g){ // radar dish, sweeping
+    g.add(at(k.E(new THREE.CylinderGeometry(.05, .14, .7, 6)), 0, .35, 0));
+    const piv = at(new THREE.Group(), 0, .78, 0), tilt = new THREE.Group(); tilt.rotation.z = .8; piv.add(tilt); g.add(piv);
+    const dish = k.Wf(new THREE.SphereGeometry(.58, 12, 4, 0, PI*2, 0, PI/2.7), .7); dish.rotation.x = PI; dish.position.y = .58; tilt.add(dish);
+    tilt.add(k.Ln([[0,0,0],[0,.5,0]]), at(k.Dot(.06), 0, .5, 0));
+    return t => { piv.rotation.y = t * .8; };
+  },
+  screen(k, g){ // sieve funnel, dots dropping through
+    const f = k.Wf(new THREE.ConeGeometry(.58, .8, 10, 1, true), .7); f.rotation.x = PI; f.position.y = 1.0; g.add(f);
+    g.add(k.Ln([[0,.6,0],[0,.22,0]]), at(k.S(new THREE.BoxGeometry(.6, .08, .6)), 0, .12, 0));
+    const dots = [0,1,2].map(i => { const d = k.Dot(.055); g.add(d); return d; });
+    return t => dots.forEach((d, i) => { const q = (t * .45 + i/3) % 1, sp = 1 - Math.min(1, q * 1.6); d.position.set(Math.sin(i * 2.1) * .32 * sp, 1.75 - q * 1.5, Math.cos(i * 2.1) * .32 * sp); });
+  },
+  spec(k, g){ // drafting board with a blueprint being drawn
+    g.add(k.Ln([[-.42,0,-.2],[-.42,.62,-.2],[.42,0,-.2],[.42,.62,-.2],[-.42,0,.25],[-.42,.3,.25],[.42,0,.25],[.42,.3,.25]], .8));
+    const b = at(new THREE.Group(), 0, .78, 0); b.rotation.x = .85; g.add(b);
+    b.add(k.S(new THREE.BoxGeometry(1.1, .04, .8), .16));
+    b.add(k.Ln([[-.42,.03,-.26],[.3,.03,-.26],[-.42,.03,-.08],[.42,.03,-.08],[-.42,.03,.1],[.1,.03,.1],[-.42,.03,.28],[.34,.03,.28]], .8));
+    const pen = k.Dot(.06); b.add(pen);
+    return t => { const q = (t * .25) % 1, row = Math.floor(q * 4); pen.position.set(-.42 + ((q * 4) % 1) * .7, .06, -.26 + row * .18); };
+  },
+  demand(k, g){ // broadcast tower sending rings out
+    g.add(at(k.Wf(new THREE.ConeGeometry(.3, 1.35, 4, 3, true), .8), 0, .68, 0), at(k.Dot(.07), 0, 1.42, 0));
+    const rs = [0,1,2].map(() => { const r = k.Fc(new THREE.TorusGeometry(.26, .014, 6, 40), .8); r.rotation.x = PI/2; r.position.y = 1.42; g.add(r); return r; });
+    return (t, fade) => rs.forEach((r, i) => { const q = (t * .3 + i/3) % 1; r.scale.setScalar(1 + q * 2.6); r.material.opacity = .85 * (1 - q) * fade; });
+  },
+  build(k, g){ // two meshing gears over a work block
+    g.userData.face = true;
+    g.add(at(k.S(new THREE.BoxGeometry(.8, .3, .5), .14), 0, .15, 0));
+    const mk = (r, x, y) => { const c = k.Wf(new THREE.CylinderGeometry(r, r, .08, 8, 1), .85); c.rotation.x = PI/2; c.position.set(x, y, 0); g.add(c); return c; };
+    const a = mk(.36, -.2, .95), b = mk(.24, .36, .72);
+    g.add(k.Ln([[-.2,.3,0],[-.2,.95,0]], .6));
+    return t => { a.rotation.y = t * .7; b.rotation.y = -t * 1.05 + .3; };
+  },
+  launch(k, g){ // rocket on its pad beside a gantry
+    g.add(at(k.E(new THREE.CylinderGeometry(.55, .55, .05, 14)), 0, .03, 0));
+    const r = new THREE.Group(); g.add(r);
+    r.add(at(k.S(new THREE.CylinderGeometry(.14, .16, .72, 8), .16), 0, .68, 0), at(k.S(new THREE.ConeGeometry(.14, .32, 8), .16), 0, 1.2, 0), at(k.E(new THREE.ConeGeometry(.3, .26, 3, 1, true)), 0, .4, 0));
+    const rungs = []; for (let y = .25; y < 1.2; y += .25) rungs.push([.36,y,-.09],[.36,y,.09]);
+    g.add(k.Ln([[.36,0,-.09],[.36,1.25,-.09],[.36,0,.09],[.36,1.25,.09],[.36,.95,0],[.16,.95,0]].concat(rungs), .7));
+    const fl = at(k.Glow(.7, .5), 0, .22, 0); g.add(fl);
+    return (t, fade) => { r.position.y = Math.sin(t * 1.1) * .03; fl.material.opacity = (.3 + .2 * Math.sin(t * 3.1)) * fade; };
+  },
+  grow(k, g){ // rising bars
+    const hs = [.35, .6, .9, 1.25], bars = hs.map((h, i) => { const b = k.S(new THREE.BoxGeometry(.18, 1, .18), .18); b.position.x = -.39 + i * .26; g.add(b); return b; });
+    g.add(k.Ln([[-.5,.55,.2],[.45,1.5,.2],[.45,1.5,.2],[.3,1.47,.2],[.45,1.5,.2],[.42,1.35,.2]], .7));
+    const set = t => bars.forEach((b, i) => { const h = hs[i] * (.86 + .14 * Math.sin(t * 1.1 - i * .7)); b.scale.y = h; b.position.y = h/2; });
+    set(0); return set;
+  },
+  /* ---- trading factory ---- */
+  idea(k, g){ // light bulb
+    g.add(at(k.E(new THREE.CylinderGeometry(.13, .16, .22, 8)), 0, .5, 0), k.Ln([[0,0,0],[0,.4,0],[-.3,0,0],[.3,0,0]], .7), at(k.Wf(new THREE.SphereGeometry(.36, 9, 6), .6), 0, .98, 0));
+    const rays = []; for (let i = 0; i < 6; i++) { const a = i * PI/3 + PI/6; rays.push([Math.cos(a) * .5, .98 + Math.sin(a) * .5, 0], [Math.cos(a) * .66, .98 + Math.sin(a) * .66, 0]); }
+    const ry = k.Ln(rays, .7); g.add(ry); const gl = at(k.Glow(1.1, .5), 0, .98, 0); g.add(gl); g.userData.face = true;
+    return (t, fade) => { const q = .5 + .5 * Math.sin(t * 1.8); gl.material.opacity = (.25 + .45 * q) * fade; ry.material.opacity = (.3 + .6 * q) * fade; };
+  },
+  code(k, g){ // < | > with a soft cursor
+    g.userData.face = true;
+    g.add(k.Bar(-.26, 1.25, -.6, .85), k.Bar(-.6, .85, -.26, .45), k.Bar(.26, 1.25, .6, .85), k.Bar(.6, .85, .26, .45), k.Ln([[-.6,.2,0],[.6,.2,0]], .6));
+    const cur = k.Fc(new THREE.BoxGeometry(.07, .62, .05), .9); cur.position.set(0, .85, 0); g.add(cur);
+    return (t, fade) => { cur.material.opacity = (.25 + .7 * (.5 + .5 * Math.sin(t * 3.2))) * fade; };
+  },
+  backtest(k, g){ // candlesticks with a sweep running back through history
+    const cs = [[.5,.3],[.72,.36],[.6,.3],[.9,.44],[1.08,.4]];
+    cs.forEach(([c, h], i) => { const x = -.44 + i * .22; g.add(at(k.S(new THREE.BoxGeometry(.12, h, .12), .2), x, c, 0), k.Ln([[x, c - h/2 - .12, 0],[x, c + h/2 + .12, 0]], .8)); });
+    g.add(k.Ln([[-.6,.12,0],[.6,.12,0]], .6));
+    const sw = k.Fc(new THREE.BoxGeometry(.03, 1.3, .4), .55); sw.position.y = .78; g.add(sw);
+    return (t, fade) => { const q = (t * .28) % 1; sw.position.x = .56 - q * 1.12; sw.material.opacity = .55 * Math.sin(q * PI) * fade; };
+  },
+  exam(k, g){ // vault door
+    g.userData.face = true;
+    g.add(at(k.S(new THREE.BoxGeometry(1.05, 1.05, .16), .1), 0, .66, 0), at(k.Fc(new THREE.TorusGeometry(.37, .035, 8, 32), .9), 0, .66, .1), at(k.Fc(new THREE.CircleGeometry(.34, 28), .12), 0, .66, .1));
+    const h = at(new THREE.Group(), 0, .66, .12); h.add(k.Ln([[-.22,0,0],[.22,0,0],[-.11,.19,0],[.11,-.19,0],[-.11,-.19,0],[.11,.19,0]]), k.Dot(.06)); g.add(h);
+    g.add(k.Ln([[.52,.4,.09],[.62,.4,.09],[.52,.92,.09],[.62,.92,.09]], .8));
+    return t => { h.rotation.z = Math.sin(t * .5) * 1.4; };
+  },
+  paper(k, g){ // paper plane circling a ticker post
+    g.add(k.Ln([[0,0,0],[0,.55,0]], .7), at(k.E(new THREE.BoxGeometry(.3, .1, .3)), 0, .05, 0));
+    const ring = []; for (let i = 0; i < 24; i += 2) { const a = i * PI/12, b = (i + 1) * PI/12; ring.push([Math.cos(a) * .5, 1, Math.sin(a) * .5], [Math.cos(b) * .5, 1, Math.sin(b) * .5]); }
+    g.add(k.Ln(ring, .45));
+    const pl = new THREE.Group(); pl.add(k.Ln([[.3,0,0],[-.26,0,.2],[.3,0,0],[-.26,0,-.2],[.3,0,0],[-.26,-.12,0],[-.26,0,.2],[-.14,0,0],[-.26,0,-.2],[-.14,0,0],[-.26,-.12,0],[-.14,0,0]])); g.add(pl);
+    const set = t => { const a = t * .7; pl.position.set(Math.cos(a) * .5, 1 + Math.sin(a * 2) * .06, Math.sin(a) * .5); pl.rotation.y = -(a + PI/2); };
+    set(.6); return set;
+  },
+  watch(k, g){ // scope with a scanning hand
+    g.userData.face = true;
+    g.add(k.Ln([[0,0,0],[0,.38,0],[-.28,0,0],[.28,0,0]], .7), at(k.Fc(new THREE.TorusGeometry(.46, .03, 8, 36), .9), 0, .86, 0), at(k.Fc(new THREE.CircleGeometry(.44, 30), .08), 0, .86, 0));
+    g.add(k.Ln([[-.46,.86,0],[-.34,.86,0],[.34,.86,0],[.46,.86,0],[0,1.2,0],[0,1.32,0],[0,.4,0],[0,.52,0]], .8), at(k.Dot(.08), 0, .86, 0));
+    const hand = at(new THREE.Group(), 0, .86, .01); hand.add(k.Ln([[0,0,0],[.42,0,0]])); g.add(hand);
+    return t => { hand.rotation.z = -t * .9; };
+  },
+};
+    const SP = 320, AZ = .62, EL = .36, HH = 1.3, CY = .78;
+    const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true, premultipliedAlpha: true});
+    renderer.setPixelRatio(1); renderer.setSize(SP, SP, false); renderer.setClearColor(0x000000, 0);
+    const scene = new THREE.Scene(), camera = new THREE.OrthographicCamera(-HH, HH, HH, -HH, .1, 50);
+    camera.position.set(Math.sin(AZ) * Math.cos(EL) * 12, CY + Math.sin(EL) * 12, Math.cos(AZ) * Math.cos(EL) * 12); camera.lookAt(0, CY, 0);
+    const cache = {};
+    const get = id => {
+      if (cache[id]) return cache[id];
+      const tint = [], g = new THREE.Group(), K = kit(0xffffff, tint), build = STAGE_MODELS[id];
+      const tick = build ? build(K, g) : (g.add(at(K.S(new THREE.BoxGeometry(.7, .7, .7)), 0, .4, 0)), null);
+      g.visible = false; scene.add(g); return cache[id] = {g, tick, tint};
+    };
+    const col = new THREE.Color();
+    // draw model `id` with its ground centre at (x, y); u = pixels per model unit
+    function draw(G, id, rgb, x, y, u, alpha, t, yaw) {
+      const m = get(id);
+      if (m.rgb !== rgb) { m.rgb = rgb; col.set("rgb(" + rgb + ")"); m.tint.forEach(q => q.color.copy(col)); }
+      if (m.tick) m.tick(t, 1);
+      m.g.rotation.y = m.g.userData.face ? AZ + yaw * .5 : yaw;
+      m.g.visible = true; renderer.render(scene, camera); m.g.visible = false;
+      const d = 2 * HH * u, o = G.globalCompositeOperation, ga = G.globalAlpha;
+      G.globalCompositeOperation = "lighter"; G.globalAlpha = alpha;
+      G.drawImage(renderer.domElement, x - d / 2, y - CY * Math.cos(EL) * u - d / 2, d, d);
+      G.globalCompositeOperation = o; G.globalAlpha = ga;
+    }
+    return {draw};
+  } catch (err) { return null; }
+})();
+
+function glow(p, rgb, a, r = 2.4) {
+  const k = r * (p[2] || 1) * Math.max(.75, Math.min(1.3, cam.k));
+  [[3.6, .09], [2, .22], [1, 1]].forEach(([m, al]) => { G.beginPath(); G.arc(p[0], p[1], k * m, 0, TAU); G.fillStyle = `rgba(${rgb},${al * a})`; G.fill(); });
+}
+const lerp3 = (A, B, u) => [A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u, A[2] + (B[2] - A[2]) * u];
+const mix2 = (A, B, u) => [A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u];
+const flashOf = (f, sid) => st.fl && st.fl.f === f && st.fl.sid === sid && st.tt - st.fl.t0 < 1.5 ? (st.tt - st.fl.t0) / 1.5 : -1;
+
+// a machine on its isometric base plate. o = {sz, pr, art, rgb, a, sp, dash, ph, k, gate, fl, xu, dots}
+function drawStation(w, o) {
+  const [x, y, z] = w, pr = o.pr, th = pr * .3, rgb = o.rgb, dash = o.dash, tt = st.tt;
+  const fl = o.fl >= 0 ? 1 - o.fl : 0, a = Math.min(1, o.a * (1 + fl * .8));
+  const xr = o.xu > 0 && o.xu < 1 && !RM ? Math.pow(Math.sin(Math.PI * o.xu), .6) : 0;
+  const N = P(x, y + th, z - pr), E = P(x + pr, y + th, z), F = P(x, y + th, z + pr), Wt = P(x - pr, y + th, z);
+  const E0 = P(x + pr, y, z), F0 = P(x, y, z + pr), W0 = P(x - pr, y, z);
+  if (y > 1) { const f0 = P(x, 0, z); path([P(x, y, z), f0]); stroke(rgb, a * .25, 1, [1, 4]); G.beginPath(); G.ellipse(f0[0], f0[1], pr * cam.k * .5, pr * cam.k * .5 * cam.sp, 0, 0, TAU); stroke(rgb, a * .13, 1); }
+  // status rings on the floor around the plate
+  if (o.k === "act") { ring(x, z, y, pr * 1.5); stroke(C.amber, a * (.5 + .25 * Math.sin(tt * 1.6)), 1.4); }
+  if (fl) { ring(x, z, y, pr * (1.3 + o.fl * 1.5)); stroke(rgb, fl * .8, 1.5); }
+  // plate: top face, two visible sides, hatching on the right face
+  path([Wt, N, E, E0, F0, W0], true); G.fillStyle = "rgba(5,11,20,.9)"; G.fill();
+  path([N, E, F, Wt], true); G.fillStyle = `rgba(${rgb},${(o.k === "act" ? .2 : .06) * a + fl * .15})`; G.fill(); stroke(rgb, a * .9, 1.2, dash);
+  path([Wt, W0, F0, E0, E]); stroke(rgb, a * .5, 1, dash); path([F, F0]); stroke(rgb, a * .5, 1, dash);
+  if (!dash) { G.beginPath(); for (let i = 1; i < 7; i++) { const p = mix2(F, E, i / 7), q = mix2(F0, E0, i / 7); G.moveTo(p[0], p[1]); G.lineTo(q[0], q[1]); } stroke(rgb, a * .4, .8); }
+  // the machine
+  const c = P(x, y + th, z), px = o.sz * cam.k * c[2], still = RM || !o.sp;
+  G.save(); G.translate(c[0], c[1] - px * (1.04 + .16 * xr)); G.scale(px, px);
+  G.lineWidth = (1.05 + px * .012) / px; G.lineJoin = G.lineCap = "round";
+  const e3 = M3 && o.m3 ? o.e3 || 0 : 0;
+  G.globalAlpha = a * (1 - .55 * xr) * (1 - e3); G.strokeStyle = G.fillStyle = `rgb(${rgb})`; G.setLineDash(dash ? dash.map(d => d / px) : []);
+  o.art(still ? 1.7 + (o.ph || 0) : tt * o.sp + (o.ph || 0), px > 26, still);
+  G.restore(); G.setLineDash([]);
+  if (e3 > .01) M3.draw(G, o.m3, rgb, c[0], c[1] - px * .16 * xr, px * 1.3, Math.min(1, a * e3 * (1 - .5 * xr) * 1.25), still ? 1.2 + (o.ph || 0) : tt * (o.sp || 0) + (o.ph || 0), still ? 0 : Math.sin(tt * .32 + (o.ph || 0)) * .45);
+  // X-ray: a scan line passes and the items held inside show through
+  if (xr) {
+    const sy = c[1] - px * 2.1 * o.xu; path([[c[0] - px * 1.05, sy], [c[0] + px * 1.05, sy]]); stroke(rgb, xr * .9, 1.2);
+    path([[c[0] - px * 1.05, c[1]], [c[0] - px * 1.05, c[1] - px * 2.2], [c[0] + px * 1.05, c[1] - px * 2.2], [c[0] + px * 1.05, c[1]]]); stroke(rgb, xr * .3, 1, [2, 5]);
+    (o.dots || []).forEach((d, j, l) => glow([c[0] + (j - (l.length - 1) / 2) * px * .5, c[1] - px * .95, 1], d, xr, 3.2));
+  }
+  if (o.gate) {   // lock badge, amber only when something is open here
+    const q = Math.max(3.2, px * .15), lx = c[0] + px * .98, ly = c[1] - px * 2.02, on = o.k === "act";
+    G.beginPath(); G.rect(lx - q, ly, q * 2, q * 1.5); G.fillStyle = "rgba(5,11,20,.9)"; G.fill(); G.moveTo(lx - q * .55, ly); G.arc(lx, ly, q * .55, Math.PI, 0); stroke(on ? C.amber : C.cyan, on ? a : a * .7, 1.2);
+  }
+  return {c, px};
+}
+// a small glowing box for one item, hovering over its shadow
+function itemBox(x, y, z, h, rgb, a, rot, sel) {
+  const r = h * 1.414, cs = [0, 1, 2, 3].map(k => { const an = rot + k * Math.PI / 2; return [x + r * Math.cos(an), z + r * Math.sin(an)]; });
+  const top = cs.map(c => P(c[0], y + h, c[1])), bot = cs.map(c => P(c[0], y - h, c[1])), f0 = P(x, 0, z), c = P(x, y, z);
+  G.beginPath(); G.ellipse(f0[0], f0[1], r * cam.k * f0[2] * .9, r * cam.k * f0[2] * .9 * cam.sp, 0, 0, TAU); G.fillStyle = `rgba(${rgb},${a * .12})`; G.fill();
+  glow(c, rgb, a * .35, 3.4);
+  for (let k = 0; k < 4; k++) { const n = (k + 1) % 4; if ((cs[k][1] + cs[n][1]) / 2 <= z) continue;
+    path([top[k], top[n], bot[n], bot[k]], true); G.fillStyle = `rgba(${rgb},${a * (.22 + .12 * (k % 2))})`; G.fill(); stroke(rgb, a * .95, 1); }
+  path(top, true); G.fillStyle = `rgba(${rgb},${a * .5})`; G.fill(); stroke(rgb, a, 1.1);
+  if (sel) { G.beginPath(); G.arc(c[0], c[1], h * cam.k * c[2] * 2.6, 0, TAU); stroke(C.ink, a * .9, 1.2, [3, 4]); }
+  return c;
+}
+function itemDots(w, its, r, a, front, seed) {
+  its.forEach((it, j) => {
+    const an = st.tt * .3 + seed + j * TAU / its.length, sn = Math.sin(an); if ((sn >= 0) !== front) return;
+    glow(P(w[0] + r * Math.cos(an), w[1] + 7 + 2.5 * Math.sin(st.tt * 1.2 + j * 2.1), w[2] + r * sn), dotRgb(it), a, 2.2);
+  });
+}
+
+let HIT = [];
+// overview: one built factory = hub + its stage chain on a tilted orbit
+function drawOrbit(f, a) {
+  const tt = st.tt, n = f.stages.length, sa = f.sa, PR = phone ? 21 : 17, SZ = phone ? 22 : 15, tr = (PR + 3) / OR;
+  const lit = Math.max(0, ...f.items.map(it => f.stages.findIndex(s => s.id === it.stage)));
+  const arcPts = (a0, a1) => { const pts = []; for (let j = 0; j <= 8; j++) pts.push(P(...f.orb(a0 + (a1 - a0) * j / 8))); return pts; };
+  // pipes: dashes move inside the conduit wherever work has flowed
+  for (let i = 0; i < n; i++) {
+    const a1 = i + 1 < n ? sa[i + 1] : f.ba, on = f.on && i < lit, pts = arcPts(sa[i] - tr, a1 + tr), da = a * dA(pts[4][2]);
+    path(pts); stroke(i + 1 < n ? C.cyan : C.red, da * .09, 5); stroke(i + 1 < n ? C.cyan : C.red, da * (on ? .85 : .24), 1.2, [5, 7], on ? -tt * 14 : 0);
+  }
+  if (lit > 0 && f.on) for (let j = 0; j < 3; j++) { const u = fr(tt * .06 + j / 3) * lit, i = Math.floor(u), p = P(...f.orb(sa[i] + (sa[i + 1] - sa[i]) * ease(u - i))); glow(p, C.cyan, a * dA(p[2])); }
+  // gates that need You: amber feed to the hub, then up the link to the core
+  const hubW = [f.x, 10, f.z], acts = f.stages.map((s, i) => i).filter(i => stageOpen(f, f.stages[i].id));
+  acts.forEach(i => { path([P(...f.orb(sa[i])), P(...hubW)]); stroke(C.amber, a * .55, 1, [4, 6], -tt * 12); });
+  if (acts.length) {
+    const cy = tt / 5.5 + FS.indexOf(f) * .5, i = acts[Math.floor(cy) % acts.length], u = fr(cy), dir = Math.atan2(f.z, f.x), core = [112 * Math.cos(dir), 0, 112 * Math.sin(dir)];
+    const p = P(...(u < .3 ? lerp3(f.orb(sa[i]), hubW, ease(u / .3)) : lerp3(hubW, core, ease((u - .3) / .7))));
+    glow(p, C.amber, a * Math.min(1, (1 - u) * 6), 2.8);
+  }
+  // rejected items now and then replay their last hop into the incinerator
+  const ks = killed(f).filter(k => k.stage), binW = f.orb(f.ba); let binFlash = 0, rejP = null;
+  if (ks.length && !RM && f.on) {
+    const cy = tt / 8 + FS.indexOf(f) * .45 + .1, k = ks[Math.floor(cy) % ks.length], u = fr(cy) * 4;
+    if (u < 1) { const w = lerp3(f.orb(sa[f.stages.findIndex(s => s.id === k.stage)]), binW, ease(u)); w[1] += 34 * Math.sin(Math.PI * u); rejP = P(...w); }
+    else if (u < 1.6) binFlash = 1 - (u - 1) / .6;
+  }
+  const list = f.stages.map((s, i) => ({s, i, w: f.orb(sa[i])})); list.push({bin: 1, w: binW}, {hub: 1, w: [f.x, 0, f.z]});
+  list.sort((p, q) => p.w[2] - q.w[2]).forEach(o => {
+    if (o.hub) { hexPrism(f.x, f.z, 28, 20, C.cyan, a * (f.on ? 1 : .45), .12); ring(f.x, f.z, 20, 13); stroke(C.cyan, a * .55, 1); const p = P(f.x, 10, f.z); HIT.push({x: p[0], y: p[1], r: 34 * cam.k, f}); return; }
+    const da = a * dA(P(...o.w)[2]);
+    if (o.bin) {
+      const r = drawStation(o.w, {sz: SZ * .8, pr: PR * .8, art: ART_BIN, rgb: C.red, a: da * .85, sp: .6});
+      if (binFlash) { ring(o.w[0], o.w[2], o.w[1], PR * (1 + (1 - binFlash) * 1.6)); stroke(C.red, binFlash * .9, 1.6); glow([r.c[0], r.c[1] - r.px, 1], C.red, binFlash * .6, 5); }
+      if (!phone) { const q = P(o.w[0], o.w[1], o.w[2] + PR * .8); G.font = "500 9px 'JetBrains Mono',ui-monospace,monospace"; G.textAlign = "center"; G.fillStyle = `rgba(${C.red},${da * .9})`; G.fillText(killed(f).length + " REJECTED", q[0], q[1] + 13); }
+      HIT.push({x: r.c[0], y: r.c[1] - r.px, r: r.px + 8, f, bin: 1}); return;
+    }
+    const ss = stStatus(f, o.s), its = alive(f).filter(it => it.stage === o.s.id);
+    itemDots(o.w, its, PR * 1.3, da, false, o.i);
+    const r = drawStation(o.w, {sz: SZ, pr: PR, art: STAGE_ART[o.s.id] || ART_GENERIC, ...ss, a: da * ss.a, ph: o.i * 1.7, gate: o.s.gate, fl: flashOf(f, o.s.id)});
+    itemDots(o.w, its, PR * 1.3, da, true, o.i);
+    if (!phone) { const q = P(o.w[0], o.w[1], o.w[2] + PR); G.font = "500 9px 'JetBrains Mono',ui-monospace,monospace"; G.textAlign = "center"; G.fillStyle = `rgba(${ss.k === "act" ? C.amber : C.ink},${da * (ss.k === "ghost" ? .42 : .8)})`; G.fillText(shortName(o.s).toUpperCase(), q[0], q[1] + 13); }
+    HIT.push({x: r.c[0], y: r.c[1] - r.px, r: r.px + 8, f, s: o.s});
+  });
+  if (rejP) glow(rejP, C.red, a, 2.6);
+}
+
+function draw() {
+  setCam();
+  const e = ease(st.t), aAll = 1 - e, tt = st.tt;
+  G.clearRect(0, 0, W, H); HIT = [];
+
+  // floor grid: a few concentric guides, very quiet. Nothing of the overview is drawn once it has faded out.
+  if (aAll > .02 || phone) {
+  [140, 220, R, 432].forEach((r, i) => { ring(0, 0, 0, r); stroke(C.cyan, (i === 2 ? .2 : .07) * (phone ? .25 + .75 * aAll : aAll), 1, i === 2 ? [2, 7] : null); });
+  ticks(0, 0, 424, 432, 120, st.spin, C.cyan, .16 * aAll);
+  ticks(0, 0, 416, 432, 12, st.spin, C.cyan, .4 * aAll);
+
+  // links You <-> factory; an open decision makes the link a live amber feed
+  FS.forEach(f => {
+    const n = f.approvals.length, isSel = st.fac === f;
+    const a = (isSel && phone ? 1 : aAll) * (f.planned ? .22 : n ? .85 : .4);
+    const dir = Math.atan2(f.z, f.x), r0 = 112, r1 = Math.hypot(f.x, f.z) - (f.planned ? 64 : 34);
+    path([P(r0 * Math.cos(dir), 0, r0 * Math.sin(dir)), P(r1 * Math.cos(dir), 0, r1 * Math.sin(dir))]);
+    if (n) { stroke(C.amber, a * .16, 6); stroke(C.amber, a, 1.5, [6, 8], tt * 13); } else stroke(C.cyan, a, 1, f.planned ? [3, 6] : null);
+  });
+
+  // core: stacked rings + spend gauge
+  const ca = phone ? .3 + .7 * aAll : aAll, coreRgb = totalOpen ? C.amber : C.green;
+  [0, 16, 32].forEach((y, i) => { ring(0, 0, y, 62 - i * 9); stroke(coreRgb, ca * (.9 - i * .22), i ? 1 : 1.6); });
+  ring(0, 0, 0, 44); G.fillStyle = `rgba(${coreRgb},${.07 * ca})`; G.fill();
+  ring(0, 0, 0, 96); stroke(C.cyan, .14 * ca, 5);
+  ring(0, 0, 0, 96, Math.PI * .5, Math.PI * .5 + Math.PI * 2 * Math.max(.02, spent / budget)); stroke(C.cyan, .85 * ca, 5);
+  ticks(0, 0, 104, 110, 48, -st.spin * 1.5, C.cyan, .25 * ca);
+  }
+
+  // factories, far to near. Planned ones stay dim outlines.
+  if (aAll > .02) [...FS].sort((p, q) => p.z - q.z).forEach(f => {
+    if (!f.planned) return drawOrbit(f, aAll);
+    const n = f.stages.length, dash = [3, 5], da = aAll * dA(P(f.x, 0, f.z)[2]);
+    hexPrism(f.x, f.z, 38, 24, C.cyan, da * .4, 0, dash);
+    const gap = .09, seg = Math.PI * 2 / n;
+    f.stages.forEach((s, i) => { ring(f.x, f.z, 0, 60, -Math.PI / 2 + i * seg + gap, -Math.PI / 2 + (i + 1) * seg - gap); stroke(C.cyan, da * .24, 2, dash); });
+    const p = P(f.x, 10, f.z); HIT.push({x: p[0], y: p[1], r: 66 * cam.k, f});
+  });
+
+  // factory level: the line
+  if (st.fac && e > .02) {
+    const f = st.fac, n = f.stages.length, x0 = f.x - (n / 2) * S + S / 2;
+    const hlStage = st.hl ? apStage(f, f.approvals.find(a => a.id === st.hl) || {id: "", title: "", detail: ""}) : null;
+    const {SR, SZ} = zs(), xr = x0 + n * S - S * .1;
+    const lit = f.planned ? -1 : Math.max(0, ...f.items.map(it => f.stages.findIndex(s => s.id === it.stage)));
+    const pipe = (xa, xb, flows, rgb = C.cyan) => { const on = flows && f.on; path([P(xa, 3, f.z), P(xb, 3, f.z)]); stroke(rgb, e * .1, 6); stroke(rgb, e * (on ? .9 : .28), 1.3, f.planned ? [3, 6] : [6, 8], on ? -tt * 18 : 0); };
+    pipe(x0 - S * .55, x0 - SR * 1.1, lit >= 0);
+    for (let i = 0; i < n - 1; i++) pipe(x0 + i * S + SR * 1.1, x0 + (i + 1) * S - SR * 1.1, i < lit);
+    if (!f.planned) pipe(x0 + (n - 1) * S + SR * 1.1, xr - SR * .85, false, C.red);
+    if (lit > 0 && f.on) for (let j = 0; j < 3; j++) { const u = fr(tt * .06 + j / 3) * lit, i = Math.floor(u); glow(P(x0 + (i + ease(u - i)) * S, 3, f.z), C.cyan, e); }
+    const off = phone ? {} : (f._off || {}), yp = youPos();
+    f.stages.forEach((s, i) => {
+      const x = x0 + i * S, ss = stStatus(f, s), act = ss.k === "act", dim = hlStage && hlStage !== s.id ? .3 : 1, w = [x, 0, f.z];
+      const its = alive(f).filter(it => it.stage === s.id);
+      const xu = st.xr && (st.xr.sid === "*" || st.xr.sid === s.id) ? (tt - st.xr.t0) / 1.6 - (st.xr.sid === "*" ? i * .09 : 0) : -1;
+      const r = drawStation(w, {sz: SZ, pr: SR, art: f.planned ? ART_GENERIC : STAGE_ART[s.id] || ART_GENERIC, ...ss, a: e * dim * ss.a, ph: i * 1.7, fl: flashOf(f, s.id), xu, dots: its.map(dotRgb), m3: f.planned ? null : s.id, e3: Math.max(0, (e - .45) / .55)});
+      HIT.push({x: r.c[0], y: r.c[1] - r.px, r: r.px + 6, f, s});
+      // items held at this stage: small boxes on the floor in front of the machine
+      const bh = SR * .2, gapB = bh * 3.1;
+      its.forEach((it, j) => {
+        const bx = x + (j - (its.length - 1) / 2) * gapB, bz = f.z + SR * 1.75, by = bh * (1.5 + (RM ? 0 : .35 * Math.sin(tt * 1.1 + i + j * 1.9)));
+        const p = itemBox(bx, by, bz, bh, dotRgb(it), e * dim, (RM ? .6 : tt * .25) + j, st.sel === it.id);
+        HIT.push({x: p[0], y: p[1], r: Math.max(13, bh * cam.k * 2.2), f, it});
+      });
+      if (!phone) {
+        const p = P(x, 0, f.z);
+        if (off[s.id] != null) { path([[p[0], p[1] + SR * cam.k * .75], [p[0], p[1] + 76 + off[s.id]]]); stroke(C.cyan, e * dim * .3, 1); }
+        if (act) {
+          const topY = topOf(x, f.z, SR, SZ)[1] - 60, l1 = topY - yp[1], l2 = yp[0] - 44 - p[0];
+          path([[p[0], topY], [p[0], yp[1]], [yp[0] - 44, yp[1]]]); stroke(C.amber, e * dim * .6, 1, [4, 6], -tt * 13);
+          G.beginPath(); G.arc(p[0], topY, 2.5, 0, 7); G.fillStyle = `rgba(${C.amber},${e * dim})`; G.fill();
+          const d = ease(fr(tt / 4.5 + i * .37)) * (l1 + l2); glow(d < l1 ? [p[0], topY - d, 1] : [p[0] + d - l1, yp[1], 1], C.amber, e * dim, 2.4);
+        }
+      }
+    });
+    if (!f.planned) {
+      const bw = [xr, 0, f.z], ks = killed(f).filter(k => k.stage);
+      const r = drawStation(bw, {sz: SZ * .72, pr: SR * .75, art: ART_BIN, rgb: C.red, a: e * (st.hl ? .3 : .9), sp: .6});
+      HIT.push({x: r.c[0], y: r.c[1] - r.px, r: r.px + 6, f, bin: 1});
+      if (ks.length && !RM && f.on) {
+        const cy = tt / 8 + .1, k = ks[Math.floor(cy) % ks.length], u = fr(cy) * 4;
+        if (u < 1) { const w = lerp3([x0 + f.stages.findIndex(s => s.id === k.stage) * S, SZ * 1.2, f.z], [xr, SZ, f.z], ease(u)); w[1] += 46 * Math.sin(Math.PI * u); glow(P(...w), C.red, e, 2.8); }
+        else if (u < 1.6) { const b = 1 - (u - 1) / .6; ring(xr, f.z, 0, SR * (.8 + (1 - b) * 1.4)); stroke(C.red, e * b * .9, 1.6); glow([r.c[0], r.c[1] - r.px, 1], C.red, e * b * .6, 6); }
+      }
+    }
+
+    if (!phone) {
+      // header node (this factory) top-left
+      const hp = headPos(), base = f.planned ? .4 : 1, dash = f.planned ? [3, 5] : null, seg = Math.PI * 2 / n;
+      hex2d(hp[0], hp[1], 20, 13, C.cyan, e * base, f.planned ? 0 : .1, dash);
+      f.stages.forEach((sg, i) => {
+        const has = alive(f).some(it => it.stage === sg.id), act = stageOpen(f, sg.id);
+        ell(hp[0], hp[1], 36, -Math.PI / 2 + i * seg + .1, -Math.PI / 2 + (i + 1) * seg - .1);
+        stroke(act ? C.amber : C.cyan, e * (f.planned ? .2 : act ? 1 : has ? .9 : .25), act || has ? 3 : 2, dash);
+      });
+      // You, docked top-right
+      const open = f.approvals.length, rgb = open ? C.amber : C.green;
+      [0, 7, 14].forEach((dy, i) => { ell(yp[0], yp[1] - dy, 30 - i * 5); stroke(rgb, e * (.9 - i * .25), i ? 1 : 1.5); });
+      ell(yp[0], yp[1], 20); G.fillStyle = `rgba(${rgb},${.08 * e})`; G.fill();
+    }
+  }
+}
+
+// ---------- event stream ----------
+const EVS = FS.flatMap(f => f.events.map(ev => ({...ev, f}))).sort((a, b) => a.at < b.at ? 1 : -1);
+const evScope = () => st.fac && st.target ? EVS.filter(ev => ev.f === st.fac) : EVS;
+function streamReset() {
+  const l = evScope().slice(0, 9);
+  $("stream").innerHTML = l.length ? l.map((ev, i) => `<li class="${ev.failed ? "flag" : ""}" data-e="${i}"><time>${esc(ev.t.replace(/\s*([ap])m/i, "$1"))}</time><span><b>${esc(ev.f.short.toLowerCase())}</b> ${esc(ev.text)}</span></li>`).join("") : `<li><time>—</time><span>No runs yet.</span></li>`;
+  $("stream").querySelectorAll("[data-e]").forEach(li => li.onmouseenter = () => { const ev = l[li.dataset.e]; st.fl = {f: ev.f, sid: ev.stage, t0: st.tt}; kick(); });
+}
+
+const statusOf = f => f.planned ? "Planned" : f.on ? "On" : "Off";
+
+// ---------- labels ----------
+let LB = [];
+function label(cls, pos, anchor, html, off) {
+  const w = document.createElement("div"); w.className = "lb " + anchor + " " + cls; if (off != null) w.style.setProperty("--off", off + "px");
+  w.innerHTML = html; $("labels").appendChild(w); LB.push({w, pos}); return w.firstElementChild;
+}
+function buildLabels() {
+  $("labels").innerHTML = ""; LB = [];
+  label("lv-all", [0, 74, 0], "c-above", `<div class="core"><em>YOU</em><b class="${totalOpen ? "" : "zero"}">${totalOpen}</b><small>${totalOpen === 1 ? "decision waiting" : totalOpen ? "decisions waiting" : "all clear"}</small></div>`, phone ? 22 : 0);
+  if (!phone) label("lv-all", [0, 0, 124], "c-below", `<div class="spend">spend <b>$${spent.toFixed(2)}</b> / $${budget}</div>`, 2);
+  FS.forEach(f => {
+    const open = f.approvals.length, back = f.z < -40;
+    const status = statusOf(f);
+    const b = label("lv-all", [f.x, back ? 24 : 0, f.z + (back ? 0 : f.planned ? 78 : OR + (phone ? 30 : 17))], back ? "c-above" : "c-below",
+      `<button class="fac ${f.planned ? "plan" : f.on ? "" : "off"}" type="button" aria-label="Open ${esc(f.name)}"><span class="nm">${esc(phone ? f.short : f.name)}</span><span class="st">${status}</span>${f.planned ? "" : `<span class="ct">${alive(f).length} alive · ${killed(f).length} rejected</span>`}${open ? `<span class="bd">${open} need${open === 1 ? "s" : ""} you</span>` : ""}</button>`, back ? 48 : f.planned ? 4 : phone ? 6 : 22);
+    b.onclick = () => zoomTo(f.id);
+  });
+  if (st.fac) {
+    const f = st.fac, n = f.stages.length, x0 = f.x - (n / 2) * S + S / 2;
+    const ap = st.hl ? f.approvals.find(a => a.id === st.hl) : null, hlStage = ap ? apStage(f, ap) : null, hlItems = ap ? ap.items : null;
+    const off = f._off = phone ? {} : chipLayout(f), {SR, SZ} = zs();
+    f.stages.forEach((s, i) => {
+      const x = x0 + i * S, act = stageOpen(f, s.id);
+      const dim = hlStage && hlStage !== s.id ? " dim" : "";
+      const sb = label("lv-fac" + dim, phone ? [x, 0, f.z] : () => topOf(x, f.z, SR, SZ), phone ? "c-left" : "c-above",
+        `<button class="stg ${s.gate ? "gate" : ""} ${act ? "open" : ""}" type="button"><span class="nm">${s.gate ? LOCK : ""}${esc(s.name)}</span>${f.planned || phone ? "" : `<span class="ag ${act ? "blocked" : "idle"}"><i></i>${act ? "needs you" : s.last ? "ran " + esc(s.last.t) : "no runs yet"}</span>`}</button>`, phone ? 26 : 6);
+      sb.onclick = () => openStage(s.id);
+      const its = alive(f).filter(it => it.stage === s.id);
+      if (its.length) {
+        const cw = label("lv-fac", [x, 0, f.z], phone ? "c-right" : "c-below",
+          `<div class="chips">${its.map(it => `<button class="chip s-${it.state}${st.sel === it.id ? " sel" : ""}${hlItems && !hlItems.includes(it.id) ? " dim" : ""}" type="button" data-i="${esc(it.id)}"><i></i><span>${esc(it.name)}<small>${esc(chipFact(it))}</small></span>${phone ? "" : sparkline(it.pnl, 46, 22, "mini")}</button>`).join("")}</div>`, phone ? 26 : 76 + (off[s.id] || 0));
+        cw.querySelectorAll("[data-i]").forEach(c => c.onclick = () => openItem(c.dataset.i));
+      }
+    });
+    if (!f.planned) {
+      const xr = x0 + n * S - S * .1;
+      const rb = label("lv-fac" + (st.hl ? " dim" : ""), phone ? [xr, 0, f.z] : () => topOf(xr, f.z, SR * .75, SZ * .72), phone ? "c-right" : "c-above", `<button class="rej" type="button"><b>${killed(f).length}</b>rejected</button>`, phone ? 22 : 10);
+      rb.onclick = openRejects;
+    } else label("lv-fac", [f.x + S * .42, 0, f.z], "c-below", `<div class="empty">Blueprint only. Not built.</div>`, 56);
+    if (!phone) {
+      const status = statusOf(f), open = f.approvals.length;
+      label("lv-fac", () => { const h = headPos(); return [h[0] + 52, h[1] - 6]; }, "c-right",
+        `<div class="fhead ${f.planned ? "plan" : f.on ? "" : "off"}"><span class="nm">${esc(f.name)}</span><span class="st">${status}</span><span class="ct">${f.planned ? f.stages.length + " stages planned" : `${alive(f).length} alive · ${killed(f).length} rejected`}</span></div>`, 0);
+      label("lv-fac", () => { const y = youPos(); return [y[0] - 44, y[1] - 34]; }, "c-left",
+        `<div class="ydock"><em>YOU</em><b class="${open ? "" : "zero"}">${open}</b><small>${open ? "open here" : "all clear"}</small></div>`, 0);
+    }
+  }
+  placeLabels();
+}
+function placeLabels() {
+  const e = ease(st.t);
+  LB.forEach(l => {
+    const p = typeof l.pos === "function" ? l.pos() : P(...l.pos); l.w.style.transform = `translate(${p[0].toFixed(1)}px,${p[1].toFixed(1)}px)`;
+    const all = l.w.classList.contains("lv-all"), o = all ? 1 - e : e;
+    l.w.style.opacity = l.w.classList.contains("dim") ? o * .28 : o; l.w.style.visibility = o < .05 ? "hidden" : "visible";
+    l.w.style.pointerEvents = "none"; if (l.w.firstElementChild) l.w.firstElementChild.style.pointerEvents = o > .6 ? "" : "none";
+  });
+}
+
+// ---------- HUD ----------
+function hud() {
+  $("asof").textContent = "as of " + D.asOf;
+  const on = BUILT.filter(f => f.on).length, open = totalOpen;
+  const al = FS.reduce((n, f) => n + alive(f).length, 0);
+  $("kpis").innerHTML = `
+    <div class="kpi"><small>Factories on</small><b>${on}<em> of ${BUILT.length} built</em></b></div>
+    <div class="kpi ${open ? "act" : ""}"><small>Needs you</small><b>${open}</b></div>
+    <div class="kpi"><small>Spend</small><b>$${spent.toFixed(2)}<em> / $${budget}</em></b></div>
+    <div class="kpi"><small>Items alive</small><b>${al}</b></div>`;
+  $("rcnt").textContent = open; $("rcnt").className = "cnt" + (open ? "" : " zero");
+  $("needs").innerHTML = FS.flatMap(f => f.approvals.map(a => `<button class="need ${st.hl === a.id ? "on" : ""}" type="button" data-f="${esc(f.id)}" data-a="${esc(a.id)}">
+      <span class="top"><span class="fc">${esc(f.short)}</span><span>${esc(a.id)}</span></span>
+      <strong>${esc(a.title)}</strong></button>`)).join("") || `<p class="clear">Nothing is waiting on you.</p>`;
+  $("needs").querySelectorAll(".need").forEach(b => b.onclick = () => openApproval(b.dataset.f, b.dataset.a));
+  $("power").innerHTML = FS.map(f => `<div><span>${esc(f.short)}</span>${powerSwitch(f)}</div>`).join("");
+  const sc = st.fac && st.target ? st.fac.id : "*"; if (sc !== st.scope) { st.scope = sc; streamReset(); }
+  document.body.classList.toggle("zoomed", !!(st.fac && st.target));
+  if (st.fac && st.target) readout(st.fac);
+  const c = $("crumb");
+  if (st.fac && st.target) {
+    c.hidden = false;
+    c.innerHTML = `<button type="button" id="back">← All factories</button><span>›</span><b>${esc(st.fac.name)}</b>${st.fac.on ? "" : `<span id="note">Off. No run starts while ${esc(stopNote(st.fac))} exists.</span>`}`;
+    $("back").onclick = zoomOut;
+  } else c.hidden = true;
+}
+
+function readout(f) {
+  const sp = f.spend, pct = sp.monthBudget ? Math.min(1, sp.month / sp.monthBudget) : 0, c = 2 * Math.PI * 22;
+  const evs = f.events.slice(0, 3);
+  $("readout").innerHTML = `
+    <div><h3>${f.planned ? "Planned stages" : "Reached each stage"}</h3><div class="flow">${f.stages.map(sg => `<div><b class="${sg.reached ? "" : "z"}">${f.planned ? "–" : sg.reached}</b><span>${esc(shortName(sg))}</span><i class="${sg.reached ? "on" : ""}"></i></div>`).join("")}</div></div>
+    <div><h3>Spend</h3><div class="gauge"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="22" fill="none" stroke="rgba(95,212,244,.16)" stroke-width="4"/><circle cx="27" cy="27" r="22" fill="none" stroke="#5fd4f4" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(c * Math.max(pct, f.planned ? 0 : .02)).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 27 27)"/></svg><div><b>$${sp.month.toFixed(2)}</b><small>${sp.monthBudget ? "of $" + sp.monthBudget + " this month" : "no budget set"}</small></div></div></div>
+    <div class="runs"><h3>Runs</h3><b>${sp.runs}</b><small>${f.planned ? "not built" : "this month"}</small></div>
+    <div><h3>Latest</h3>${evs.length ? `<ul class="evs">${evs.map(ev => `<li><time>${esc(ev.t)}</time><span>${esc(ev.text)}</span></li>`).join("")}</ul>` : `<div class="empty">No runs yet.</div>`}</div>`;
+}
+
+// ---------- detail ----------
+function show(html) {
+  const d = $("detail"); d.innerHTML = `<button class="x" type="button" id="dx">CLOSE</button>` + html;
+  d.classList.add("on"); d.setAttribute("aria-hidden", "false"); $("dx").onclick = closeDetail;
+}
+function closeDetail() { const d = $("detail"); d.classList.remove("on"); d.setAttribute("aria-hidden", "true"); if (st.hl || st.sel) { st.hl = null; st.sel = null; buildLabels(); hud(); } }
+const histHtml = h => h ? `<ul class="hist">${h.map(x => `<li><time>${esc(x[0])}</time><div><b>${esc(x[1])}</b><span>${esc(x[2])}</span></div></li>`).join("")}</ul>` : "";
+function openItem(id) {
+  const f = st.fac, it = f.items.find(i => i.id === id), ci = f.stages.findIndex(s => s.id === it.stage);
+  st.sel = id; st.hl = null; buildLabels(); hud();
+  const tiles = [...Object.entries(it.facts).map(([k, v]) => [k.replace(/_/g, " "), v]), ["spent", "$" + it.spend.toFixed(2)]];
+  show(`<div class="eyebrow">${esc(f.short)} · ${esc(ci < 0 ? "no stage" : f.stages[ci].name)}</div><h2>${esc(it.name)}</h2>
+    <div class="tags">${[it.platform, it.category].filter(Boolean).map(t => `<span class="tag">${esc(t)}</span>`).join("")}<span class="tag ${it.state === "waiting" ? "amber" : it.state === "killed" ? "red" : "green"}">${it.state === "waiting" ? "waiting on you" : it.state}</span></div>
+    ${it.pnl ? `<div class="pnl"><div class="cap"><span>Paper result, % since start</span><span style="color:var(--ink)">${it.pnl[it.pnl.length - 1] > 0 ? "+" : ""}${it.pnl[it.pnl.length - 1].toFixed(1)}%</span></div>${sparkline(it.pnl, 280, 64)}</div>` : ""}
+    <p class="lead">${esc(it.summary)}</p>
+    ${it.killed ? `<div class="killbox"><b style="font-weight:500">Rejected.</b> ${esc(it.killed)}</div>` : ""}
+    <div class="steps">${f.stages.map((q, i) => `<span class="${i < ci ? "past" : i === ci ? "cur" + (it.state === "waiting" ? " wait" : "") : ""}">${esc(shortName(q))}</span>`).join("")}</div>
+    <div class="tiles">${tiles.map(([l, v]) => `<div class="tile"><small>${esc(l)}</small><b>${esc(v)}</b></div>`).join("")}</div>
+    ${it.evidence.length ? `<dl class="dl"><dt>Evidence</dt>${it.evidence.map(e => `<dd>${esc(e.claim)}<small>${esc(e.source)}</small></dd>`).join("")}</dl>` : ""}
+    ${it.blockedBy ? `<div class="row"><button class="btn" type="button" id="goAp">Review ${esc(it.blockedBy)}</button><span style="align-self:center;font-size:12px;color:var(--ink2)">blocks this item</span></div>` : ""}
+    ${histHtml(it.history)}`);
+  const g = $("goAp"); if (g) g.onclick = () => openApproval(f.id, it.blockedBy);
+}
+function openStage(id) {
+  const f = st.fac, sg = f.stages.find(s => s.id === id), its = f.items.filter(i => i.stage === id);
+  st.sel = null; st.hl = null; st.xr = {sid: id, t0: st.tt}; buildLabels(); hud();
+  show(`<div class="eyebrow">${esc(f.short)} · stage</div><h2>${esc(sg.name)}</h2>
+    ${sg.gate ? `<div class="tags"><span class="tag ${stageOpen(f, id) ? "amber" : ""}">Gate · ${esc(sg.gate)}</span></div>` : ""}
+    <p>${sg.runs.length ? "Worked by " + esc(sg.runs.join(", ")) + "." : "No skill runs this stage."} ${sg.reached} reached it.</p>
+    ${sg.last ? `<p class="lead">Last run ${esc(sg.last.t)}: ${esc(sg.last.text)}</p>` : `<p>No runs yet.</p>`}
+    <ul class="hist">${its.map(i => `<li><time>${i.state === "killed" ? "rejected" : "here"}</time><div><b>${esc(i.name)}</b><span>${esc(i.killed || i.summary)}</span></div></li>`).join("") || `<li><time>—</time><div><span>Nothing is at this stage.</span></div></li>`}</ul>`);
+}
+function openRejects() {
+  const f = st.fac, ks = killed(f); st.sel = null; st.hl = null; buildLabels(); hud();
+  show(`<div class="eyebrow">${esc(f.short)} · rejected</div><h2>${ks.length} rejected</h2><p>Each one records where it stopped and why.</p>
+    <ul class="hist">${ks.map(i => `<li><time>${esc((f.stages.find(s => s.id === i.stage) || {name: "–"}).name)}</time><div><button class="open" type="button" data-i="${esc(i.id)}">${esc(i.name)}</button><span>${esc(i.killed)}</span></div></li>`).join("")}</ul>`);
+  $("detail").querySelectorAll(".open").forEach(b => { b.onclick = () => openItem(b.dataset.i); });
+}
+function openApproval(fid, aid) {
+  const f = FS.find(x => x.id === fid), a = f.approvals.find(x => x.id === aid);
+  st.hl = aid; st.sel = null; zoomTo(fid, true);
+  const its = a.items.map(id => f.items.find(i => i.id === id));
+  show(`<div class="eyebrow">Needs you · ${esc(a.id)}</div><h2>${esc(a.title)}</h2>
+    <div class="tags"><span class="tag amber">waiting on you</span><span class="tag">${esc(f.name)}</span>${a.expires ? `<span class="tag">expires ${esc(a.expires)}</span>` : ""}</div>
+    <p class="lead">${esc(a.detail) || "See the packet."}</p>
+    ${its.length ? `<ul class="hist">${its.map(i => `<li><time>covers</time><div><b>${esc(i.name)}</b><span>${esc(i.summary)}</span></div></li>`).join("")}</ul>` : ""}
+    <dl class="dl"><dt>To decide</dt><dd>Read the packet, then move it to escalations/approved/ or escalations/rejected/. The next run acts on it.<small>${esc(a.file)}</small></dd></dl>`);
+}
+
+// ---------- navigation ----------
+function zoomTo(fid, keep) {
+  const f = FS.find(x => x.id === fid);
+  if (st.fac !== f && st.t > 0) st.t = 0;
+  st.fac = f; st.target = 1; if (!keep) { st.hl = null; st.sel = null; $("detail").classList.remove("on"); }
+  if (RM) st.t = 1;
+  if (phone) $("rail").classList.add("closed");
+  history.replaceState(null, "", "#" + f.id);
+  buildLabels(); hud(); kick();
+}
+function zoomOut() { history.replaceState(null, "", location.pathname); st.target = 0; st.hl = null; st.sel = null; $("detail").classList.remove("on"); if (RM) { st.t = 0; st.fac = null; buildLabels(); } hud(); kick(); }
+
+let raf = 0, last = 0;
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000 || 0); last = now;
+  if (st.t !== st.target) { st.t += Math.sign(st.target - st.t) * dt / .55; if (Math.abs(st.t - st.target) < .02 || (st.target ? st.t > 1 : st.t < 0)) { st.t = st.target; if (!st.target) { st.fac = null; buildLabels(); } else st.xr = {sid: "*", t0: st.tt}; } }
+  if (!RM) {
+    st.spin += dt * .012; st.tt += dt; st.px += (st.mx - st.px) * .05; st.py += (st.my - st.py) * .05;
+  }
+  draw(); placeLabels();
+  raf = (!RM || st.t !== st.target) ? requestAnimationFrame(frame) : 0;
+}
+function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+
+addEventListener("resize", () => { measure(); buildLabels(); kick(); });
+addEventListener("mousemove", ev => { st.mx = ev.clientX / W - .5; st.my = ev.clientY / H - .5; });
+addEventListener("keydown", ev => { if (ev.key === "Escape") { if ($("detail").classList.contains("on")) closeDetail(); else if (st.target) zoomOut(); } });
+const hitAt = ev => { let best = null, bd = 1e9; for (const o of HIT) { const d = Math.hypot(o.x - ev.clientX, o.y - ev.clientY), w = o.it ? 200 : o.s || o.bin ? 60 : 0; if (d < o.r && d - w < bd) { bd = d - w; best = o; } } return best; };
+cv.addEventListener("click", ev => {
+  const o = hitAt(ev); if (!o) return;
+  if (!st.target) zoomTo(o.f.id); else if (o.it) openItem(o.it.id); else if (o.s) openStage(o.s.id); else if (o.bin) openRejects();
+});
+cv.addEventListener("mousemove", ev => {
+  const o = hitAt(ev), tip = $("tip"); cv.style.cursor = o ? "pointer" : "";
+  if (o && o.it) { tip.innerHTML = `<b>${esc(o.it.name)}</b> · ${esc(chipFact(o.it))}`; tip.style.left = o.x + "px"; tip.style.top = (o.y - o.r) + "px"; tip.hidden = false; }
+  else if (o && (o.s || o.bin)) {
+    const n = o.s ? alive(o.f).filter(it => it.stage === o.s.id).length : killed(o.f).length;
+    tip.innerHTML = o.s ? `<b>${esc(o.s.name)}</b> · ${STATUS_TXT[stStatus(o.f, o.s).k]} · ${n} here${o.s.gate ? " · gate" : ""}` : `<b>Rejected</b> · ${n} ideas stopped`;
+    tip.style.left = o.x + "px"; tip.style.top = (o.y - o.r) + "px"; tip.hidden = false;
+  } else tip.hidden = true;
+});
+cv.addEventListener("mouseleave", () => { $("tip").hidden = true; });
+$("rhead").onclick = () => { if (phone) $("rail").classList.toggle("closed"); };
+
+// a switch or new runs change what every label and machine shows, so start again from the new files
+onPower(() => FS, () => location.reload());
+watch(() => LOADED, () => location.reload());
+measure(); if (phone) $("rail").classList.add("closed");
+hud(); measure(); buildLabels(); draw(); placeLabels(); kick();
+if (location.hash.length > 1 && FS.some(f => f.id === location.hash.slice(1))) { st.t = RM ? 1 : .999; zoomTo(location.hash.slice(1)); }
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); buildLabels(); kick(); });
+</script>
+</body>
+</html>

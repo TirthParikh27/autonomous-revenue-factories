@@ -21,6 +21,18 @@ These are the patterns behind app ads that work on Meta and TikTok. Weigh them a
 - **Looks made by a person who cares.** One typeface, a small palette, generous type (nothing under about 40 px on a 1080 px frame), calm motion with purpose. Nothing overlaps, nothing is cut off, nothing important sits in the top 250 px or bottom 400 px where the platform draws its own buttons.
 - **Honest.** See the limits below. An ad that over-promises buys clicks that never convert, which is the expensive kind of false positive.
 
+## Tell one story
+
+A tour of features is forgettable. A video lands when it takes the viewer through one concrete example from start to finish, and the features appear because the story needs them.
+
+- **Pick one example and follow it.** One person, one idea, one order, by name, from the moment the problem appears to the moment it is resolved. Every scene is the next thing that happens to it. If a scene would work with the example swapped out, it is a feature list again.
+- **Open on what happened, not on what the product is.** The first line is an event with a number or a time in it ("This morning a factory came back with twelve app ideas"), and the name of the product waits for the end card.
+- **Give it a turn.** Somewhere the example meets trouble or a decision (eight of the twelve die, the one we follow stops at a gate). That is what makes the ending land.
+- **Show where we are.** A small step marker in a corner ("2 · 8 killed") lets a viewer who looked away find their place.
+- **The camera follows the voice.** Start wide so the viewer knows where they are, move in on the one thing the line names until it is easy to read, hold, then pull back before the next step. Never sit wide on a full screen of small text.
+- **Join scenes with a reason.** A cut inside one screen, a short dip or push when the place changes. One kind of transition per video.
+- **End on the name and the promise**, one line each, after the story has earned them.
+
 ## The character
 
 Each app gets one character that appears in every ad, on the page and later in the app. It need not be human. It makes a batch of ads recognisably one brand, and it gives the ad a narrator.
